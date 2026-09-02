@@ -55,8 +55,21 @@ def _reason_for_value(feature: str, value: object, positive: bool) -> str:
     if feature in {"shared_device_account_count", "customer_unique_devices_30d", "customer_unique_merchants_7d"}:
         return f"{label} is elevated ({value})" if positive else f"{label} is low ({value})"
     if feature in {"is_international", "is_night"}:
-        return f"{label.replace(' indicator', '')} is present" if positive else f"{label.replace(' indicator', '')} is absent"
+        indicator = label.replace(" indicator", "")
+        return f"{indicator} is present" if positive else f"{indicator} is absent"
     return f"{label} ({value}) increases fraud risk" if positive else f"{label} ({value}) reduces fraud risk"
+
+
+def _raw_feature_name(transformed_name: str) -> str:
+    """Map a preprocessed feature name back to its raw model feature."""
+    raw_name = transformed_name.split("__", 1)[-1]
+    if raw_name in MODEL_FEATURES:
+        return raw_name
+    for feature in CATEGORICAL_FEATURES:
+        prefix = f"{feature}_"
+        if raw_name.startswith(prefix):
+            return feature
+    return raw_name
 
 
 def explain_xgboost(model, transactions: pd.DataFrame, top_n: int = 5) -> list[list[ReasonCode]]:
@@ -88,7 +101,7 @@ def explain_xgboost(model, transactions: pd.DataFrame, top_n: int = 5) -> list[l
         reasons: list[ReasonCode] = []
         for feature_idx, contribution in ranked:
             transformed_name = feature_names[feature_idx]
-            raw_feature = transformed_name.split("__", 1)[-1]
+            raw_feature = _raw_feature_name(transformed_name)
             value = expanded_values.iloc[row_idx].get(raw_feature, transformed_name)
             reasons.append(
                 ReasonCode(
