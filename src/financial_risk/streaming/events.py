@@ -33,13 +33,13 @@ class EventEnvelope:
         except (TypeError, json.JSONDecodeError) as exc:
             raise ValueError("event envelope must contain valid JSON") from exc
         if not isinstance(payload, dict):
-            raise ValueError("event envelope must be a JSON object")
+            raise TypeError("event envelope must be a JSON object")
         required = {"event_id", "event_type", "schema_version", "occurred_at", "payload"}
         missing = required.difference(payload)
         if missing:
             raise ValueError(f"event envelope missing fields: {sorted(missing)}")
         if not isinstance(payload["payload"], dict):
-            raise ValueError("event envelope payload must be an object")
+            raise TypeError("event envelope payload must be an object")
         schema_version = int(payload["schema_version"])
         if schema_version < 1:
             raise ValueError("schema_version must be >= 1")
