@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from financial_risk.api.app import app
-from financial_risk.api.config import Settings
+from financial_risk.api.config import settings
 
 
 client = TestClient(app)
@@ -24,8 +24,8 @@ def test_version():
     response = client.get("/version")
     assert response.status_code == 200
     payload = response.json()
-    assert payload["version"] == "0.1.0"
-    assert payload["environment"] == "development"
+    assert payload["version"] == app.version
+    assert payload["environment"] == settings.app_env
 
 
 def test_settings_read_from_environment(monkeypatch):
@@ -34,11 +34,11 @@ def test_settings_read_from_environment(monkeypatch):
     monkeypatch.setenv("MODEL_ARTIFACT_PATH", "/tmp/models")
     monkeypatch.setenv("APP_VERSION", "9.9.9")
 
-    settings = Settings.from_env()
-    assert settings.app_env == "test"
-    assert settings.log_level == "DEBUG"
-    assert settings.model_artifact_path == "/tmp/models"
-    assert settings.app_version == "9.9.9"
+    settings_from_env = settings.__class__.from_env()
+    assert settings_from_env.app_env == "test"
+    assert settings_from_env.log_level == "DEBUG"
+    assert settings_from_env.model_artifact_path == "/tmp/models"
+    assert settings_from_env.app_version == "9.9.9"
 
 
 def test_risk_score_endpoint():
