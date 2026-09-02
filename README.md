@@ -295,6 +295,19 @@ See [`docs/ci-model-quality-gates.md`](docs/ci-model-quality-gates.md) for the C
 
 See [`docs/airflow-orchestration.md`](docs/airflow-orchestration.md) for the DAG contract and deployment boundary.
 
+## Phase 21: Kafka Streaming Event Layer
+
+- Versioned, transport-neutral event envelope for financial transaction events
+- Stable event IDs suitable for Kafka keys and downstream idempotency strategies
+- Explicit event type, schema version, UTC occurrence time, and JSON payload
+- Optional Confluent Kafka producer and consumer adapters loaded lazily
+- Consumer configuration with manual offset commits for process-then-commit workflows
+- Streaming dependency isolated from the core CI/runtime dependency set
+- Architecture documented for future schema registry, dead-letter, partition scaling, and real-time risk-service integration
+- Explicit boundary: this phase implements the client integration contract but does not claim a running Kafka cluster or production streaming deployment
+
+See [`docs/kafka-streaming.md`](docs/kafka-streaming.md) for the streaming architecture, reliability contract, and production extension path.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -326,4 +339,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 20 — Airflow orchestration.
+**Current phase:** Phase 21 — Kafka streaming event layer.
