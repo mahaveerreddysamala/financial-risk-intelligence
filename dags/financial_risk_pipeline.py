@@ -7,13 +7,16 @@ stage ordering only.
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import pendulum
 from airflow.sdk import dag, task
 
 
 @dag(
     dag_id="financial_risk_training_pipeline",
     schedule="@weekly",
-    start_date=None,
+    start_date=pendulum.datetime(2026, 1, 1, tz="UTC"),
     catchup=False,
     tags=["financial-risk", "ml", "quality-gate"],
     description="Generate, validate, benchmark, and quality-gate the fraud model.",
@@ -41,22 +44,26 @@ def financial_risk_training_pipeline():
         return input_path
 
     @task
-    def benchmark_model() -> str:
+    def benchmark_model(_validated_path: str) -> str:
         from financial_risk.models.benchmark import run_benchmark
 
         benchmark, _, _ = run_benchmark(rows=20_000, seed=42)
-        output = "artifacts/airflow/model-benchmark.csv"
+        output = Path("artifacts/airflow/model-benchmark.csv")
+        output.parent.mkdir(parents=True, exist_ok=True)
         benchmark.to_csv(output, index=False)
-        return output
+        return str(output)
 
     @task
     def enforce_quality_gate(benchmark_path: str) -> str:
-        from financial_risk.mlops.ci_quality import evaluate_quality_gates
-
         import pandas as pd
 
+        from financial_risk.mlops.ci_quality import evaluate_quality_gates
+
         benchmark = pd.read_csv(benchmark_path)
-        xgb = benchmark.loc[benchmark["model"].eq("XGBoost")].iloc[0]
+        xgboost_rows = benchmark.loc[benchmark["model"].eq("XGBoost")]
+        if xgboost_rows.empty:
+            raise ValueError("Benchmark must contain an XGBoost result")
+        xgb = xgboost_rows.iloc[0]
         result = evaluate_quality_gates(
             {
                 "test_pr_auc": float(xgb["pr_auc"]),
@@ -70,8 +77,7 @@ def financial_risk_training_pipeline():
 
     raw = generate_data()
     validated = validate_data(raw)
-    benchmark = benchmark_model()
-    validated >> benchmark
+    benchmark = benchmark_model(validated)
     enforce_quality_gate(benchmark)
 
 
