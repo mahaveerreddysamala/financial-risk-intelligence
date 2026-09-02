@@ -4,7 +4,7 @@ A production-oriented financial AI/ML platform for transaction fraud detection, 
 
 ## Project Vision
 
-This project is being built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform will combine behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, and a grounded investigation copilot.
+This project is being built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, and a grounded investigation copilot.
 
 ## Planned Architecture
 
@@ -59,7 +59,7 @@ XGBoost/LightGBM    Isolation Forest      Network Features
 - Timestamp and numeric-domain checks
 - Fraud-label consistency checks
 - Fail-fast validation API for batch and future streaming ingestion
-- Contract tests for both valid and intentionally corrupted datasets
+- Contract tests for valid and intentionally corrupted datasets
 
 See [`docs/data-contract.md`](docs/data-contract.md) for the field-level contract and validation behavior.
 
@@ -74,18 +74,27 @@ See [`docs/data-contract.md`](docs/data-contract.md) for the field-level contrac
 
 See [`docs/feature-engineering.md`](docs/feature-engineering.md) for feature definitions, leakage controls, and the PySpark scaling path.
 
+## Phase 4: Fraud Modeling
+
+- Class-balanced Logistic Regression baseline
+- XGBoost fraud classifier with training-set class weighting
+- Chronological train/validation/test evaluation
+- PR-AUC, ROC-AUC, precision, recall, and F1
+- Decision-threshold analysis for investigation capacity
+- Precision@K and Recall@K for investigator prioritization
+- Reproducible model-comparison utilities
+
+See [`docs/model-benchmark.md`](docs/model-benchmark.md) for the evaluation protocol. Measured model results will be added only after the training workflow is executed and verified.
+
 ## Planned ML Capabilities
 
-- Logistic Regression baseline
-- Random Forest baseline
-- XGBoost / LightGBM fraud modeling
-- Imbalanced-learning evaluation
-- Temporal and leakage-aware validation
+- Random Forest comparison
+- LightGBM comparison
 - Isolation Forest anomaly detection
-- Behavioral and velocity features
+- Advanced behavioral and velocity features
 - Geographic and network risk features
-- Cost-sensitive threshold optimization
-- SHAP explainability
+- Cost-sensitive expected-loss decisioning
+- SHAP explainability and reason codes
 - Model calibration and monitoring
 
 ## Planned GenAI Capabilities
@@ -113,4 +122,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 3 — leakage-aware behavioral, velocity, geographic, and network feature engineering.
+**Current phase:** Phase 4 — baseline and XGBoost fraud modeling with threshold and top-K evaluation.
