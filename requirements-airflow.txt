@@ -1,0 +1,2 @@
+# Optional orchestration environment. Keep Airflow out of the lightweight CI/runtime image.
+apache-airflow==3.3.1
