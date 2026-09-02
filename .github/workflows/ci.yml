@@ -27,7 +27,13 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
 
       - name: Lint
-        run: ruff check src tests
+        run: ruff check src tests scripts
 
       - name: Test
         run: python -m pytest -q
+
+      - name: Benchmark model quality
+        run: python -m financial_risk.models.benchmark --rows 20000 --seed 42
+
+      - name: Enforce model quality gate
+        run: python scripts/check_model_quality.py --benchmark artifacts/model-benchmark.csv
