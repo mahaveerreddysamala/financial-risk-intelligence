@@ -32,7 +32,7 @@ def test_event_deserialization_validates_required_fields() -> None:
 
 
 def test_serialize_event_requires_timezone_aware_timestamp() -> None:
-    naive_timestamp = datetime.strptime("2026-09-02 00:00:00", "%Y-%m-%d %H:%M:%S")
+    naive_timestamp = datetime.fromtimestamp(0, UTC).replace(tzinfo=None)
     with pytest.raises(ValueError, match="timezone-aware"):
         serialize_event("TXN123", "transaction.created", {}, occurred_at=naive_timestamp)
 
