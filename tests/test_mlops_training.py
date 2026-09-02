@@ -98,7 +98,7 @@ def test_training_logs_model_with_metadata(monkeypatch: pytest.MonkeyPatch) -> N
     assert captured["thresholds"] == [0.85, 0.85]
     assert captured["parameters"]["feature_count"] == len(FEATURES) + len(CATEGORICAL_FEATURES)
     assert captured["parameters"]["threshold"] == 0.85
-    assert captured["tags"]["artifact_root"] == "artifacts/models"
+    assert str(captured["tags"]["artifact_root"]).replace("\\", "/") == "artifacts/models"
     assert result.run_id == "run-123"
     assert model is captured["model"]
     assert metrics["test_pr_auc"] == 0.08
