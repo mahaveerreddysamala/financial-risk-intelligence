@@ -62,7 +62,8 @@ def test_drift_report():
         "current_size",
     ]
     assert len(report) == 2
-    assert report["drift_detected"].all()
+    assert report.loc[report["feature"] == "txn_count_1h", "drift_detected"].item() is True
+    assert report.loc[report["feature"] == "amount", "drift_detected"].item() is False
 
 
 def test_monitoring_validates_inputs():
