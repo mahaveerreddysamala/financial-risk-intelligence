@@ -1,5 +1,5 @@
-import pytest
 from fastapi.testclient import TestClient
+import pytest
 
 from financial_risk.api.app import app
 
