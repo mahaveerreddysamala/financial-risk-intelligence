@@ -25,9 +25,12 @@ class QualityGateResult:
 def evaluate_quality_gates(
     metrics: dict[str, float],
     *,
-    config: QualityGateConfig = QualityGateConfig(),
+    config: QualityGateConfig | None = None,
 ) -> QualityGateResult:
     """Evaluate model metrics against explicit promotion thresholds."""
+    if config is None:
+        config = QualityGateConfig()
+
     failures: list[str] = []
     checks = {
         "test_pr_auc": (config.min_pr_auc, "min_pr_auc"),
