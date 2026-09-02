@@ -178,10 +178,12 @@ See [`docs/investigation-cases.md`](docs/investigation-cases.md) for the case sc
 - Lightweight retrieval over financial policy and fraud-typology reference documents
 - Investigation-context assembly from structured case evidence
 - Grounded prompt construction for downstream LLM adapters
+- Provider-neutral adapter contract for approved LLM services
+- Deterministic evidence-only fallback when no external LLM is configured
 - Explicit evidence-only boundary that requires the model to distinguish observation from interpretation
-- Production extension path to embedding/vector retrieval and approved LLM services
+- Production extension path to embedding/vector retrieval and enterprise LLM gateways
 
-See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) for the retrieval design, grounding boundary, and production extension path.
+See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) and [`docs/grounded-copilot-adapter.md`](docs/grounded-copilot-adapter.md) for the retrieval, grounding, and provider-integration design.
 
 ## Planned ML Capabilities
 
