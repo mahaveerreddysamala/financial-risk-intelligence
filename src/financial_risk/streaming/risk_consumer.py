@@ -15,6 +15,7 @@ class RiskScoringResult:
 
     event_id: str
     transaction_id: str
+    occurred_at: str
     risk_score: float
     risk_band: str
     action: str
@@ -90,6 +91,7 @@ def score_transaction_event(
     return RiskScoringResult(
         event_id=event.event_id,
         transaction_id=transaction_id,
+        occurred_at=event.occurred_at,
         risk_score=decision.score,
         risk_band=decision.level,
         action=decision.action,
@@ -107,6 +109,6 @@ def scoring_result_event(result: RiskScoringResult) -> EventEnvelope:
         event_id=result.event_id,
         event_type="transaction.risk_scored",
         schema_version=1,
-        occurred_at="",
+        occurred_at=result.occurred_at,
         payload=result.to_dict(),
     )
