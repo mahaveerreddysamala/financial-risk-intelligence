@@ -262,23 +262,38 @@ See [`docs/model-training-mlflow.md`](docs/model-training-mlflow.md) for the tra
 
 ## Phase 18: Model Quality Gates
 
-- Explicit minimum PR-AUC, recall, and precision thresholds for promotion eligibility
-- Optional PSI drift gate
-- Deterministic pass/fail result with actionable failure messages
-- Quality policy separated from model-training code
-- Unit coverage for passing, failing, missing-metric, drift, and boundary cases
+- Explicit promotion-quality thresholds for PR-AUC, recall, and precision
+- Optional PSI drift threshold enforcement
+- Structured pass/fail result with actionable failure messages
+- Unit coverage for threshold boundaries, missing metrics, and drift failures
+- Separation between portfolio operating assumptions and regulatory requirements
 
-See [`docs/model-quality-gates.md`](docs/model-quality-gates.md) for the quality policy and promotion assumptions.
+See [`docs/model-quality-gates.md`](docs/model-quality-gates.md) for the gate contract and promotion assumptions.
 
-## Phase 19: CI Model Quality Gate
+## Phase 19: CI Model Quality Enforcement
 
-- GitHub Actions executes the deterministic 20K synthetic fraud benchmark on every push and pull request to `main`
-- CI extracts the XGBoost benchmark metrics and enforces minimum PR-AUC, recall, and precision thresholds
-- Failed model-quality checks return a non-zero status and block the workflow
-- Quality thresholds remain explicit portfolio operating assumptions rather than regulatory or production approval criteria
-- Local script supports reproducing the same gate outside GitHub Actions
+- GitHub Actions executes Ruff and the full test suite
+- CI runs the deterministic 20K fraud benchmark
+- Benchmark metrics are passed into the model-quality gate
+- CI fails when configured PR-AUC, recall, or precision thresholds are not met
+- Project package is installed in CI so module-based benchmark execution matches local behavior
+- Quality-gate workflow is kept deterministic and independent of hosted MLflow services
 
-See [`docs/ci-model-quality-gates.md`](docs/ci-model-quality-gates.md) for the CI workflow and local execution contract.
+See [`docs/ci-model-quality-gates.md`](docs/ci-model-quality-gates.md) for the CI contract and operational boundary.
+
+## Phase 20: Airflow Orchestration
+
+- Apache Airflow 3 DAG for scheduled financial-risk model validation
+- Thin orchestration layer over the existing tested Python package
+- Scheduled synthetic-data generation for repeatable pipeline execution
+- Transaction data-contract validation as an explicit task
+- Deterministic 20K fraud benchmark as a downstream task
+- Model-quality gate as the final pass/fail task
+- Task ordering and scheduling owned by Airflow while business logic remains in `src/`
+- Optional Airflow environment isolated from the lightweight CI/runtime dependencies
+- Production extension path for object storage, streaming ingestion, managed MLflow, and deployment promotion
+
+See [`docs/airflow-orchestration.md`](docs/airflow-orchestration.md) for the DAG contract and deployment boundary.
 
 ## Planned ML Capabilities
 
@@ -299,9 +314,9 @@ See [`docs/ci-model-quality-gates.md`](docs/ci-model-quality-gates.md) for the C
 - Kafka / batch ingestion
 - AWS S3 / EC2 / ECS
 - MLflow
+- Airflow
 - FastAPI
 - Docker
-- Airflow
 - GitHub Actions
 - Terraform
 
@@ -311,4 +326,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 19 — CI model quality gate.
+**Current phase:** Phase 20 — Airflow orchestration.
