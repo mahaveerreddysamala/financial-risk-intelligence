@@ -1,22 +1,20 @@
+import pandas as pd
 import pytest
-
-shap = pytest.importorskip("shap")
 
 from financial_risk.data_generation.generator import generate_transactions
 from financial_risk.features.pipeline import build_feature_table
-from financial_risk.models.baseline import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 from financial_risk.models.explainability import ReasonCode, explain_xgboost, reason_code_table
 from financial_risk.models.xgboost_model import build_xgboost_model
 
-
-MODEL_FEATURES = NUMERIC_FEATURES + CATEGORICAL_FEATURES
+shap = pytest.importorskip("shap")
 
 
 def test_xgboost_shap_reason_codes():
-    raw = generate_transactions(n_transactions=800, seed=42)
+    raw = generate_transactions(rows=800, seed=42)
     features = build_feature_table(raw)
     model = build_xgboost_model(scale_pos_weight=5.0)
-    model.fit(features[MODEL_FEATURES], features["is_fraud"])
+    feature_columns = list(model.named_steps["preprocess"].feature_names_in_)
+    model.fit(features[feature_columns], features["is_fraud"])
 
     explanations = explain_xgboost(model, features.head(4), top_n=3)
 
@@ -26,8 +24,15 @@ def test_xgboost_shap_reason_codes():
     table = reason_code_table(explanations[0])
     assert list(table.columns) == ["feature", "reason", "shap_value"]
     assert table["shap_value"].notna().all()
+    assert table["feature"].notna().all()
+    assert table["reason"].str.len().gt(0).all()
 
 
 def test_explainability_validates_top_n():
     with pytest.raises(ValueError, match="top_n"):
-        explain_xgboost(object(), [], top_n=0)
+        explain_xgboost(object(), pd.DataFrame(), top_n=0)
+
+
+def test_explainability_validates_missing_features():
+    with pytest.raises(ValueError, match="Missing model features"):
+        explain_xgboost(object(), pd.DataFrame(), top_n=1)
