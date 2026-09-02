@@ -52,6 +52,17 @@ XGBoost/LightGBM    Isolation Forest      Network Features
 - Data-generation configuration
 - Unit tests and validation
 
+## Phase 2: Data Quality & Contracts
+
+- Canonical transaction data contract
+- Required-field and identifier validation
+- Timestamp and numeric-domain checks
+- Fraud-label consistency checks
+- Fail-fast validation API for batch and future streaming ingestion
+- Contract tests for both valid and intentionally corrupted datasets
+
+See [`docs/data-contract.md`](docs/data-contract.md) for the field-level contract and validation behavior.
+
 ## Planned ML Capabilities
 
 - Logistic Regression baseline
@@ -91,4 +102,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 1 — platform foundation and deterministic financial transaction generation.
+**Current phase:** Phase 2 — transaction data contract and fail-fast validation.
