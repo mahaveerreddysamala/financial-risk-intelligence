@@ -70,10 +70,11 @@ def run_benchmark(rows: int = 20_000, seed: int = 42) -> tuple[pd.DataFrame, pd.
     validation_probabilities = xgboost.predict_proba(validation[FEATURE_COLUMNS])[:, 1]
     selected_threshold = _select_f1_threshold(validation["is_fraud"], validation_probabilities)
     test_probabilities = xgboost.predict_proba(test[FEATURE_COLUMNS])[:, 1]
+    threshold_values = (0.30, 0.50, 0.70, 0.85, selected_threshold)
     threshold_rows = evaluate_thresholds(
         test["is_fraud"].to_numpy(),
         test_probabilities,
-        thresholds=(0.30, 0.50, 0.70, 0.85, selected_threshold),
+        thresholds=threshold_values,
     )
     threshold_table = pd.DataFrame([asdict(row) for row in threshold_rows])
     threshold_table["model"] = "XGBoost"
@@ -82,6 +83,7 @@ def run_benchmark(rows: int = 20_000, seed: int = 42) -> tuple[pd.DataFrame, pd.
 
     top_k_values = [100, 250, 500, 1000]
     top_k_rows = []
+    prevalence = float(test["is_fraud"].mean())
     for k in top_k_values:
         precision, recall = precision_recall_at_k(
             test["is_fraud"].to_numpy(), test_probabilities, k
@@ -93,10 +95,12 @@ def run_benchmark(rows: int = 20_000, seed: int = 42) -> tuple[pd.DataFrame, pd.
                 "k": min(k, len(test)),
                 "precision_at_k": precision,
                 "recall_at_k": recall,
+                "lift_at_k": precision / prevalence if prevalence > 0 else 0.0,
             }
         )
     top_k_table = pd.DataFrame(top_k_rows)
     top_k_table.attrs["selected_validation_threshold"] = selected_threshold
+    top_k_table.attrs["test_prevalence"] = prevalence
     return benchmark, threshold_table, top_k_table
 
 
@@ -121,8 +125,10 @@ def main() -> None:
     top_k.to_csv(top_k_output, index=False)
 
     selected_threshold = top_k.attrs["selected_validation_threshold"]
+    test_prevalence = top_k.attrs["test_prevalence"]
     print("Model benchmark")
     print(benchmark.to_string(index=False))
+    print(f"\nTest fraud prevalence: {test_prevalence:.4%}")
     print("\nXGBoost test threshold analysis")
     print(thresholds.to_string(index=False))
     print("\nXGBoost test top-K analysis")
