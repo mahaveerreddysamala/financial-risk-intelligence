@@ -1,5 +1,3 @@
-import pandas as pd
-
 from financial_risk.data_generation.generator import generate_transactions
 from financial_risk.features.pipeline import build_feature_table
 from financial_risk.models.split import temporal_split
@@ -19,7 +17,10 @@ def test_xgboost_pipeline_trains_and_returns_probability_metrics() -> None:
     scale_pos_weight = train_negative / max(train_positive, 1)
 
     model = build_xgboost_model(scale_pos_weight=scale_pos_weight)
-    feature_columns = model.named_steps["preprocess"].transformers[0][2] + model.named_steps["preprocess"].transformers[1][2]
+    feature_columns = (
+        model.named_steps["preprocess"].transformers[0][2]
+        + model.named_steps["preprocess"].transformers[1][2]
+    )
     model.fit(train[feature_columns], train["is_fraud"].astype(int))
 
     result = evaluate_xgboost(model, test)
