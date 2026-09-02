@@ -17,7 +17,9 @@ def add_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
 
     result = df.copy()
     result["timestamp"] = pd.to_datetime(result["timestamp"], errors="raise")
-    result["_row_id"] = np.arange(len(result))
+    # Avoid a leading-underscore column name because DataFrame.itertuples()
+    # sanitizes such names (for example, _row_id -> _1) on some pandas versions.
+    result["row_id"] = np.arange(len(result))
     result = result.sort_values(["customer_id", "timestamp", "transaction_id"], kind="mergesort")
 
     feature_cols = [
@@ -76,7 +78,7 @@ def add_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
 
             output.append(
                 {
-                    "_row_id": row._row_id,
+                    "row_id": row.row_id,
                     "customer_txn_count_7d": count_7d,
                     "customer_avg_amount_30d": avg_30d,
                     "customer_std_amount_30d": std_30d,
@@ -103,6 +105,6 @@ def add_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
         return pd.DataFrame(output)
 
     parts = [_features(group) for _, group in result.groupby("customer_id", sort=False)]
-    features = pd.concat(parts, ignore_index=True).set_index("_row_id")
-    result[feature_cols] = features.reindex(result["_row_id"])[feature_cols].to_numpy()
-    return result.sort_values("_row_id", kind="mergesort").drop(columns="_row_id")
+    features = pd.concat(parts, ignore_index=True).set_index("row_id")
+    result[feature_cols] = features.reindex(result["row_id"])[feature_cols].to_numpy()
+    return result.sort_values("row_id", kind="mergesort").drop(columns="row_id")
