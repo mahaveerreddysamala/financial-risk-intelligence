@@ -15,7 +15,7 @@ class Settings:
     app_version: str = "0.1.0"
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         """Build settings from environment variables with safe defaults."""
         return cls(
             app_env=os.getenv("APP_ENV", "development"),
