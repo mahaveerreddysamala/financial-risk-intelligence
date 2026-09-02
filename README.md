@@ -260,17 +260,25 @@ See [`docs/mlflow-model-lifecycle.md`](docs/mlflow-model-lifecycle.md) for the l
 
 See [`docs/model-training-mlflow.md`](docs/model-training-mlflow.md) for the training lifecycle and operational contract.
 
-## Phase 18: Model Quality Gates & Promotion Controls
+## Phase 18: Model Quality Gates
 
-- Explicit promotion gates for minimum test PR-AUC, recall, and precision
-- Optional feature-drift gate using the worst observed PSI value
-- Missing metrics fail closed rather than silently passing
-- Structured gate results for auditability and downstream automation
-- Model registration and `champion` alias assignment permitted only after all gates pass
-- Configurable thresholds documented as portfolio operating assumptions, not regulatory or production policy
-- Unit coverage for pass, fail, missing-metric, drift, and promotion scenarios
+- Explicit minimum PR-AUC, recall, and precision thresholds for promotion eligibility
+- Optional PSI drift gate
+- Deterministic pass/fail result with actionable failure messages
+- Quality policy separated from model-training code
+- Unit coverage for passing, failing, missing-metric, drift, and boundary cases
 
-See [`docs/model-quality-gates.md`](docs/model-quality-gates.md) for the promotion contract and threshold rationale.
+See [`docs/model-quality-gates.md`](docs/model-quality-gates.md) for the quality policy and promotion assumptions.
+
+## Phase 19: CI Model Quality Gate
+
+- GitHub Actions executes the deterministic 20K synthetic fraud benchmark on every push and pull request to `main`
+- CI extracts the XGBoost benchmark metrics and enforces minimum PR-AUC, recall, and precision thresholds
+- Failed model-quality checks return a non-zero status and block the workflow
+- Quality thresholds remain explicit portfolio operating assumptions rather than regulatory or production approval criteria
+- Local script supports reproducing the same gate outside GitHub Actions
+
+See [`docs/ci-model-quality-gates.md`](docs/ci-model-quality-gates.md) for the CI workflow and local execution contract.
 
 ## Planned ML Capabilities
 
@@ -303,4 +311,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 18 — model quality gates and promotion controls.
+**Current phase:** Phase 19 — CI model quality gate.
