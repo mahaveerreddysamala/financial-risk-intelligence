@@ -1,6 +1,5 @@
+import pandas as pd
 import pytest
-
-fastapi = pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
 
 from financial_risk.api.app import app
@@ -36,10 +35,10 @@ def test_investigation_case_endpoint():
     response = client.post(
         "/v1/investigations/cases",
         json={
-            "fraud_probability": 0.8,
-            "anomaly_score": 0.7,
-            "network_score": 0.6,
-            "velocity_score": 0.5,
+            "fraud_probability": 0.9,
+            "anomaly_score": 0.8,
+            "network_score": 0.7,
+            "velocity_score": 0.6,
             "transaction": {"transaction_id": "TXN123", "amount": 250.0, "country": "US"},
         },
     )
@@ -56,8 +55,12 @@ def test_copilot_prompt_endpoint():
         "/v1/copilot/prompt",
         json={
             "case_id": "CASE123",
-            "evidence": [{"field": "txn_count_1h", "value": 9, "signal": "velocity_risk", "severity": "high"}],
-            "references": [{"document_id": "VEL-001", "score": 0.91, "text": "Velocity fraud involves rapid transactions."}],
+            "evidence": [
+                {"field": "txn_count_1h", "value": 9, "signal": "velocity_risk", "severity": "high"}
+            ],
+            "references": [
+                {"document_id": "VEL-001", "score": 0.91, "text": "Velocity fraud involves rapid transactions."}
+            ],
         },
     )
     assert response.status_code == 200
