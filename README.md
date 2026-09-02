@@ -72,10 +72,10 @@ See [`docs/kafka-streaming.md`](docs/kafka-streaming.md) for the streaming archi
 - Automatically assembles an evidence-grounded investigation case for CRITICAL events
 - Preserves event ID, transaction ID, and event timestamp for traceability
 - Produces a `transaction.risk_scored` downstream event envelope
-- Keeps Kafka transport separate from risk decisioning logic for testability
+- Adds a transport-neutral `process_event()` worker boundary for Kafka consumers, replay jobs, and test harnesses
 - Explicitly avoids claims of a live broker, exactly-once semantics, or production model serving until those infrastructure components are deployed and verified
 
-See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) for the streaming inference contract.
+See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) and [`docs/streaming-worker.md`](docs/streaming-worker.md) for the streaming inference and worker contracts.
 
 ## Verified 20K Fraud Benchmark
 
