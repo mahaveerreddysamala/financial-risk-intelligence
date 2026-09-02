@@ -39,6 +39,9 @@ XGBoost/LightGBM    Isolation Forest      Network Features
                          SHAP + Reason Codes
                                    |
                                    v
+                     Investigation Case + Evidence
+                                   |
+                                   v
                          GenAI Investigation
                               Copilot + RAG
 ```
@@ -160,6 +163,26 @@ See [`docs/model-monitoring.md`](docs/model-monitoring.md) for monitoring design
 
 See [`docs/model-registry.md`](docs/model-registry.md) for the registry contract and production extension path.
 
+## Phase 11: Investigation Cases & Evidence Aggregation
+
+- Structured investigation cases tied to transaction IDs and risk decisions
+- Aggregation of supervised, anomaly, network, and velocity signals
+- Capture of observed transaction attributes as contextual evidence
+- Serializable evidence payloads for analyst APIs and future GenAI workflows
+- Grounding boundary that prevents downstream narrative generation from inventing unsupported facts
+
+See [`docs/investigation-cases.md`](docs/investigation-cases.md) for the case schema and GenAI integration path.
+
+## Phase 12: Grounded GenAI Investigation Copilot
+
+- Lightweight retrieval over financial policy and fraud-typology reference documents
+- Investigation-context assembly from structured case evidence
+- Grounded prompt construction for downstream LLM adapters
+- Explicit evidence-only boundary that requires the model to distinguish observation from interpretation
+- Production extension path to embedding/vector retrieval and approved LLM services
+
+See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) for the retrieval design, grounding boundary, and production extension path.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -191,4 +214,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 10 — model run registry and experiment tracking.
+**Current phase:** Phase 12 — grounded GenAI investigation copilot.
