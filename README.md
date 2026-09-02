@@ -247,6 +247,19 @@ See [`docs/production-readiness.md`](docs/production-readiness.md) for the deplo
 
 See [`docs/mlflow-model-lifecycle.md`](docs/mlflow-model-lifecycle.md) for the lifecycle design, local setup, registry usage, and production migration path.
 
+## Phase 17: Executable MLflow Training Workflow
+
+- Reusable XGBoost training entry point that consumes chronological train/validation/test datasets
+- Training-only class-imbalance weighting derived from fraud labels
+- Validation and test metrics logged together for experiment comparison
+- Model hyperparameters, split sizes, threshold, feature count, and data-domain metadata captured in MLflow
+- Fitted scikit-learn-compatible pipeline logged as an MLflow model artifact
+- Optional registered-model creation and versioning through the existing MLflow adapter
+- Explicit synthetic-data and production-deployment boundaries documented for model governance
+- Unit coverage for training validation, metadata logging, and model-run integration without requiring a hosted MLflow service
+
+See [`docs/model-training-mlflow.md`](docs/model-training-mlflow.md) for the training lifecycle and operational contract.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -278,4 +291,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 16 — MLflow model lifecycle.
+**Current phase:** Phase 17 — executable MLflow training workflow.
