@@ -260,6 +260,18 @@ See [`docs/mlflow-model-lifecycle.md`](docs/mlflow-model-lifecycle.md) for the l
 
 See [`docs/model-training-mlflow.md`](docs/model-training-mlflow.md) for the training lifecycle and operational contract.
 
+## Phase 18: Model Quality Gates & Promotion Controls
+
+- Explicit promotion gates for minimum test PR-AUC, recall, and precision
+- Optional feature-drift gate using the worst observed PSI value
+- Missing metrics fail closed rather than silently passing
+- Structured gate results for auditability and downstream automation
+- Model registration and `champion` alias assignment permitted only after all gates pass
+- Configurable thresholds documented as portfolio operating assumptions, not regulatory or production policy
+- Unit coverage for pass, fail, missing-metric, drift, and promotion scenarios
+
+See [`docs/model-quality-gates.md`](docs/model-quality-gates.md) for the promotion contract and threshold rationale.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -291,4 +303,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 17 — executable MLflow training workflow.
+**Current phase:** Phase 18 — model quality gates and promotion controls.
