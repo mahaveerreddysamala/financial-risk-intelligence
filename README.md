@@ -234,6 +234,19 @@ uvicorn financial_risk.api.app:app --host 0.0.0.0 --port 8000
 
 See [`docs/production-readiness.md`](docs/production-readiness.md) for the deployment-readiness contract.
 
+## Phase 16: MLflow Model Lifecycle
+
+- Optional MLflow integration layered on top of the lightweight model-run registry
+- Experiment tracking for model parameters, metrics, tags, and model artifacts
+- Scikit-learn-compatible model logging with reproducible model URIs
+- Registered-model version support
+- Registry aliases such as `champion` without hard-coding production stages into application code
+- Provider-neutral tracking URI configuration for local or managed MLflow backends
+- Lazy MLflow import so the base CI workflow remains lightweight
+- Explicit boundary between implemented tracking integration and future managed MLflow deployment
+
+See [`docs/mlflow-model-lifecycle.md`](docs/mlflow-model-lifecycle.md) for the lifecycle design, local setup, registry usage, and production migration path.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -265,4 +278,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 15 — production deployment readiness.
+**Current phase:** Phase 16 — MLflow model lifecycle.
