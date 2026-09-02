@@ -150,6 +150,16 @@ See [`docs/calibration-and-cost-sensitive-decisioning.md`](docs/calibration-and-
 
 See [`docs/model-monitoring.md`](docs/model-monitoring.md) for monitoring design, interpretation guidance, and production extension points.
 
+## Phase 10: Model Run Registry & Experiment Tracking
+
+- Deterministic model-run identifiers derived from experiment metadata
+- Versioned JSON records for model parameters and measured metrics
+- Feature-count and artifact-path tracking
+- Dependency-light local registry contract with a clear MLflow/managed-registry migration path
+- Reproducible experiment metadata suitable for model promotion workflows
+
+See [`docs/model-registry.md`](docs/model-registry.md) for the registry contract and production extension path.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -181,4 +191,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 9 — model monitoring and drift detection.
+**Current phase:** Phase 10 — model run registry and experiment tracking.
