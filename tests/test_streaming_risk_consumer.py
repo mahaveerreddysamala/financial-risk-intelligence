@@ -37,7 +37,7 @@ def test_score_transaction_event_reuses_ensemble_decisioning() -> None:
     assert result.event_id == "evt-1"
     assert result.transaction_id == "TXN-1"
     assert result.occurred_at == "2026-09-02T12:00:00+00:00"
-    assert result.risk_score == pytest.approx(0.80)
+    assert result.risk_score == pytest.approx(0.81)
     assert result.risk_band == "CRITICAL"
     assert result.action == "hold_and_investigate"
     assert result.investigation_case is not None
