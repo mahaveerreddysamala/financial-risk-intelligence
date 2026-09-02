@@ -8,6 +8,9 @@ from financial_risk.mlops.training import train_and_log_xgboost
 
 FEATURES = [
     "amount",
+    "is_international",
+    "is_night",
+    "shared_device_account_count",
     "customer_txn_count_7d",
     "customer_avg_amount_30d",
     "customer_std_amount_30d",
@@ -20,15 +23,9 @@ FEATURES = [
     "txn_count_5m",
     "txn_count_1h",
     "txn_count_24h",
-    "device_account_reuse_30d",
-    "ip_account_reuse_30d",
-    "merchant_customer_reuse_30d",
-    "customer_device_reuse_30d",
-    "shared_device_risk_signal",
-    "network_reuse_score",
-    "geo_deviation_score",
-    "temporal_deviation_score",
 ]
+
+CATEGORICAL_FEATURES = ["merchant_category", "payment_method", "channel", "country"]
 
 
 def _frame(rows: int = 8) -> pd.DataFrame:
@@ -37,8 +34,6 @@ def _frame(rows: int = 8) -> pd.DataFrame:
     data["payment_method"] = ["card", "wallet"] * (rows // 2) + ["card"] * (rows % 2)
     data["channel"] = ["online", "pos"] * (rows // 2) + ["online"] * (rows % 2)
     data["country"] = ["US", "CA"] * (rows // 2) + ["US"] * (rows % 2)
-    data["is_international"] = [0, 1] * (rows // 2) + [0] * (rows % 2)
-    data["is_night"] = [0, 1] * (rows // 2) + [0] * (rows % 2)
     data["is_fraud"] = [0, 1] * (rows // 2) + [0] * (rows % 2)
     return pd.DataFrame(data)
 
@@ -101,7 +96,7 @@ def test_training_logs_model_with_metadata(monkeypatch: pytest.MonkeyPatch) -> N
     assert captured["fit"] is True
     assert captured["scale_pos_weight"] == pytest.approx(1.0)
     assert captured["thresholds"] == [0.85, 0.85]
-    assert captured["parameters"]["feature_count"] == len(FEATURES) + 6
+    assert captured["parameters"]["feature_count"] == len(FEATURES) + len(CATEGORICAL_FEATURES)
     assert captured["parameters"]["threshold"] == 0.85
     assert captured["tags"]["artifact_root"] == "artifacts/models"
     assert result.run_id == "run-123"
