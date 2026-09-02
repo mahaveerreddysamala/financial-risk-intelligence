@@ -222,6 +222,18 @@ The container exposes port `8000` and starts the API with Uvicorn:
 uvicorn financial_risk.api.app:app --host 0.0.0.0 --port 8000
 ```
 
+## Phase 15: Production Deployment Readiness
+
+- Environment-driven API configuration through `APP_ENV`, `LOG_LEVEL`, `MODEL_ARTIFACT_PATH`, and `APP_VERSION`
+- JSON-structured request logging without transaction or request-body payloads
+- `/ready` readiness endpoint for container orchestration
+- `/version` endpoint exposing application version and environment
+- Container `HEALTHCHECK` against `/health`
+- GitHub Actions runtime validation that builds the image, starts the service, waits for readiness, and verifies health/version endpoints
+- Explicit deployment boundary: no cloud deployment or managed-secret claim until those integrations are implemented and verified
+
+See [`docs/production-readiness.md`](docs/production-readiness.md) for the deployment-readiness contract.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -253,4 +265,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 14 — containerization and CI validation.
+**Current phase:** Phase 15 — production deployment readiness.
