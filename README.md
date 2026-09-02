@@ -117,13 +117,24 @@ See [`docs/anomaly-and-risk-scoring.md`](docs/anomaly-and-risk-scoring.md) for t
 
 See [`docs/explainability.md`](docs/explainability.md) for the explainability design, interpretation guidance, and limitations.
 
+## Phase 7: Graph-Based Financial Crime Intelligence
+
+- Entity relationships across customers, accounts, devices, IPs, and merchants
+- Shared-device and shared-IP account counts
+- Customer device/IP degrees and merchant-customer connectivity
+- Composite network entity-degree signal
+- Log-damped network risk score for investigator prioritization
+- Database-free graph feature layer with a clear path to graph engines for larger-scale traversal and community detection
+
+See [`docs/graph-intelligence.md`](docs/graph-intelligence.md) for the graph model, interpretation guidance, and scaling path.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
 - LightGBM comparison
 - Cost-sensitive expected-loss decisioning
 - Model calibration and monitoring
-- Graph/network intelligence expansion
+- Advanced graph/community detection
 
 ## Planned GenAI Capabilities
 
@@ -150,4 +161,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 6 — SHAP explainability and human-readable fraud reason codes.
+**Current phase:** Phase 7 — graph-based financial crime intelligence.
