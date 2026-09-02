@@ -1,4 +1,4 @@
-"""Reproducible model-comparison benchmark for financial fraud detection."""
+"""Reproducible fraud-model benchmark with temporal validation and threshold selection."""
 from __future__ import annotations
 
 import argparse
@@ -9,11 +9,17 @@ import pandas as pd
 
 from financial_risk.data_generation.generator import generate_transactions
 from financial_risk.features.pipeline import build_feature_table
-from financial_risk.models.baseline import build_logistic_baseline, evaluate_binary_classifier
-from financial_risk.models.comparison import compare_models
+from financial_risk.models.baseline import (
+    CATEGORICAL_FEATURES,
+    NUMERIC_FEATURES,
+    build_logistic_baseline,
+    evaluate_binary_classifier,
+)
 from financial_risk.models.split import temporal_split
-from financial_risk.models.threshold import threshold_metrics
+from financial_risk.models.threshold import evaluate_thresholds, precision_recall_at_k
 from financial_risk.models.xgboost_model import build_xgboost_model, evaluate_xgboost
+
+FEATURE_COLUMNS = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 
 
 @dataclass(frozen=True)
@@ -26,65 +32,72 @@ class ModelBenchmarkRow:
     f1: float
 
 
-def _feature_columns() -> list[str]:
-    return [
-        "amount",
-        "is_international",
-        "is_night",
-        "shared_device_account_count",
-        "customer_txn_count_7d",
-        "customer_avg_amount_30d",
-        "customer_std_amount_30d",
-        "customer_unique_merchants_7d",
-        "customer_unique_devices_30d",
-        "customer_international_rate_30d",
-        "customer_night_txn_rate_30d",
-        "amount_vs_customer_avg",
-        "amount_zscore",
-        "txn_count_5m",
-        "txn_count_1h",
-        "txn_count_24h",
-        "merchant_category",
-        "payment_method",
-        "channel",
-        "country",
-    ]
+def _fit_models(train: pd.DataFrame) -> tuple[object, object]:
+    """Fit Logistic Regression and XGBoost using the common feature contract."""
+    y_train = train["is_fraud"].astype(int)
+    logistic = build_logistic_baseline()
+    logistic.fit(train[FEATURE_COLUMNS], y_train)
+
+    positive = int(y_train.sum())
+    negative = len(y_train) - positive
+    scale_pos_weight = negative / max(positive, 1)
+    xgboost = build_xgboost_model(scale_pos_weight=scale_pos_weight)
+    xgboost.fit(train[FEATURE_COLUMNS], y_train)
+    return logistic, xgboost
 
 
-def run_benchmark(rows: int = 20_000, seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Train baseline and XGBoost models with temporal evaluation."""
+def _select_f1_threshold(y_true: pd.Series, probabilities: object) -> float:
+    """Select a threshold on validation data only, maximizing validation F1."""
+    rows = evaluate_thresholds(y_true.to_numpy(), probabilities)
+    return max(rows, key=lambda row: (row.f1, row.precision, -row.threshold)).threshold
+
+
+def run_benchmark(rows: int = 20_000, seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Train, tune, and evaluate fraud models with a chronological split."""
     data = build_feature_table(generate_transactions(rows, seed=seed))
     train, validation, test = temporal_split(data)
-    features = _feature_columns()
+    logistic, xgboost = _fit_models(train)
 
-    logistic = build_logistic_baseline()
-    logistic.fit(train[features], train["is_fraud"].astype(int))
     logistic_result = evaluate_binary_classifier(logistic, test)
-
-    positives = int(train["is_fraud"].sum())
-    negatives = len(train) - positives
-    xgb = build_xgboost_model(scale_pos_weight=negatives / max(positives, 1))
-    xgb.fit(train[features], train["is_fraud"].astype(int))
-    xgb_result = evaluate_xgboost(xgb, test)
-
-    rows_out = pd.DataFrame(
+    xgboost_result = evaluate_xgboost(xgboost, test)
+    benchmark = pd.DataFrame(
         [
             asdict(ModelBenchmarkRow("Logistic Regression", **asdict(logistic_result))),
-            asdict(ModelBenchmarkRow("XGBoost", **asdict(xgb_result))),
+            asdict(ModelBenchmarkRow("XGBoost", **asdict(xgboost_result))),
         ]
     )
 
-    comparison = compare_models(logistic_result, xgb_result)
-
-    validation_probabilities = xgb.predict_proba(validation[features])[:, 1]
-    threshold_rows = threshold_metrics(validation["is_fraud"].astype(int).to_numpy(), validation_probabilities)
-    threshold_table = pd.DataFrame(threshold_rows)
+    validation_probabilities = xgboost.predict_proba(validation[FEATURE_COLUMNS])[:, 1]
+    selected_threshold = _select_f1_threshold(validation["is_fraud"], validation_probabilities)
+    test_probabilities = xgboost.predict_proba(test[FEATURE_COLUMNS])[:, 1]
+    threshold_rows = evaluate_thresholds(
+        test["is_fraud"].to_numpy(),
+        test_probabilities,
+        thresholds=(0.30, 0.50, 0.70, 0.85, selected_threshold),
+    )
+    threshold_table = pd.DataFrame([asdict(row) for row in threshold_rows])
     threshold_table["model"] = "XGBoost"
-    threshold_table["split"] = "validation"
-    threshold_table["rows"] = len(validation)
-    threshold_table.attrs["comparison"] = comparison
+    threshold_table["split"] = "test"
+    threshold_table["selected_on_validation"] = threshold_table["threshold"].eq(selected_threshold)
 
-    return rows_out, threshold_table
+    top_k_values = [100, 250, 500, 1000]
+    top_k_rows = []
+    for k in top_k_values:
+        precision, recall = precision_recall_at_k(
+            test["is_fraud"].to_numpy(), test_probabilities, k
+        )
+        top_k_rows.append(
+            {
+                "model": "XGBoost",
+                "split": "test",
+                "k": min(k, len(test)),
+                "precision_at_k": precision,
+                "recall_at_k": recall,
+            }
+        )
+    top_k_table = pd.DataFrame(top_k_rows)
+    top_k_table.attrs["selected_validation_threshold"] = selected_threshold
+    return benchmark, threshold_table, top_k_table
 
 
 def main() -> None:
@@ -93,22 +106,31 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--output", default="artifacts/model-benchmark.csv")
     parser.add_argument("--threshold-output", default="artifacts/xgboost-thresholds.csv")
+    parser.add_argument("--top-k-output", default="artifacts/xgboost-top-k.csv")
     args = parser.parse_args()
 
-    results, thresholds = run_benchmark(args.rows, args.seed)
+    benchmark, thresholds, top_k = run_benchmark(args.rows, args.seed)
     output = Path(args.output)
     threshold_output = Path(args.threshold_output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    threshold_output.parent.mkdir(parents=True, exist_ok=True)
-    results.to_csv(output, index=False)
-    thresholds.to_csv(threshold_output, index=False)
+    top_k_output = Path(args.top_k_output)
+    for path in (output, threshold_output, top_k_output):
+        path.parent.mkdir(parents=True, exist_ok=True)
 
+    benchmark.to_csv(output, index=False)
+    thresholds.to_csv(threshold_output, index=False)
+    top_k.to_csv(top_k_output, index=False)
+
+    selected_threshold = top_k.attrs["selected_validation_threshold"]
     print("Model benchmark")
-    print(results.to_string(index=False))
-    print("\nValidation threshold analysis")
+    print(benchmark.to_string(index=False))
+    print("\nXGBoost test threshold analysis")
     print(thresholds.to_string(index=False))
-    print(f"\nModel results written to: {output}")
+    print("\nXGBoost test top-K analysis")
+    print(top_k.to_string(index=False))
+    print(f"\nSelected validation threshold: {selected_threshold:.4f}")
+    print(f"Model results written to: {output}")
     print(f"Threshold results written to: {threshold_output}")
+    print(f"Top-K results written to: {top_k_output}")
 
 
 if __name__ == "__main__":
