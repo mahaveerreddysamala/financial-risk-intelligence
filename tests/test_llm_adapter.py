@@ -1,6 +1,6 @@
 import pytest
 
-from financial_risk.investigation.copilot import build_copilot_context, RetrievalResult
+from financial_risk.investigation.copilot import RetrievalResult, build_copilot_context
 from financial_risk.investigation.llm_adapter import (
     build_evidence_only_fallback,
     run_grounded_copilot,
