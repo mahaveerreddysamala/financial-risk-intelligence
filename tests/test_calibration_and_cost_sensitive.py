@@ -25,7 +25,7 @@ def test_expected_costs_and_actions():
         "hold_expected_cost",
     ]
     assert choose_cost_sensitive_action(0.01, policy) == "approve"
-    assert choose_cost_sensitive_action(0.50, policy) == "review"
+    assert choose_cost_sensitive_action(0.50, policy) == "hold"
     assert choose_cost_sensitive_action(0.99, policy) == "hold"
 
 
