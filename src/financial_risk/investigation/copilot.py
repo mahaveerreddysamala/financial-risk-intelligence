@@ -1,8 +1,8 @@
 """Evidence-grounded retrieval and prompt construction for investigations."""
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -83,9 +83,7 @@ def build_grounded_prompt(context: CopilotContext) -> str:
         f"- {item.get('field')}: {item.get('value')} (signal={item.get('signal')}, severity={item.get('severity')})"
         for item in context.evidence
     ]
-    document_lines = [
-        f"[{doc.document_id}] {doc.text}" for doc in context.retrieved_documents
-    ]
+    document_lines = [f"[{doc.document_id}] {doc.text}" for doc in context.retrieved_documents]
     return "\n".join(
         [
             "You are a financial investigation copilot.",
