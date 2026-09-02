@@ -83,19 +83,38 @@ See [`docs/feature-engineering.md`](docs/feature-engineering.md) for feature def
 - Decision-threshold analysis for investigation capacity
 - Precision@K and Recall@K for investigator prioritization
 - Reproducible model-comparison utilities
+- Validation-selected operating threshold
+- Fraud prevalence and lift reporting
 
-See [`docs/model-benchmark.md`](docs/model-benchmark.md) for the evaluation protocol. Measured model results will be added only after the training workflow is executed and verified.
+Measured 20K benchmark:
+
+| Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|---:|
+| Logistic Regression | 0.6131 | 0.0573 | 2.45% | 51.28% | 0.0468 |
+| XGBoost | **0.6667** | **0.0802** | **4.44%** | 10.26% | **0.0620** |
+
+XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating threshold, with 15.38% test precision and 5.13% test recall on the 20K synthetic test workload. These values are a reproducible synthetic-data benchmark, not a claim of production fraud performance.
+
+See [`docs/model-benchmark.md`](docs/model-benchmark.md) for the evaluation protocol.
+
+## Phase 5: Anomaly Detection & Ensemble Risk Scoring
+
+- Isolation Forest trained on historical/training observations only
+- Normalized anomaly scoring from behavioral and transaction features
+- Ensemble risk score combining supervised fraud probability, anomaly, network, and velocity signals
+- Operational risk bands: LOW, MEDIUM, HIGH, CRITICAL
+- Decisioning actions for approval, monitoring, step-up verification, and investigation
+
+See [`docs/anomaly-and-risk-scoring.md`](docs/anomaly-and-risk-scoring.md) for the scoring design and operating rules.
 
 ## Planned ML Capabilities
 
 - Random Forest comparison
 - LightGBM comparison
-- Isolation Forest anomaly detection
-- Advanced behavioral and velocity features
-- Geographic and network risk features
 - Cost-sensitive expected-loss decisioning
 - SHAP explainability and reason codes
 - Model calibration and monitoring
+- Graph/network intelligence expansion
 
 ## Planned GenAI Capabilities
 
@@ -122,4 +141,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 4 — baseline and XGBoost fraud modeling with threshold and top-K evaluation.
+**Current phase:** Phase 5 — anomaly detection and ensemble risk scoring.
