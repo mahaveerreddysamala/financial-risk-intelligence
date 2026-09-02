@@ -28,6 +28,11 @@ where = ["src"]
 line-length = 100
 exclude = ["notebooks"]
 
+[tool.ruff.lint.isort]
+from-first = false
+known-first-party = ["financial_risk"]
+order-by-type = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
