@@ -21,7 +21,7 @@ def test_airflow_dag_declares_expected_pipeline_stages() -> None:
         assert f"def {task_name}(" in source
     assert 'dag_id="financial_risk_training_pipeline"' in source
     assert 'schedule="@weekly"' in source
-    assert "validated >> benchmark" in source
+    assert "benchmark_model(validated)" in source
     assert "enforce_quality_gate(benchmark)" in source
 
 
