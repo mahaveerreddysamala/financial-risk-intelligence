@@ -16,7 +16,7 @@ class _RunContext:
     def __init__(self, run_id: str) -> None:
         self.info = SimpleNamespace(run_id=run_id)
 
-    def __enter__(self) -> _RunContext:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *args: object) -> None:
