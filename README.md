@@ -107,12 +107,21 @@ See [`docs/model-benchmark.md`](docs/model-benchmark.md) for the evaluation prot
 
 See [`docs/anomaly-and-risk-scoring.md`](docs/anomaly-and-risk-scoring.md) for the scoring design and operating rules.
 
+## Phase 6: SHAP Explainability & Reason Codes
+
+- Transaction-level SHAP explanations for the XGBoost model
+- Ranked positive and negative model contributions
+- Human-readable reason codes for investigators
+- Analyst-facing reason-code table for downstream APIs and investigation workflows
+- Explicit separation between model explanation and a claim of fraud causality
+
+See [`docs/explainability.md`](docs/explainability.md) for the explainability design, interpretation guidance, and limitations.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
 - LightGBM comparison
 - Cost-sensitive expected-loss decisioning
-- SHAP explainability and reason codes
 - Model calibration and monitoring
 - Graph/network intelligence expansion
 
@@ -141,4 +150,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 5 — anomaly detection and ensemble risk scoring.
+**Current phase:** Phase 6 — SHAP explainability and human-readable fraud reason codes.
