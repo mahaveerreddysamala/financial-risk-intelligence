@@ -44,6 +44,9 @@ XGBoost/LightGBM    Isolation Forest      Network Features
                                    v
                          GenAI Investigation
                               Copilot + RAG
+                                   |
+                                   v
+                         FastAPI + Container
 ```
 
 ## Phase 1: Foundation
@@ -185,6 +188,40 @@ See [`docs/investigation-cases.md`](docs/investigation-cases.md) for the case sc
 
 See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) and [`docs/grounded-copilot-adapter.md`](docs/grounded-copilot-adapter.md) for the retrieval, grounding, and provider-integration design.
 
+## Phase 13: FastAPI Risk & Investigation Service
+
+- REST API for transaction risk scoring
+- Investigation-case creation endpoint
+- Grounded GenAI copilot prompt endpoint
+- Health endpoint for service checks
+- Pydantic request validation with bounded risk-score inputs
+- Automated API tests using FastAPI TestClient
+- Provider-neutral service layer without hard-coded LLM credentials
+
+Endpoints:
+
+```text
+GET  /health
+POST /v1/risk/score
+POST /v1/investigations/cases
+POST /v1/copilot/prompt
+```
+
+## Phase 14: Containerization & CI Validation
+
+- Production-oriented Python 3.11 slim container for the FastAPI service
+- Uvicorn ASGI server configuration
+- Docker build context exclusions for tests, caches, datasets, and local artifacts
+- GitHub Actions workflow for automated Ruff linting and pytest execution
+- Dependency pin ranges that keep local and CI environments aligned
+- Container-ready service boundary suitable for future AWS/ECS, Kubernetes, or managed container deployment
+
+The container exposes port `8000` and starts the API with Uvicorn:
+
+```text
+uvicorn financial_risk.api.app:app --host 0.0.0.0 --port 8000
+```
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
@@ -193,7 +230,7 @@ See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) and [`docs/
 
 ## Planned GenAI Capabilities
 
-- RAG over financial investigation policies and fraud typologies
+- Embedding-based RAG over financial investigation policies and fraud typologies
 - Evidence-grounded investigation summaries
 - Transaction explanation assistant
 - Controlled investigation tools / agent workflow
@@ -202,7 +239,7 @@ See [`docs/investigation-copilot.md`](docs/investigation-copilot.md) and [`docs/
 
 - Python, SQL, PySpark
 - Kafka / batch ingestion
-- AWS S3 / EC2
+- AWS S3 / EC2 / ECS
 - MLflow
 - FastAPI
 - Docker
@@ -216,4 +253,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 12 — grounded GenAI investigation copilot.
+**Current phase:** Phase 14 — containerization and CI validation.
