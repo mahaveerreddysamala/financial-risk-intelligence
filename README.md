@@ -17,7 +17,7 @@ Financial Events
 Data Quality + Contracts
       |
       v
-Feature Engineering
+Leakage-Aware Feature Engineering
       |
       +-------------------+-------------------+
       |                   |                   |
@@ -63,6 +63,17 @@ XGBoost/LightGBM    Isolation Forest      Network Features
 
 See [`docs/data-contract.md`](docs/data-contract.md) for the field-level contract and validation behavior.
 
+## Phase 3: Leakage-Aware Feature Engineering
+
+- Customer behavioral baselines and rolling activity windows
+- Transaction velocity features across 5-minute, 1-hour, and 24-hour windows
+- Geographic and temporal deviation signals
+- Prior-only device, IP, merchant, and customer/device reuse features
+- Amount deviation and customer-normalized risk signals
+- Deterministic feature pipeline with explicit feature tests
+
+See [`docs/feature-engineering.md`](docs/feature-engineering.md) for feature definitions, leakage controls, and the PySpark scaling path.
+
 ## Planned ML Capabilities
 
 - Logistic Regression baseline
@@ -102,4 +113,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 2 — transaction data contract and fail-fast validation.
+**Current phase:** Phase 3 — leakage-aware behavioral, velocity, geographic, and network feature engineering.
