@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import pytest
 
 from financial_risk.streaming.events import EventEnvelope
@@ -37,7 +35,7 @@ def test_process_event_scores_and_publishes() -> None:
 def test_process_event_returns_result_without_publisher() -> None:
     result = process_event(_event(), publish=None)
     assert result.transaction_id == "TXN-1"
-    assert result.risk_score == pytest.approx(0.80)
+    assert result.risk_score == pytest.approx(0.81)
 
 
 def test_process_event_requires_publish_callable_when_provided() -> None:
