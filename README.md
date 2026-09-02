@@ -139,11 +139,21 @@ See [`docs/graph-intelligence.md`](docs/graph-intelligence.md) for the graph mod
 
 See [`docs/calibration-and-cost-sensitive-decisioning.md`](docs/calibration-and-cost-sensitive-decisioning.md) for the decision framework and portfolio assumptions.
 
+## Phase 9: Model Monitoring & Drift Detection
+
+- Population Stability Index (PSI) for numeric feature-distribution drift
+- Configurable drift thresholds and feature-level monitoring reports
+- Observed fraud-rate shift monitoring across scoring periods
+- Reference-versus-current sample tracking
+- Monitoring outputs designed for scheduled jobs, dashboards, and alerting systems
+- Clear production extension path for missingness, categorical drift, delayed labels, and observability integration
+
+See [`docs/model-monitoring.md`](docs/model-monitoring.md) for monitoring design, interpretation guidance, and production extension points.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
 - LightGBM comparison
-- Model monitoring and drift detection
 - Advanced graph/community detection
 
 ## Planned GenAI Capabilities
@@ -171,4 +181,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 8 — probability calibration and cost-sensitive decisioning.
+**Current phase:** Phase 9 — model monitoring and drift detection.
