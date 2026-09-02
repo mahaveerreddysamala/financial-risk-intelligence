@@ -32,8 +32,9 @@ def test_event_deserialization_validates_required_fields() -> None:
 
 
 def test_serialize_event_requires_timezone_aware_timestamp() -> None:
+    naive_timestamp = datetime(2026, 9, 2, tzinfo=None)
     with pytest.raises(ValueError, match="timezone-aware"):
-        serialize_event("TXN123", "transaction.created", {}, occurred_at=datetime(2026, 9, 2))
+        serialize_event("TXN123", "transaction.created", {}, occurred_at=naive_timestamp)
 
 
 def test_kafka_adapters_validate_configuration() -> None:
