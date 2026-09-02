@@ -18,3 +18,27 @@ jobs:
 
       - name: Verify image metadata
         run: docker image inspect financial-risk-intelligence:ci --format '{{.Config.WorkingDir}}'
+
+      - name: Start API container
+        run: docker run --detach --name financial-risk-intelligence-ci -p 8000:8000 financial-risk-intelligence:ci
+
+      - name: Wait for API readiness
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if docker exec financial-risk-intelligence-ci python -c "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/ready', timeout=2)"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs financial-risk-intelligence-ci
+          exit 1
+
+      - name: Verify API endpoints
+        run: |
+          docker exec financial-risk-intelligence-ci python -c "from urllib.request import urlopen; assert urlopen('http://127.0.0.1:8000/health', timeout=2).status == 200"
+          docker exec financial-risk-intelligence-ci python -c "from urllib.request import urlopen; assert urlopen('http://127.0.0.1:8000/version', timeout=2).status == 200"
+
+      - name: Stop API container
+        if: always()
+        run: docker rm --force financial-risk-intelligence-ci
