@@ -128,12 +128,22 @@ See [`docs/explainability.md`](docs/explainability.md) for the explainability de
 
 See [`docs/graph-intelligence.md`](docs/graph-intelligence.md) for the graph model, interpretation guidance, and scaling path.
 
+## Phase 8: Probability Calibration & Cost-Sensitive Decisioning
+
+- Reliability diagnostics using Brier score and observed-versus-predicted fraud rates
+- Probability calibration support using sigmoid or isotonic calibration
+- Reliability-bin summaries for model monitoring
+- Expected-loss decisioning for approve, review, and hold actions
+- Explicit separation between calibrated model probability and business action policy
+- Configurable false-positive, false-negative, and review costs
+
+See [`docs/calibration-and-cost-sensitive-decisioning.md`](docs/calibration-and-cost-sensitive-decisioning.md) for the decision framework and portfolio assumptions.
+
 ## Planned ML Capabilities
 
 - Random Forest comparison
 - LightGBM comparison
-- Cost-sensitive expected-loss decisioning
-- Model calibration and monitoring
+- Model monitoring and drift detection
 - Advanced graph/community detection
 
 ## Planned GenAI Capabilities
@@ -161,4 +171,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 7 — graph-based financial crime intelligence.
+**Current phase:** Phase 8 — probability calibration and cost-sensitive decisioning.
