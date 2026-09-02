@@ -31,16 +31,32 @@ def population_stability_index(
     bins: int = 10,
     threshold: float = 0.20,
 ) -> DriftResult:
-    """Compute PSI using reference quantile bins and flag material distribution shift."""
+    """Compute PSI using robust reference bins and flag material distribution shift."""
     if bins < 2:
         raise ValueError("bins must be at least 2")
     if threshold < 0:
         raise ValueError("threshold must be non-negative")
 
     ref, cur = _validate_numeric(reference, current)
-    edges = np.unique(np.quantile(ref, np.linspace(0.0, 1.0, bins + 1)))
-    if len(edges) < 3:
-        raise ValueError("reference values must contain enough variation for drift bins")
+    unique_ref = np.unique(ref)
+    if len(unique_ref) == 1:
+        # A constant reference feature still has a meaningful PSI when the
+        # current population moves away from that value. Use a small window
+        # around the reference value so the comparison remains well-defined.
+        value = float(unique_ref[0])
+        span = max(abs(value) * 1e-6, 1e-6)
+        edges = np.array([value - span, value + span], dtype=float)
+    else:
+        quantiles = np.quantile(ref, np.linspace(0.0, 1.0, bins + 1))
+        edges = np.unique(quantiles)
+        if len(edges) < 2:
+            raise ValueError("reference values must contain enough variation for drift bins")
+
+        # Expand the outer boundaries so values outside the reference range
+        # are represented in the current distribution rather than dropped.
+        lower = np.nextafter(edges[0], -np.inf)
+        upper = np.nextafter(edges[-1], np.inf)
+        edges = np.concatenate(([lower], edges[1:-1], [upper]))
 
     ref_counts, _ = np.histogram(ref, bins=edges)
     cur_counts, _ = np.histogram(cur, bins=edges)
