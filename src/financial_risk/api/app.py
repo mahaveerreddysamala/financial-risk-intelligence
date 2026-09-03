@@ -5,6 +5,7 @@ import time
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from financial_risk.api.config import settings
@@ -16,8 +17,10 @@ from financial_risk.investigation.copilot import (
     build_grounded_prompt,
 )
 from financial_risk.models.risk_score import combine_risk_signals, decision_from_score
+from financial_risk.streaming.observability import StreamingMetrics
 
 logger = configure_logging(settings.log_level)
+api_metrics = StreamingMetrics()
 
 app = FastAPI(
     title="Financial Crime & Risk Intelligence API",
@@ -60,18 +63,27 @@ def _risk_payload(request: RiskRequest) -> dict[str, Any]:
 
 @app.middleware("http")
 async def request_logging(request: Request, call_next: Any) -> Any:
-    """Log request metadata without recording financial request bodies."""
+    """Log request metadata and collect operational metrics without bodies."""
     started = time.perf_counter()
+    collect_metrics = request.url.path != "/metrics"
+    if collect_metrics:
+        api_metrics.increment("api_requests_total")
+
     try:
-        response = await call_next(request)
+        with api_metrics.time() if collect_metrics else _null_context():
+            response = await call_next(request)
     except Exception:
         elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
+        if collect_metrics:
+            api_metrics.increment("api_requests_failed")
         logger.exception(
             "request_failed",
             extra={"method": request.method, "path": request.url.path, "duration_ms": elapsed_ms},
         )
         raise
     elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
+    if collect_metrics:
+        api_metrics.increment(f"api_status_{response.status_code}")
     logger.info(
         "request_completed",
         extra={
@@ -82,6 +94,16 @@ async def request_logging(request: Request, call_next: Any) -> Any:
         },
     )
     return response
+
+
+class _null_context:
+    """Minimal context manager for requests that must not update metrics."""
+
+    def __enter__(self) -> None:
+        return None
+
+    def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
+        return None
 
 
 @app.get("/health")
@@ -98,6 +120,15 @@ def ready() -> dict[str, str]:
 @app.get("/version")
 def version() -> dict[str, str]:
     return {"version": app.version, "environment": settings.app_env}
+
+
+@app.get("/metrics", response_class=PlainTextResponse)
+def metrics() -> PlainTextResponse:
+    """Expose application metrics in Prometheus text exposition format."""
+    return PlainTextResponse(
+        api_metrics.prometheus(prefix="financial_risk_api"),
+        media_type="text/plain; version=0.0.4; charset=utf-8",
+    )
 
 
 @app.post("/v1/risk/score")
