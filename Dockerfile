@@ -5,14 +5,21 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app/src \
     APP_ENV=production \
     LOG_LEVEL=INFO \
-    MODEL_ARTIFACT_PATH=/app/artifacts
+    MODEL_ARTIFACT_PATH=/app/artifacts \
+    MODEL_NAME=financial-risk-ensemble \
+    MODEL_VERSION=1.0.0 \
+    FEATURE_CONTRACT_VERSION=1.0
 
 WORKDIR /app
+
+RUN useradd --create-home --uid 10001 appuser
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY src ./src
+RUN chown -R appuser:appuser /app
+USER 10001
 
 EXPOSE 8000
 
