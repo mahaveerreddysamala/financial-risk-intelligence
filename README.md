@@ -4,7 +4,7 @@ A production-oriented financial AI/ML platform for transaction fraud detection, 
 
 ## Project Vision
 
-This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, durable streaming state, and a grounded investigation copilot.
+This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, graph/community intelligence, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, durable distributed state, and a grounded investigation copilot.
 
 ## Architecture
 
@@ -23,7 +23,7 @@ Leakage-Aware Feature Engineering
         |                   |                   |
         v                   v                   v
 Supervised ML       Anomaly Detection    Graph Risk
-XGBoost             Isolation Forest      Network Features
+XGBoost             Isolation Forest      Network + Communities
         |                   |                   |
         +-------------------+-------------------+
                             |
@@ -161,8 +161,8 @@ See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`d
 - Input, scored-output, and dead-letter Kafka topics wired through environment configuration
 - API container with Docker health check and `/health`, `/ready`, `/version`, and `/metrics` endpoints
 - Restart policies for long-running Kafka, API, and worker services
-- Verified local event path from `transaction.created` through the worker to `transaction.risk_scored`
-- Explicit deployment boundary: one local Kafka broker, plaintext listeners, single-partition application topics, and in-memory idempotency are used for reproducible portfolio validation
+- Verified local event path from `transaction.created` through the worker to the `transaction.risk_scored` output
+- Explicit deployment boundary: one local Kafka broker, plaintext listeners, and reproducible local validation are used for the portfolio stack
 
 See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md).
 
@@ -238,7 +238,7 @@ See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
 - Worker enables Redis automatically when `REDIS_URL` is configured
 - Docker Compose adds a health-checked Redis service and health-gated worker startup
 - In-memory state implementations remain available for deterministic unit tests and transport-agnostic runs
-- Verified restart persistence: customer history for `C-PHASE35` retained both test transactions after worker restart, and the restarted worker recognized the first event as a duplicate
+- Verified restart persistence: customer history retained transactions after worker restart, and the restarted worker recognized a replayed event as a duplicate
 - Explicit production boundary: the local stack does not yet configure Redis authentication, TLS, replication, backups, high availability, or operational persistence policies
 
 See [`docs/durable-streaming-state.md`](docs/durable-streaming-state.md).
@@ -257,6 +257,34 @@ See [`docs/durable-streaming-state.md`](docs/durable-streaming-state.md).
 
 See [`docs/kafka-horizontal-scaling.md`](docs/kafka-horizontal-scaling.md).
 
+## Phase 37: Redis Atomicity & Distributed State Safety
+
+- Atomic event-claim semantics prevent two horizontally scaled workers from processing the same event concurrently
+- Claim leases expire so a crashed worker does not permanently strand an event
+- Successful processing marks the event complete; failed processing releases the claim for retry
+- Customer transaction history uses an atomic append operation instead of an unsafe read-modify-write sequence
+- Shared Redis state remains durable across worker restarts and replicas
+- In-memory idempotency behavior remains available for deterministic unit tests
+- Added dedicated Phase 37 state-safety tests covering claim, release, completion, and atomic-history integration
+- Verified end-to-end with two workers: the first copy of `phase37-duplicate-002` succeeded and the duplicate was suppressed
+- Verified Redis persisted exactly one customer transaction and a bounded idempotency key TTL
+- Explicit production boundary: Redis authentication, TLS, replication, failover, backups, and managed operational controls remain deployment concerns
+
+See [`docs/redis-atomicity.md`](docs/redis-atomicity.md) for the state-safety design and validation runbook.
+
+## Phase 38: Graph Community Detection
+
+- Adds deterministic heterogeneous entity-graph construction across customers, accounts, devices, IPs, and merchants
+- Uses weighted entity relationships so repeated reuse strengthens graph edges
+- Detects communities through modularity optimization for fraud-ring style network segmentation
+- Produces customer-level `community_id`, `community_customer_count`, weighted network degree, and `community_risk_signal` features
+- Keeps community analysis as an explainable feature layer that can complement supervised fraud probability and existing network-risk signals
+- Adds automated tests for graph construction, deterministic community assignment, derived features, and input validation
+- Uses NetworkX as a focused graph-analysis dependency; graph storage remains in-process for reproducible portfolio validation
+- Explicit production boundary: community detection is currently batch/in-process; distributed graph processing and online incremental community updates remain future deployment extensions
+
+See [`docs/graph-community-detection.md`](docs/graph-community-detection.md).
+
 ## Verified 20K Fraud Benchmark
 
 | Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
@@ -268,8 +296,7 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 ## Planned ML / Engineering Extensions
 
-- Redis atomicity and race-safe state updates
-- Advanced graph/community detection
+- Advanced graph analytics and online community updates
 - Random Forest and LightGBM model comparisons
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
 - Production alerting, autoscaling, deeper operational monitoring, and distributed tracing
@@ -278,6 +305,6 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 ## Repository Status
 
-**Current phase:** Phase 36 — Kafka partition-aware horizontal scaling.
+**Current phase:** Phase 38 — Graph community detection.
 
-**Validation status:** Local lint/tests are passing through Phase 35; Phase 36 partition routing and multi-worker Docker validation are implemented and awaiting local verification.
+**Validation status:** Phase 37 distributed idempotency and durable customer-state behavior has been validated end-to-end. Phase 38 implementation and automated tests are now added and ready for local validation.
