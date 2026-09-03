@@ -1,18 +1,18 @@
 from pathlib import Path
 
 import joblib
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-from financial_risk.models.artifact import PersistedModelService
-from financial_risk.models.artifact import FEATURE_COLUMNS
 from financial_risk.api.app import app
+from financial_risk.models.artifact import FEATURE_COLUMNS, PersistedModelService
 
 
 class DummyModel:
     def predict_proba(self, frame):
         assert list(frame.columns) == FEATURE_COLUMNS
-        return [[0.15, 0.85]]
+        return np.array([[0.15, 0.85]])
 
 
 def _features() -> dict[str, object]:
