@@ -1,54 +1,78 @@
 # Financial Crime & Risk Intelligence Platform
 
-A production-oriented financial AI/ML platform for transaction fraud detection, anomaly detection, graph-based risk intelligence, explainable AI, and GenAI-assisted investigations.
+A production-oriented financial AI/ML platform for transaction fraud detection, anomaly detection, graph-based risk intelligence, explainable AI, MLOps, real-time streaming, and GenAI-assisted investigations.
 
 ## Project Vision
 
-This project is being built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, and a grounded investigation copilot.
+This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, and a grounded investigation copilot.
 
 ## Architecture
 
 ```text
-Financial Events
-      |
-      +--> Batch / Streaming Ingestion
-      |
-      v
+Financial Transactions
+        |
+        +--> Batch / Kafka Streaming Ingestion
+        |
+        v
 Data Quality + Contracts
-      |
-      v
+        |
+        v
 Leakage-Aware Feature Engineering
-      |
-      +-------------------+-------------------+
-      |                   |                   |
-      v                   v                   v
+        |
+        +-------------------+-------------------+
+        |                   |                   |
+        v                   v                   v
 Supervised ML       Anomaly Detection    Graph Risk
-XGBoost/LightGBM    Isolation Forest      Network Features
-      |                   |                   |
-      +-------------------+-------------------+
-                          |
-                          v
-                Risk Scoring / Decisioning
-                          |
-                 +--------+--------+
-                 |                 |
-                 v                 v
-              Approve           Review
-                                   |
-                                   v
-                         SHAP + Reason Codes
-                                   |
-                                   v
-                     Investigation Case + Evidence
-                                   |
-                                   v
-                         GenAI Investigation
-                              Copilot + RAG
-                                   |
-                                   v
-                         FastAPI + Container
-                                   |
-                         Prometheus + Grafana
+XGBoost             Isolation Forest      Network Features
+        |                   |                   |
+        +-------------------+-------------------+
+                            |
+                            v
+                  Risk Scoring / Decisioning
+                            |
+               +------------+------------+
+               |                         |
+               v                         v
+            Approve                 Review / Hold
+                                         |
+                                         v
+                               SHAP + Reason Codes
+                                         |
+                                         v
+                              Investigation Case
+                                         |
+                                         v
+                              GenAI Copilot + RAG
+                                         |
+                                         v
+                                  FastAPI Service
+                                         |
+                             +-----------+-----------+
+                             |                       |
+                             v                       v
+                       Prometheus              Grafana
+
+Kafka transaction path:
+
+transaction.created
+        |
+        v
+Streaming Feature State
+(prior-only customer history)
+        |
+        v
+Persisted XGBoost Artifact
+        |
+        v
+Fraud Probability
+        |
+        +--> Anomaly + Network + Velocity Signals
+        |
+        v
+Ensemble Risk Score
+        |
+        v
+transaction.risk_scored
 ```
 
 ## Phases 1–20
@@ -75,9 +99,9 @@ See [`docs/kafka-streaming.md`](docs/kafka-streaming.md) for the streaming archi
 - Preserves event ID, transaction ID, and event timestamp for traceability
 - Produces a `transaction.risk_scored` downstream event envelope
 - Adds a transport-neutral `process_event()` worker boundary for Kafka consumers, replay jobs, and test harnesses
-- Explicitly avoids claims of a live broker, exactly-once semantics, or production model serving until those infrastructure components are deployed and verified
+- Explicitly avoids claims of a live broker, exactly-once semantics, or persisted model serving until those components are deployed and verified
 
-See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) and [`docs/streaming-worker.md`](docs/streaming-worker.md) for the streaming inference and worker contracts.
+See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) for the streaming inference contract.
 
 ## Phase 23: Kafka End-to-End Integration Smoke Test
 
@@ -115,7 +139,7 @@ See [`docs/streaming-runtime.md`](docs/streaming-runtime.md) for the reliability
 - FastAPI `/metrics` endpoint exposing Prometheus-compatible application metrics
 - Explicit production boundary: the current metrics backend is in-process; persistent metrics storage and dashboards remain deployment concerns
 
-See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`docs/api-operational-metrics.md`](docs/api-operational-metrics.md) for the metrics model and API integration boundary.
+See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`docs/api-operational-metrics.md`](docs/api-operational-metrics.md).
 
 ## Phase 28: Docker Compose Production-Style Stack
 
@@ -128,30 +152,62 @@ See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`d
 - Verified local event path from `transaction.created` through the worker to `transaction.risk_scored`
 - Explicit deployment boundary: one local Kafka broker, plaintext listeners, single-partition application topics, and in-memory idempotency are used for reproducible portfolio validation
 
-See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md) for the deployment runbook and production boundary.
+See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md).
 
 ## Phase 29: Prometheus + Grafana Observability
 
-- Prometheus collector scraping the FastAPI `/metrics` endpoint on a 5-second interval
-- Grafana provisioned with a Prometheus datasource
+- Prometheus collector scraping the FastAPI `/metrics` endpoint
+- Grafana provisioned with a Prometheus datasource and dashboard
 - Pre-provisioned `Financial Risk API` dashboard for request volume, failures, request rate, latency, and HTTP status trends
 - Monitoring services integrated into the Docker Compose stack
-- Live validation of API health, API metrics, Prometheus readiness, Grafana health, and a Kafka → worker → CRITICAL risk event path
+- Live validation of API health, application metrics, Prometheus readiness, Grafana health, and Kafka worker activity
 - Explicit production boundary: local dashboards use reproducible demo credentials; persistence, TLS, authentication, alerting, and highly available monitoring remain deployment concerns
 
-See [`docs/prometheus-grafana.md`](docs/prometheus-grafana.md) for the observability runbook and production boundary.
+See [`docs/prometheus-grafana.md`](docs/prometheus-grafana.md).
 
 ## Phase 30: Model Serving Contract & Deployment Hardening
 
 - Dedicated `RiskModelService` boundary between the FastAPI transport layer and the risk decision engine
 - Versioned serving metadata for model name, model version, and feature-contract version
-- `/v1/risk/score` and investigation workflows return model provenance with each decision
 - `/version` exposes deployment and model metadata for diagnostics
 - API and streaming worker containers run as non-root UID 10001 users
 - Container files are owned by the runtime user before process startup
-- Explicit production boundary: the current service wraps the portfolio ensemble risk engine; a managed persisted model artifact, external registry, authenticated/TLS service mesh, and autoscaling inference platform are still deployment extensions
+- Explicit production boundary: persisted artifact loading was introduced separately in Phase 31; managed registry, authenticated/TLS service mesh, and autoscaling inference remain deployment extensions
 
-See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md) for the serving contract and hardening runbook.
+See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
+
+## Phase 31: Persisted XGBoost Model Artifact Serving
+
+- Persisted `financial-fraud-xgboost.joblib` serving artifact
+- Dedicated `PersistedModelService` with explicit artifact and metadata validation
+- Exact model feature contract enforced before inference
+- Model provenance returned with every persisted-model prediction
+- FastAPI `POST /v1/model/score` endpoint for persisted-model inference
+- Docker Compose mounts the artifact directory read-only into the API and streaming worker
+- `scikit-learn==1.5.2` pinned to match the serialized artifact and prevent estimator deserialization incompatibility
+- Verified inside the container with scikit-learn 1.5.2 and successful persisted-model inference
+- Explicit security boundary: joblib/pickle artifacts are treated as trusted internal model artifacts
+
+## Phase 32: Persisted Model Integrated into Kafka Streaming
+
+- Streaming worker loads the persisted XGBoost artifact at startup
+- `transaction.created` events can provide the model feature vector to the persisted model service
+- Fraud probability from persisted XGBoost is combined with anomaly, network, and velocity signals through the established ensemble decision engine
+- Model name, version, and feature-contract version propagate into downstream `transaction.risk_scored` events
+- Kafka end-to-end validation completed using a real broker and the persisted model
+- Verified example: `phase32-model-test-002` produced `fraud_probability=0.0355707`, `risk_score=0.3777854`, `risk_band=MEDIUM`, `action=monitor`
+- Kafka boundary hardened so null/tombstone and malformed JSON records are skipped without crashing the long-running worker
+
+## Phase 33: Stateful Real-Time Feature Generation
+
+- Streaming feature state generates the persisted model's required behavioral and velocity features from raw transaction events
+- Prior-only customer history is used so the current transaction does not leak into its own features
+- Rolling customer windows cover 7-day behavioral history and 30-day customer statistics
+- Short-horizon transaction velocity features cover 5-minute, 1-hour, and 24-hour windows
+- `prepare()` computes features without mutating history; `commit()` records the transaction only after successful processing
+- Feature generation remains in-memory for reproducible local validation
+- CI includes explicit history-window expiry coverage
+- Production boundary: distributed feature state, durable state storage, partition-aware scaling, and external state recovery remain future deployment extensions
 
 ## Verified 20K Fraud Benchmark
 
@@ -164,19 +220,16 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 ## Planned ML / Engineering Extensions
 
-- Random Forest comparison
-- LightGBM comparison
+- Random Forest and LightGBM model comparisons
 - Advanced graph/community detection
-- Embedding-based RAG over financial investigation policies and fraud typologies
-- Controlled investigation tools / agent workflow
+- Durable/distributed streaming feature state and external idempotency storage
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
-- Production alerting and deeper monitoring using Prometheus/Grafana or an equivalent observability stack
-- Persisted trained-model artifact serving and autoscaled inference deployment
-
-## Scale Targets
-
-The platform will be benchmarked at progressively larger synthetic workloads, including 100K, 1M, 10M, and 50M transactions. Performance figures will be added only after they are measured and verified.
+- Production alerting, autoscaling, TLS/authentication, and deeper operational monitoring
+- External LLM provider integration for the grounded investigation copilot
+- Broader benchmark and scale testing at 100K, 1M, 10M, and 50M synthetic transactions
 
 ## Repository Status
 
-**Current phase:** Phase 30 — model serving contract and deployment hardening.
+**Current phase:** Phase 33 — stateful real-time feature generation and persisted-model Kafka integration.
+
+**Validation status:** Local lint/tests and Docker-based Kafka/model-serving paths are verified. GitHub Actions continues to enforce the test suite and linting; CI fixes are committed as issues are identified.
