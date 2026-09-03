@@ -34,9 +34,15 @@ services:
       - /bin/sh
       - -c
       - >-
-        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092
+        until /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092
         --create --if-not-exists --topic financial-risk-events
-        --partitions 1 --replication-factor 1
+        --partitions 1 --replication-factor 1; do sleep 1; done;
+        sleep 365d
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic financial-risk-events >/dev/null 2>&1"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
 
   kafka-smoke:
     build:
@@ -44,7 +50,7 @@ services:
       dockerfile: Dockerfile.kafka-smoke
     depends_on:
       kafka-init:
-        condition: service_completed_successfully
+        condition: service_healthy
     environment:
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_TOPIC: financial-risk-events
