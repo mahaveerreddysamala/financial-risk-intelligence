@@ -11,16 +11,24 @@ from financial_risk.streaming.worker import process_event
 
 
 def _wait_for_broker(bootstrap_servers: str, attempts: int = 30) -> None:
-    """Wait briefly for Kafka to accept client connections."""
+    """Wait until Kafka accepts connections and has no queued producer messages."""
     last_error: Exception | None = None
     for _ in range(attempts):
+        producer = None
         try:
             producer = KafkaEventProducer(bootstrap_servers)
-            producer.flush(1.0)
-            return
+            remaining = producer.flush(1.0)
+            if remaining == 0:
+                return
+            last_error = RuntimeError(
+                f"Kafka producer still has {remaining} queued messages while probing broker"
+            )
         except (OSError, RuntimeError, ValueError) as exc:  # pragma: no cover - integration environment only
             last_error = exc
-            time.sleep(1)
+        finally:
+            if producer is not None:
+                producer.flush(0.0)
+        time.sleep(1)
     raise RuntimeError(f"Kafka broker did not become ready: {last_error}")
 
 
