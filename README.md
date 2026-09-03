@@ -47,6 +47,8 @@ XGBoost/LightGBM    Isolation Forest      Network Features
                                    |
                                    v
                          FastAPI + Container
+                                   |
+                         Prometheus + Grafana
 ```
 
 ## Phases 1–20
@@ -134,9 +136,22 @@ See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md) for the deplo
 - Grafana provisioned with a Prometheus datasource
 - Pre-provisioned `Financial Risk API` dashboard for request volume, failures, request rate, latency, and HTTP status trends
 - Monitoring services integrated into the Docker Compose stack
+- Live validation of API health, API metrics, Prometheus readiness, Grafana health, and a Kafka → worker → CRITICAL risk event path
 - Explicit production boundary: local dashboards use reproducible demo credentials; persistence, TLS, authentication, alerting, and highly available monitoring remain deployment concerns
 
 See [`docs/prometheus-grafana.md`](docs/prometheus-grafana.md) for the observability runbook and production boundary.
+
+## Phase 30: Model Serving Contract & Deployment Hardening
+
+- Dedicated `RiskModelService` boundary between the FastAPI transport layer and the risk decision engine
+- Versioned serving metadata for model name, model version, and feature-contract version
+- `/v1/risk/score` and investigation workflows return model provenance with each decision
+- `/version` exposes deployment and model metadata for diagnostics
+- API and streaming worker containers run as non-root UID 10001 users
+- Container files are owned by the runtime user before process startup
+- Explicit production boundary: the current service wraps the portfolio ensemble risk engine; a managed persisted model artifact, external registry, authenticated/TLS service mesh, and autoscaling inference platform are still deployment extensions
+
+See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md) for the serving contract and hardening runbook.
 
 ## Verified 20K Fraud Benchmark
 
@@ -156,6 +171,7 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 - Controlled investigation tools / agent workflow
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
 - Production alerting and deeper monitoring using Prometheus/Grafana or an equivalent observability stack
+- Persisted trained-model artifact serving and autoscaled inference deployment
 
 ## Scale Targets
 
@@ -163,4 +179,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 29 — Prometheus and Grafana observability integration.
+**Current phase:** Phase 30 — model serving contract and deployment hardening.
