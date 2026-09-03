@@ -1,10 +1,14 @@
 """Optional Confluent Kafka producer and consumer adapters."""
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterator
 from typing import Any
 
 from financial_risk.streaming.events import EventEnvelope
+
+
+logger = logging.getLogger(__name__)
 
 
 def _require_kafka() -> Any:
@@ -78,7 +82,7 @@ class KafkaEventConsumer:
         self._consumer.subscribe([topic])
 
     def poll(self, timeout: float = 1.0) -> EventEnvelope | None:
-        """Poll one message and deserialize it, returning None on timeout."""
+        """Poll one message and deserialize it, returning None on timeout or tombstone."""
         if timeout < 0:
             raise ValueError("timeout must be non-negative")
         message = self._consumer.poll(timeout)
@@ -89,7 +93,8 @@ class KafkaEventConsumer:
             raise RuntimeError(str(error))
         value = message.value()
         if value is None:
-            raise ValueError("Kafka message value must not be null")
+            logger.warning("Skipping Kafka tombstone/null-value record on topic=%s", self._topic)
+            return None
         return EventEnvelope.from_json(value)
 
     def consume(self, *, timeout: float = 1.0) -> Iterator[EventEnvelope]:
