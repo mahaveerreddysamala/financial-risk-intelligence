@@ -52,18 +52,12 @@ def build_entity_graph(
 
 
 def detect_communities(graph: nx.Graph) -> dict[str, int]:
-    """Assign deterministic integer community IDs using modularity optimization."""
+    """Assign deterministic integer community IDs from connected entity groups."""
     if graph.number_of_nodes() == 0:
         return {}
 
-    communities = nx.community.greedy_modularity_communities(graph, weight="weight")
-    ordered = sorted(
-        communities,
-        key=lambda members: (
-            -sum(graph.degree(node, weight="weight") for node in members),
-            min(members),
-        ),
-    )
+    components = list(nx.connected_components(graph))
+    ordered = sorted(components, key=lambda members: min(members))
     assignments: dict[str, int] = {}
     for community_id, members in enumerate(ordered):
         for node in sorted(members):
