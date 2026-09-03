@@ -53,6 +53,17 @@ services:
       retries: 15
       start_period: 5s
 
+  redis:
+    image: redis:7.4-alpine
+    container_name: financial-risk-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
   api:
     build:
       context: .
@@ -88,10 +99,14 @@ services:
       KAFKA_OUTPUT_TOPIC: financial-risk-scored
       KAFKA_DLQ_TOPIC: financial-risk-dlq
       KAFKA_GROUP_ID: financial-risk-scoring-worker
+      REDIS_URL: redis://redis:6379/0
+      REDIS_KEY_PREFIX: financial-risk
     volumes:
       - ./artifacts:/app/artifacts:ro
     depends_on:
       kafka-init:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   prometheus:
@@ -116,7 +131,7 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
-      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/provisioning/dashboards:/var/lib/grafana/dashboards:ro
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
       - "3000:3000"
