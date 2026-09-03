@@ -13,11 +13,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+RUN useradd --create-home --uid 10001 appuser
+
 COPY requirements.txt .
 COPY requirements-streaming.txt .
 RUN pip install --no-cache-dir -r requirements-streaming.txt
 
 COPY src ./src
 COPY scripts ./scripts
+RUN chown -R appuser:appuser /app
+USER 10001
 
 CMD ["python", "scripts/run_streaming_worker.py"]
