@@ -102,6 +102,18 @@ See [`docs/kafka-e2e-smoke.md`](docs/kafka-e2e-smoke.md) for the runbook and pro
 
 See [`docs/streaming-runtime.md`](docs/streaming-runtime.md) for the reliability model and worker runbook.
 
+## Phase 25: Streaming Observability & Operational Metrics
+
+- Thread-safe in-process counters for streaming throughput and outcomes
+- Processing-latency timing with count, average, maximum, and p95 summaries
+- Risk-band counters for LOW, MEDIUM, HIGH, and CRITICAL decisions
+- Poll-timeout, failure, retry, duplicate, success, and dead-letter counters
+- Prometheus-compatible text exposition for integration with a metrics collector
+- Metrics embedded in the transport-agnostic runtime without changing the event contract
+- Explicit production boundary: the current metrics backend is in-process; persistent metrics storage and dashboards remain deployment concerns
+
+See [`docs/streaming-observability.md`](docs/streaming-observability.md) for the metrics model and integration boundary.
+
 ## Verified 20K Fraud Benchmark
 
 | Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
@@ -119,6 +131,7 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 - Embedding-based RAG over financial investigation policies and fraud typologies
 - Controlled investigation tools / agent workflow
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
+- Production metrics backend and dashboards using Prometheus/Grafana or an equivalent observability stack
 
 ## Scale Targets
 
@@ -126,4 +139,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 24 — production-style streaming runtime reliability.
+**Current phase:** Phase 25 — streaming observability and operational metrics.
