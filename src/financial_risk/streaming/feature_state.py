@@ -122,6 +122,13 @@ class StreamingFeatureService:
         current = self._base_row(event_payload, occurred_at)
         customer_id = current["customer_id"]
         cutoff = current["timestamp"] - pd.Timedelta(days=self.history_days)
+        if self._state_store is not None and hasattr(self._state_store, "append_history"):
+            self._state_store.append_history(
+                customer_id,
+                current,
+                cutoff_timestamp=cutoff.isoformat(),
+            )
+            return
         history = [row for row in self._get_history(customer_id) if self._timestamp(row["timestamp"]) >= cutoff]
         history.append(current)
         history = [row for row in history if self._timestamp(row["timestamp"]) >= cutoff]
