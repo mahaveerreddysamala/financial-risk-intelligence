@@ -22,6 +22,20 @@ def _require_kafka() -> Any:
     return Producer, Consumer
 
 
+def routing_key(event: EventEnvelope) -> str:
+    """Return the Kafka partition key for one event.
+
+    Transaction events use customer ID so all events for the same customer are
+    routed to the same partition, preserving per-customer ordering when a
+    consumer group is horizontally scaled. Other event types use event ID.
+    """
+    if event.event_type == "transaction.created":
+        customer_id = event.payload.get("customer_id")
+        if customer_id is not None and str(customer_id).strip():
+            return str(customer_id)
+    return event.event_id
+
+
 class KafkaEventProducer:
     """Small producer adapter with JSON event serialization."""
 
@@ -34,12 +48,12 @@ class KafkaEventProducer:
         )
 
     def publish(self, topic: str, event: EventEnvelope) -> None:
-        """Publish an envelope using its event ID as the Kafka key."""
+        """Publish an envelope using its routing key."""
         if not topic.strip():
             raise ValueError("topic must not be empty")
         self._producer.produce(
             topic=topic,
-            key=event.event_id,
+            key=routing_key(event),
             value=event.to_json(),
         )
         self._producer.poll(0)
