@@ -57,6 +57,12 @@ Kafka transaction path:
 transaction.created
         |
         v
+Kafka partition key = customer_id
+        |
+        v
+Consumer Group (scalable workers)
+        |
+        v
 Durable Streaming State
 (Redis customer history + idempotency)
         |
@@ -232,9 +238,24 @@ See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
 - Worker enables Redis automatically when `REDIS_URL` is configured
 - Docker Compose adds a health-checked Redis service and health-gated worker startup
 - In-memory state implementations remain available for deterministic unit tests and transport-agnostic runs
+- Verified restart persistence: customer history for `C-PHASE35` retained both test transactions after worker restart, and the restarted worker recognized the first event as a duplicate
 - Explicit production boundary: the local stack does not yet configure Redis authentication, TLS, replication, backups, high availability, or operational persistence policies
 
 See [`docs/durable-streaming-state.md`](docs/durable-streaming-state.md).
+
+## Phase 36: Kafka Partition-Aware Horizontal Scaling
+
+- `transaction.created` events now use `customer_id` as the Kafka routing key
+- Same-customer transactions therefore map to the same partition, preserving per-customer ordering within the Kafka partition model
+- `financial-risk-events` is configured with three local partitions for scale-out validation
+- Worker replicas use the same Kafka consumer group so Kafka can distribute partitions across instances
+- Worker `container_name` is removed so Docker Compose can create multiple worker replicas
+- Redis remains the shared feature-history and idempotency state boundary across replicas
+- Added unit coverage for customer-based routing-key behavior and fallback routing
+- Added a reproducible runbook for 2-worker / 3-partition validation
+- Explicit production boundary: the local validation uses one Kafka broker; production requires replicated brokers, capacity planning, partition sizing, and operational rebalance tuning
+
+See [`docs/kafka-horizontal-scaling.md`](docs/kafka-horizontal-scaling.md).
 
 ## Verified 20K Fraud Benchmark
 
@@ -247,9 +268,9 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 ## Planned ML / Engineering Extensions
 
-- Random Forest and LightGBM model comparisons
+- Redis atomicity and race-safe state updates
 - Advanced graph/community detection
-- Redis-backed state hardening with authentication, TLS, persistence, replication, and high availability
+- Random Forest and LightGBM model comparisons
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
 - Production alerting, autoscaling, deeper operational monitoring, and distributed tracing
 - External LLM provider integration for the grounded investigation copilot
@@ -257,6 +278,6 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 ## Repository Status
 
-**Current phase:** Phase 35 — durable distributed streaming state.
+**Current phase:** Phase 36 — Kafka partition-aware horizontal scaling.
 
-**Validation status:** Local lint/tests are passing; Docker Kafka/model-serving validation is verified through Phase 34. Phase 35 Redis-backed state is implemented and awaiting containerized validation.
+**Validation status:** Local lint/tests are passing through Phase 35; Phase 36 partition routing and multi-worker Docker validation are implemented and awaiting local verification.
