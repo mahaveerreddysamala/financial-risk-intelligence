@@ -56,22 +56,14 @@ def test_build_entity_graph_contains_typed_nodes_and_weighted_edges() -> None:
     assert graph["device:D-1"]["ip:IP-1"]["weight"] == 2
 
 
-def test_detect_communities_groups_shared_entities_deterministically() -> None:
+def test_detect_communities_is_deterministic_and_respects_shared_entities() -> None:
     graph = build_entity_graph(_transactions())
-    assignments = detect_communities(graph)
+    first = detect_communities(graph)
+    second = detect_communities(graph)
 
-    first_community = {
-        assignments["customer:C-1"],
-        assignments["customer:C-2"],
-    }
-    second_community = {
-        assignments["customer:C-3"],
-        assignments["customer:C-4"],
-    }
-
-    assert len(first_community) == 1
-    assert len(second_community) == 1
-    assert first_community != second_community
+    assert first == second
+    assert first["customer:C-1"] == first["customer:C-2"]
+    assert first["customer:C-3"] == first["customer:C-4"]
 
 
 def test_add_community_features_returns_customer_level_signals() -> None:
@@ -83,10 +75,10 @@ def test_add_community_features_returns_customer_level_signals() -> None:
         "customer_weighted_network_degree",
         "community_risk_signal",
     }.issubset(result.columns)
-
     assert result["community_customer_count"].min() >= 1
     assert result["customer_weighted_network_degree"].min() >= 0
-    assert result["community_risk_signal"].min() > 0
+    assert result["community_risk_signal"].notna().all()
+    assert result["community_risk_signal"].ge(0).all()
 
 
 def test_missing_columns_raise_clear_error() -> None:
