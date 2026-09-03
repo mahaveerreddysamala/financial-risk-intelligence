@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
+from itertools import pairwise
 
 import networkx as nx
 import numpy as np
@@ -42,7 +43,7 @@ def build_entity_graph(
         ]
         for node in nodes:
             graph.add_node(node)
-        for left, right in zip(nodes, nodes[1:]):
+        for left, right in pairwise(nodes):
             if graph.has_edge(left, right):
                 graph[left][right]["weight"] += 1
             else:
