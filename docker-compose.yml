@@ -82,12 +82,12 @@ services:
     environment:
       APP_ENV: production
       LOG_LEVEL: INFO
+      MODEL_ARTIFACT_FILE: /app/artifacts/financial-fraud-xgboost.joblib
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       KAFKA_INPUT_TOPIC: financial-risk-events
       KAFKA_OUTPUT_TOPIC: financial-risk-scored
       KAFKA_DLQ_TOPIC: financial-risk-dlq
       KAFKA_GROUP_ID: financial-risk-scoring-worker
-      MODEL_ARTIFACT_FILE: /app/artifacts/financial-fraud-xgboost.joblib
     volumes:
       - ./artifacts:/app/artifacts:ro
     depends_on:
