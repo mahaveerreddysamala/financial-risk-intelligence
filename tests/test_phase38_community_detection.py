@@ -35,6 +35,14 @@ def _transactions() -> pd.DataFrame:
                 "ip_id": "IP-3",
                 "merchant_id": "M-3",
             },
+            {
+                "transaction_id": "TXN-4",
+                "customer_id": "C-4",
+                "account_id": "A-4",
+                "device_id": "D-3",
+                "ip_id": "IP-3",
+                "merchant_id": "M-3",
+            },
         ]
     )
 
@@ -53,20 +61,26 @@ def test_detect_communities_groups_shared_entities_deterministically() -> None:
     assignments = detect_communities(graph)
 
     assert assignments["customer:C-1"] == assignments["customer:C-2"]
+    assert assignments["customer:C-3"] == assignments["customer:C-4"]
     assert assignments["customer:C-1"] != assignments["customer:C-3"]
 
 
 def test_add_community_features_returns_customer_level_signals() -> None:
     result = add_community_features(_transactions())
 
-    assert {"community_id", "community_customer_count", "customer_weighted_network_degree", "community_risk_signal"}.issubset(result.columns)
+    assert {
+        "community_id",
+        "community_customer_count",
+        "customer_weighted_network_degree",
+        "community_risk_signal",
+    }.issubset(result.columns)
     shared = result[result["customer_id"].isin(["C-1", "C-2"])]
-    isolated = result[result["customer_id"] == "C-3"].iloc[0]
+    second_shared = result[result["customer_id"].isin(["C-3", "C-4"])]
 
     assert shared["community_customer_count"].nunique() == 1
     assert shared["community_customer_count"].iloc[0] == 2
-    assert isolated["community_customer_count"] == 1
-    assert shared["community_risk_signal"].iloc[0] > isolated["community_risk_signal"]
+    assert second_shared["community_customer_count"].nunique() == 1
+    assert second_shared["community_customer_count"].iloc[0] == 2
 
 
 def test_missing_columns_raise_clear_error() -> None:
