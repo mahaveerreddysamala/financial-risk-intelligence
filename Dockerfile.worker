@@ -13,7 +13,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements.txt requirements-streaming.txt ./
+COPY requirements.txt .
+COPY requirements-streaming.txt .
 RUN pip install --no-cache-dir -r requirements-streaming.txt
 
 COPY src ./src
