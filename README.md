@@ -110,9 +110,22 @@ See [`docs/streaming-runtime.md`](docs/streaming-runtime.md) for the reliability
 - Poll-timeout, failure, retry, duplicate, success, and dead-letter counters
 - Prometheus-compatible text exposition for integration with a metrics collector
 - Metrics embedded in the transport-agnostic runtime without changing the event contract
+- FastAPI `/metrics` endpoint exposing Prometheus-compatible application metrics
 - Explicit production boundary: the current metrics backend is in-process; persistent metrics storage and dashboards remain deployment concerns
 
-See [`docs/streaming-observability.md`](docs/streaming-observability.md) for the metrics model and integration boundary.
+See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`docs/api-operational-metrics.md`](docs/api-operational-metrics.md) for the metrics model and API integration boundary.
+
+## Phase 28: Docker Compose Production-Style Stack
+
+- Multi-service local stack combining FastAPI, Kafka, topic initialization, and the streaming risk worker
+- Dedicated worker image with the optional Confluent Kafka dependency isolated from the API image
+- Health-gated Kafka topic initialization before API and worker startup
+- Input, scored-output, and dead-letter Kafka topics wired through environment configuration
+- API container with Docker health check and `/health`, `/ready`, `/version`, and `/metrics` endpoints
+- Restart policies for long-running Kafka, API, and worker services
+- Explicit deployment boundary: one local Kafka broker, plaintext listeners, single-partition application topics, and in-memory idempotency are used for reproducible portfolio validation
+
+See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md) for the deployment runbook and production boundary.
 
 ## Verified 20K Fraud Benchmark
 
@@ -139,4 +152,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 25 — streaming observability and operational metrics.
+**Current phase:** Phase 28 — Docker Compose production-style application and streaming stack.
