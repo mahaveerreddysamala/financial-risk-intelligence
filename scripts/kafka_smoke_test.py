@@ -11,18 +11,14 @@ from financial_risk.streaming.worker import process_event
 
 
 def _wait_for_broker(bootstrap_servers: str, attempts: int = 30) -> None:
-    """Wait until Kafka accepts connections and has no queued producer messages."""
+    """Wait until Kafka accepts client connections."""
     last_error: Exception | None = None
     for _ in range(attempts):
         producer = None
         try:
             producer = KafkaEventProducer(bootstrap_servers)
-            remaining = producer.flush(1.0)
-            if remaining == 0:
-                return
-            last_error = RuntimeError(
-                f"Kafka producer still has {remaining} queued messages while probing broker"
-            )
+            producer.flush(1.0)
+            return
         except (OSError, RuntimeError, ValueError) as exc:  # pragma: no cover - integration environment only
             last_error = exc
         finally:
@@ -30,6 +26,17 @@ def _wait_for_broker(bootstrap_servers: str, attempts: int = 30) -> None:
                 producer.flush(0.0)
         time.sleep(1)
     raise RuntimeError(f"Kafka broker did not become ready: {last_error}")
+
+
+def _flush_until_empty(producer: KafkaEventProducer, timeout: float = 30.0) -> None:
+    """Wait for a published event to leave the producer queue."""
+    deadline = time.time() + timeout
+    remaining = 1
+    while time.time() < deadline:
+        remaining = producer.flush(1.0)
+        if remaining == 0:
+            return
+    raise RuntimeError(f"Kafka producer still has {remaining} queued messages")
 
 
 def main() -> None:
@@ -56,9 +63,7 @@ def main() -> None:
     )
 
     producer.publish(topic, event)
-    remaining = producer.flush(10.0)
-    if remaining != 0:
-        raise RuntimeError(f"Kafka producer still has {remaining} queued messages")
+    _flush_until_empty(producer)
 
     received = None
     deadline = time.time() + 20
