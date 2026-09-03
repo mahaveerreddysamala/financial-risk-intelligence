@@ -6,6 +6,7 @@ import os
 
 from financial_risk.models.artifact import PersistedModelService
 from financial_risk.streaming.events import EventEnvelope
+from financial_risk.streaming.feature_state import StreamingFeatureService
 from financial_risk.streaming.kafka import KafkaEventConsumer, KafkaEventProducer
 from financial_risk.streaming.risk_consumer import scoring_result_event
 from financial_risk.streaming.runtime import DeadLetterRecord, StreamingRuntime
@@ -41,6 +42,7 @@ def main() -> None:
         client_id="financial-risk-scoring-worker",
     )
     model_service = PersistedModelService(artifact_path)
+    feature_service = StreamingFeatureService()
 
     def publish_result(result) -> None:
         producer.publish(output_topic, scoring_result_event(result))
@@ -56,7 +58,11 @@ def main() -> None:
         producer.publish(dead_letter_topic, event)
 
     def process_stream_event(event: EventEnvelope):
-        return process_event(event, model_service=model_service)
+        return process_event(
+            event,
+            model_service=model_service,
+            feature_service=feature_service,
+        )
 
     runtime = StreamingRuntime(
         consumer=consumer,
