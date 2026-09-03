@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 import os
 
+from financial_risk.models.artifact import PersistedModelService
 from financial_risk.streaming.events import EventEnvelope
 from financial_risk.streaming.kafka import KafkaEventConsumer, KafkaEventProducer
 from financial_risk.streaming.risk_consumer import scoring_result_event
@@ -24,6 +25,10 @@ def main() -> None:
     output_topic = os.getenv("KAFKA_OUTPUT_TOPIC", "financial-risk-scored")
     dead_letter_topic = os.getenv("KAFKA_DLQ_TOPIC", "financial-risk-dlq")
     group_id = os.getenv("KAFKA_GROUP_ID", "financial-risk-scoring-worker")
+    artifact_path = os.getenv(
+        "MODEL_ARTIFACT_FILE",
+        "artifacts/financial-fraud-xgboost.joblib",
+    )
 
     consumer = KafkaEventConsumer(
         bootstrap_servers,
@@ -35,6 +40,7 @@ def main() -> None:
         bootstrap_servers,
         client_id="financial-risk-scoring-worker",
     )
+    model_service = PersistedModelService(artifact_path)
 
     def publish_result(result) -> None:
         producer.publish(output_topic, scoring_result_event(result))
@@ -49,9 +55,12 @@ def main() -> None:
         )
         producer.publish(dead_letter_topic, event)
 
+    def process_stream_event(event: EventEnvelope):
+        return process_event(event, model_service=model_service)
+
     runtime = StreamingRuntime(
         consumer=consumer,
-        processor=process_event,
+        processor=process_stream_event,
         publisher=publish_result,
         dead_letter=publish_dead_letter,
     )
