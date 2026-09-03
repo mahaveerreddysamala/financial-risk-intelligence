@@ -82,7 +82,7 @@ class KafkaEventConsumer:
         self._consumer.subscribe([topic])
 
     def poll(self, timeout: float = 1.0) -> EventEnvelope | None:
-        """Poll one message and deserialize it, returning None on timeout or tombstone."""
+        """Poll one message and deserialize it, returning None for invalid records."""
         if timeout < 0:
             raise ValueError("timeout must be non-negative")
         message = self._consumer.poll(timeout)
@@ -95,7 +95,13 @@ class KafkaEventConsumer:
         if value is None:
             logger.warning("Skipping Kafka tombstone/null-value record on topic=%s", self._topic)
             return None
-        return EventEnvelope.from_json(value)
+        try:
+            return EventEnvelope.from_json(value)
+        except (TypeError, ValueError) as exc:
+            logger.warning(
+                "Skipping malformed Kafka record on topic=%s: %s", self._topic, exc
+            )
+            return None
 
     def consume(self, *, timeout: float = 1.0) -> Iterator[EventEnvelope]:
         """Yield validated events until the caller stops iteration."""
