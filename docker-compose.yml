@@ -47,10 +47,11 @@ services:
         --replication-factor 1;
         sleep 365d
     healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic financial-risk-events >/dev/null 2>&1 && /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic financial-risk-scored >/dev/null 2>&1 && /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --describe --topic financial-risk-dlq >/dev/null 2>&1"]
+      test: ["CMD-SHELL", "topics=$(/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list 2>/dev/null); echo \"$topics\" | grep -Fx 'financial-risk-events' >/dev/null && echo \"$topics\" | grep -Fx 'financial-risk-scored' >/dev/null && echo \"$topics\" | grep -Fx 'financial-risk-dlq' >/dev/null"]
       interval: 2s
-      timeout: 5s
+      timeout: 10s
       retries: 15
+      start_period: 5s
 
   api:
     build:
