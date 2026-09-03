@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 from typing import Protocol
 
 from financial_risk.streaming.events import EventEnvelope
+from financial_risk.streaming.observability import StreamingMetrics
 from financial_risk.streaming.risk_consumer import RiskScoringResult
 
 
@@ -110,6 +111,7 @@ class StreamingRuntime:
         dead_letter: Callable[[DeadLetterRecord], None] | None = None,
         idempotency: IdempotencyStore | None = None,
         retry_policy: RetryPolicy | None = None,
+        metrics: StreamingMetrics | None = None,
         sleep: Callable[[float], None] = time.sleep,
         logger: logging.Logger | None = None,
     ) -> None:
@@ -119,37 +121,46 @@ class StreamingRuntime:
         self.dead_letter = dead_letter
         self.idempotency = idempotency or InMemoryIdempotencyStore()
         self.retry_policy = retry_policy or RetryPolicy()
+        self.metrics = metrics or StreamingMetrics()
         self.sleep = sleep
         self.logger = logger or logging.getLogger(__name__)
         self.stats = StreamingStats()
 
     def process_event(self, event: EventEnvelope) -> bool:
-        """Process one event, retry failures, and route exhausted failures to DLQ."""
+        """Process one event, record metrics, retry failures, and route failures to DLQ."""
         self.stats.received += 1
+        self.metrics.increment("events_received")
 
         if self.idempotency.contains(event.event_id):
             self.stats.duplicates += 1
+            self.metrics.increment("events_duplicates")
             self.logger.info("stream_event_duplicate event_id=%s", event.event_id)
             return False
 
         last_error: Exception | None = None
         for attempt in range(1, self.retry_policy.max_attempts + 1):
             try:
-                result = self.processor(event)
+                with self.metrics.time():
+                    result = self.processor(event)
                 if self.publisher is not None:
                     self.publisher(result)
                 self.idempotency.mark(event.event_id)
                 self.stats.succeeded += 1
+                self.metrics.increment("events_succeeded")
+                self.metrics.increment(f"risk_band_{result.risk_band.lower()}")
                 self.logger.info(
-                    "stream_event_succeeded event_id=%s attempt=%s",
+                    "stream_event_succeeded event_id=%s attempt=%s risk_band=%s",
                     event.event_id,
                     attempt,
+                    result.risk_band,
                 )
                 return True
             except (OSError, RuntimeError, TypeError, ValueError) as exc:
                 last_error = exc
+                self.metrics.increment("events_failed")
                 if attempt < self.retry_policy.max_attempts:
                     self.stats.retried += 1
+                    self.metrics.increment("events_retried")
                     self.logger.warning(
                         "stream_event_retry event_id=%s attempt=%s error=%s",
                         event.event_id,
@@ -173,6 +184,7 @@ class StreamingRuntime:
         if self.dead_letter is not None:
             self.dead_letter(record)
         self.stats.dead_lettered += 1
+        self.metrics.increment("events_dead_lettered")
         self.logger.error(
             "stream_event_dead_lettered event_id=%s attempts=%s error=%s",
             event.event_id,
@@ -185,6 +197,7 @@ class StreamingRuntime:
         """Poll one event and process it; return False when the poll times out."""
         event = self.consumer.poll(timeout=timeout)
         if event is None:
+            self.metrics.increment("poll_timeouts")
             return False
         self.process_event(event)
         return True
