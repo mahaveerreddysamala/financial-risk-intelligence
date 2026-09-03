@@ -44,6 +44,42 @@ def test_score_transaction_event_reuses_ensemble_decisioning() -> None:
     assert result.investigation_case["transaction_id"] == "TXN-1"
 
 
+def test_score_transaction_event_with_persisted_model_service() -> None:
+    class DummyPersistedService:
+        def predict(self, features):
+            return type(
+                "Prediction",
+                (),
+                {
+                    "fraud_probability": 0.95,
+                    "model_name": "financial-fraud-xgboost",
+                    "model_version": "1.0.0",
+                    "feature_contract_version": "1.0",
+                },
+            )()
+
+    result = score_transaction_event(
+        _event(
+            model_features={"amount": 250.0},
+            anomaly_score=0.80,
+            network_risk=0.70,
+            velocity_risk=0.60,
+        ),
+        model_service=DummyPersistedService(),
+    )
+    assert result.fraud_probability == pytest.approx(0.95)
+    assert result.model_name == "financial-fraud-xgboost"
+    assert result.model_version == "1.0.0"
+    assert result.feature_contract_version == "1.0"
+    assert result.risk_score == pytest.approx(0.835)
+    assert result.risk_band == "CRITICAL"
+
+
+def test_model_features_require_persisted_service() -> None:
+    with pytest.raises(ValueError, match="persisted model service"):
+        score_transaction_event(_event(model_features={"amount": 250.0}))
+
+
 def test_score_transaction_event_skips_case_for_noncritical_result() -> None:
     result = score_transaction_event(
         _event(
