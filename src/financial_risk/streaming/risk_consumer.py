@@ -28,6 +28,7 @@ class RiskScoringResult:
     model_name: str | None = None
     model_version: str | None = None
     feature_contract_version: str | None = None
+    feature_telemetry: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-serializable scoring result."""
@@ -54,12 +55,7 @@ def score_transaction_event(
     build_case: bool = True,
     model_service: PersistedModelService | None = None,
 ) -> RiskScoringResult:
-    """Score one transaction event using the persisted model when features are supplied.
-
-    When ``model_features`` is present and a ``model_service`` is provided, the
-    persisted XGBoost artifact supplies ``fraud_probability``. Older events that
-    already contain ``fraud_probability`` remain supported as a compatibility path.
-    """
+    """Score one transaction event using the persisted model when features are supplied."""
     if event.event_type != "transaction.created":
         raise ValueError(f"unsupported event_type: {event.event_type}")
 
@@ -69,6 +65,7 @@ def score_transaction_event(
     model_name = None
     model_version = None
     feature_contract_version = None
+    feature_telemetry: dict[str, Any] | None = None
     model_features = payload.get("model_features")
     if model_features is not None:
         if model_service is None:
@@ -80,8 +77,19 @@ def score_transaction_event(
         model_name = prediction.model_name
         model_version = prediction.model_version
         feature_contract_version = prediction.feature_contract_version
+        feature_telemetry = {
+            "inference_source": "persisted_model_artifact",
+            "feature_count": len(model_features),
+            "customer_txn_count_7d": int(model_features["customer_txn_count_7d"]),
+            "customer_avg_amount_30d": float(model_features["customer_avg_amount_30d"]),
+            "amount_vs_customer_avg": float(model_features["amount_vs_customer_avg"]),
+            "txn_count_5m": int(model_features["txn_count_5m"]),
+            "txn_count_1h": int(model_features["txn_count_1h"]),
+            "txn_count_24h": int(model_features["txn_count_24h"]),
+        }
     else:
         fraud_probability = _signal(payload, "fraud_probability")
+        feature_telemetry = {"inference_source": "precomputed_signal"}
 
     anomaly_score = _signal(payload, "anomaly_score")
     network_risk = _signal(payload, "network_risk")
@@ -124,6 +132,7 @@ def score_transaction_event(
         model_name=model_name,
         model_version=model_version,
         feature_contract_version=feature_contract_version,
+        feature_telemetry=feature_telemetry,
     )
 
 
