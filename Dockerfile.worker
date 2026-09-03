@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/src \
+    APP_ENV=production \
+    LOG_LEVEL=INFO \
+    KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
+    KAFKA_INPUT_TOPIC=financial-risk-events \
+    KAFKA_OUTPUT_TOPIC=financial-risk-scored \
+    KAFKA_DLQ_TOPIC=financial-risk-dlq \
+    KAFKA_GROUP_ID=financial-risk-scoring-worker
+
+WORKDIR /app
+
+COPY requirements-streaming.txt .
+RUN pip install --no-cache-dir -r requirements-streaming.txt
+
+COPY src ./src
+COPY scripts ./scripts
+
+CMD ["python", "scripts/run_streaming_worker.py"]
