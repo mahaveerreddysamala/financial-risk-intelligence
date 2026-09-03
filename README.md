@@ -73,6 +73,10 @@ Ensemble Risk Score
         |
         v
 transaction.risk_scored
+        |
+        v
+Inference Telemetry
+(feature source, contract, feature count, key history/velocity signals)
 ```
 
 ## Phases 1–20
@@ -207,7 +211,17 @@ See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
 - `prepare()` computes features without mutating history; `commit()` records the transaction only after successful processing
 - Feature generation remains in-memory for reproducible local validation
 - CI includes explicit history-window expiry coverage
-- Production boundary: distributed feature state, durable state storage, partition-aware scaling, and external state recovery remain future deployment extensions
+- Docker validation completed with two raw transactions for the same customer; both reached persisted XGBoost inference and produced downstream `transaction.risk_scored` events
+- Explicit production boundary: distributed feature state, durable state storage, partition-aware scaling, and external state recovery remain future deployment extensions
+
+## Phase 34: Streaming Inference Telemetry
+
+- Downstream `transaction.risk_scored` events include compact `feature_telemetry`
+- Telemetry identifies whether inference used the persisted model artifact or a precomputed compatibility signal
+- Persisted-model events expose feature count and selected prior-history/velocity features without publishing the entire feature vector
+- Telemetry preserves model name, model version, and feature-contract version alongside the scoring result
+- Tests cover telemetry serialization and persisted-model inference metadata
+- Explicit production boundary: telemetry is currently carried in the event payload; centralized streaming metrics, long-term audit storage, and full distributed tracing remain deployment extensions
 
 ## Verified 20K Fraud Benchmark
 
@@ -224,12 +238,12 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 - Advanced graph/community detection
 - Durable/distributed streaming feature state and external idempotency storage
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
-- Production alerting, autoscaling, TLS/authentication, and deeper operational monitoring
+- Production alerting, autoscaling, TLS/authentication, deeper operational monitoring, and distributed tracing
 - External LLM provider integration for the grounded investigation copilot
 - Broader benchmark and scale testing at 100K, 1M, 10M, and 50M synthetic transactions
 
 ## Repository Status
 
-**Current phase:** Phase 33 — stateful real-time feature generation and persisted-model Kafka integration.
+**Current phase:** Phase 34 — streaming inference telemetry.
 
 **Validation status:** Local lint/tests and Docker-based Kafka/model-serving paths are verified. GitHub Actions is used to enforce linting and the test suite; CI corrections are incorporated as they are identified.
