@@ -4,7 +4,7 @@ A production-oriented financial AI/ML platform for transaction fraud detection, 
 
 ## Project Vision
 
-This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, and a grounded investigation copilot.
+This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, durable streaming state, and a grounded investigation copilot.
 
 ## Architecture
 
@@ -57,8 +57,11 @@ Kafka transaction path:
 transaction.created
         |
         v
-Streaming Feature State
-(prior-only customer history)
+Durable Streaming State
+(Redis customer history + idempotency)
+        |
+        v
+Prior-only Feature Generation
         |
         v
 Persisted XGBoost Artifact
@@ -72,11 +75,10 @@ Fraud Probability
 Ensemble Risk Score
         |
         v
-transaction.risk_scored
+Inference Telemetry
         |
         v
-Inference Telemetry
-(feature source, contract, feature count, key history/velocity signals)
+transaction.risk_scored
 ```
 
 ## Phases 1–20
@@ -209,10 +211,8 @@ See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
 - Rolling customer windows cover 7-day behavioral history and 30-day customer statistics
 - Short-horizon transaction velocity features cover 5-minute, 1-hour, and 24-hour windows
 - `prepare()` computes features without mutating history; `commit()` records the transaction only after successful processing
-- Feature generation remains in-memory for reproducible local validation
-- CI includes explicit history-window expiry coverage
-- Docker validation completed with two raw transactions for the same customer; both reached persisted XGBoost inference and produced downstream `transaction.risk_scored` events
-- Explicit production boundary: distributed feature state, durable state storage, partition-aware scaling, and external state recovery remain future deployment extensions
+- Feature generation remains compatible with in-memory state for deterministic tests
+- Docker validation completed with raw transactions for the same customer; generated history was reflected in downstream telemetry
 
 ## Phase 34: Streaming Inference Telemetry
 
@@ -221,7 +221,20 @@ See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
 - Persisted-model events expose feature count and selected prior-history/velocity features without publishing the entire feature vector
 - Telemetry preserves model name, model version, and feature-contract version alongside the scoring result
 - Tests cover telemetry serialization and persisted-model inference metadata
+- Docker validation demonstrated generated telemetry for raw Kafka transactions
 - Explicit production boundary: telemetry is currently carried in the event payload; centralized streaming metrics, long-term audit storage, and full distributed tracing remain deployment extensions
+
+## Phase 35: Durable Distributed Streaming State
+
+- Redis-backed customer feature history for state that survives worker restarts
+- Redis-backed event idempotency keys with bounded retention
+- Stateful feature generation keeps the existing prepare-before-commit leakage boundary while using shared state
+- Worker enables Redis automatically when `REDIS_URL` is configured
+- Docker Compose adds a health-checked Redis service and health-gated worker startup
+- In-memory state implementations remain available for deterministic unit tests and transport-agnostic runs
+- Explicit production boundary: the local stack does not yet configure Redis authentication, TLS, replication, backups, high availability, or operational persistence policies
+
+See [`docs/durable-streaming-state.md`](docs/durable-streaming-state.md).
 
 ## Verified 20K Fraud Benchmark
 
@@ -236,14 +249,14 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 - Random Forest and LightGBM model comparisons
 - Advanced graph/community detection
-- Durable/distributed streaming feature state and external idempotency storage
+- Redis-backed state hardening with authentication, TLS, persistence, replication, and high availability
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
-- Production alerting, autoscaling, TLS/authentication, deeper operational monitoring, and distributed tracing
+- Production alerting, autoscaling, deeper operational monitoring, and distributed tracing
 - External LLM provider integration for the grounded investigation copilot
 - Broader benchmark and scale testing at 100K, 1M, 10M, and 50M synthetic transactions
 
 ## Repository Status
 
-**Current phase:** Phase 34 — streaming inference telemetry.
+**Current phase:** Phase 35 — durable distributed streaming state.
 
-**Validation status:** Local lint/tests and Docker-based Kafka/model-serving paths are verified. GitHub Actions is used to enforce linting and the test suite; CI corrections are incorporated as they are identified.
+**Validation status:** Local lint/tests are passing; Docker Kafka/model-serving validation is verified through Phase 34. Phase 35 Redis-backed state is implemented and awaiting containerized validation.
