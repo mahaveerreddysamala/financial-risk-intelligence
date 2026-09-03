@@ -4,6 +4,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 
 ENTITY_COLUMNS = ("customer_id", "account_id", "device_id", "ip_id", "merchant_id")
@@ -71,31 +72,32 @@ def detect_communities(graph: nx.Graph) -> dict[str, int]:
 
 def add_community_features(df: pd.DataFrame) -> pd.DataFrame:
     """Add community membership, size, and weighted-degree risk features."""
+    required = {"customer_id", *ENTITY_COLUMNS}
+    missing = required.difference(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {sorted(missing)}")
+
     graph = build_entity_graph(df)
     assignments = detect_communities(graph)
     result = df.copy()
 
-    def customer_node(value: object) -> str:
-        return _node("customer", value)
-
     result["community_id"] = result["customer_id"].map(
-        lambda value: assignments.get(customer_node(value), -1)
+        lambda value: assignments.get(_node("customer", value), -1)
     ).astype("int64")
 
-    community_members = pd.Series(result["community_id"], index=result.index).map(
-        result.groupby("community_id")["customer_id"].nunique()
-    )
-    result["community_customer_count"] = community_members.fillna(0).astype("int64")
+    community_sizes = result.groupby("community_id")["customer_id"].nunique()
+    result["community_customer_count"] = result["community_id"].map(community_sizes).astype("int64")
 
-    customer_degree = result["customer_id"].map(
-        {node.split(":", 1)[1]: degree for node, degree in graph.degree(weight="weight") if node.startswith("customer:")}
-    )
-    result["customer_weighted_network_degree"] = customer_degree.fillna(0).astype("float64")
+    customer_degrees = {
+        node.removeprefix("customer:"): float(degree)
+        for node, degree in graph.degree(weight="weight")
+        if node.startswith("customer:")
+    }
+    result["customer_weighted_network_degree"] = result["customer_id"].map(customer_degrees).fillna(0.0)
 
+    # Larger communities with more cross-entity reuse produce a stronger signal.
     result["community_risk_signal"] = (
-        result["community_customer_count"].clip(lower=1).apply(lambda value: float(pd.NA if pd.isna(value) else value))
-    )
-    result["community_risk_signal"] = (
-        result["community_risk_signal"].fillna(1.0).astype(float).apply(lambda value: float(pd.np.log1p(value)) if False else value)
-    )
+        np.log1p(result["community_customer_count"].clip(lower=1).astype(float))
+        + np.log1p(result["customer_weighted_network_degree"].clip(lower=0.0))
+    ).astype(float)
     return result
