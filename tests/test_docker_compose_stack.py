@@ -26,6 +26,8 @@ def test_production_compose_uses_kafka_health_dependency():
 
 def test_worker_image_installs_streaming_dependencies_and_runs_worker():
     content = WORKER_DOCKERFILE.read_text(encoding="utf-8")
+    assert "COPY requirements.txt ." in content
     assert "COPY requirements-streaming.txt ." in content
+    assert "RUN pip install --no-cache-dir -r requirements-streaming.txt" in content
     assert "COPY scripts ./scripts" in content
     assert 'CMD ["python", "scripts/run_streaming_worker.py"]' in content
