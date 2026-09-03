@@ -232,4 +232,4 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 
 **Current phase:** Phase 33 — stateful real-time feature generation and persisted-model Kafka integration.
 
-**Validation status:** Local lint/tests and Docker-based Kafka/model-serving paths are verified. GitHub Actions continues to enforce the test suite and linting; CI fixes are committed as issues are identified.
+**Validation status:** Local lint/tests and Docker-based Kafka/model-serving paths are verified. GitHub Actions is used to enforce linting and the test suite; CI corrections are incorporated as they are identified.
