@@ -54,5 +54,5 @@ def test_commit_expires_history_after_window() -> None:
     service.commit(_payload("TXN-2"), "2026-02-02T00:00:00+00:00")
 
     features = service.prepare(_payload("TXN-3"), "2026-02-02T00:01:00+00:00")
-    assert features["customer_txn_count_7d"] == 0
+    assert features["customer_txn_count_7d"] == 1
     assert features["customer_avg_amount_30d"] == pytest.approx(100.0)
