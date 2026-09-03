@@ -12,6 +12,7 @@ class Settings:
     app_env: str = "development"
     log_level: str = "INFO"
     model_artifact_path: str = "artifacts"
+    model_artifact_file: str = "financial-fraud-xgboost.joblib"
     app_version: str = "0.1.0"
     model_name: str = "financial-risk-ensemble"
     model_version: str = "1.0.0"
@@ -24,6 +25,7 @@ class Settings:
             app_env=os.getenv("APP_ENV", "development"),
             log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
             model_artifact_path=os.getenv("MODEL_ARTIFACT_PATH", "artifacts"),
+            model_artifact_file=os.getenv("MODEL_ARTIFACT_FILE", "financial-fraud-xgboost.joblib"),
             app_version=os.getenv("APP_VERSION", "0.1.0"),
             model_name=os.getenv("MODEL_NAME", "financial-risk-ensemble"),
             model_version=os.getenv("MODEL_VERSION", "1.0.0"),
