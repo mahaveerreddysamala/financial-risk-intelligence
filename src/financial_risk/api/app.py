@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import time
+from contextlib import nullcontext
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -70,7 +71,7 @@ async def request_logging(request: Request, call_next: Any) -> Any:
         api_metrics.increment("api_requests_total")
 
     try:
-        with api_metrics.time() if collect_metrics else _null_context():
+        with api_metrics.time() if collect_metrics else nullcontext():
             response = await call_next(request)
     except Exception:
         elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
@@ -94,16 +95,6 @@ async def request_logging(request: Request, call_next: Any) -> Any:
         },
     )
     return response
-
-
-class _null_context:
-    """Minimal context manager for requests that must not update metrics."""
-
-    def __enter__(self) -> None:
-        return None
-
-    def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
-        return None
 
 
 @app.get("/health")
