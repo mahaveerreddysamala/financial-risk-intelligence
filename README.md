@@ -123,9 +123,20 @@ See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`d
 - Input, scored-output, and dead-letter Kafka topics wired through environment configuration
 - API container with Docker health check and `/health`, `/ready`, `/version`, and `/metrics` endpoints
 - Restart policies for long-running Kafka, API, and worker services
+- Verified local event path from `transaction.created` through the worker to `transaction.risk_scored`
 - Explicit deployment boundary: one local Kafka broker, plaintext listeners, single-partition application topics, and in-memory idempotency are used for reproducible portfolio validation
 
 See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md) for the deployment runbook and production boundary.
+
+## Phase 29: Prometheus + Grafana Observability
+
+- Prometheus collector scraping the FastAPI `/metrics` endpoint on a 5-second interval
+- Grafana provisioned with a Prometheus datasource
+- Pre-provisioned `Financial Risk API` dashboard for request volume, failures, request rate, latency, and HTTP status trends
+- Monitoring services integrated into the Docker Compose stack
+- Explicit production boundary: local dashboards use reproducible demo credentials; persistence, TLS, authentication, alerting, and highly available monitoring remain deployment concerns
+
+See [`docs/prometheus-grafana.md`](docs/prometheus-grafana.md) for the observability runbook and production boundary.
 
 ## Verified 20K Fraud Benchmark
 
@@ -144,7 +155,7 @@ XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating t
 - Embedding-based RAG over financial investigation policies and fraud typologies
 - Controlled investigation tools / agent workflow
 - Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
-- Production metrics backend and dashboards using Prometheus/Grafana or an equivalent observability stack
+- Production alerting and deeper monitoring using Prometheus/Grafana or an equivalent observability stack
 
 ## Scale Targets
 
@@ -152,4 +163,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 28 — Docker Compose production-style application and streaming stack.
+**Current phase:** Phase 29 — Prometheus and Grafana observability integration.
