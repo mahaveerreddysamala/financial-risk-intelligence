@@ -17,6 +17,7 @@ from financial_risk.investigation.copilot import (
     build_copilot_context,
     build_grounded_prompt,
 )
+from financial_risk.models.artifact import PersistedModelService
 from financial_risk.models.service import RiskModelMetadata, RiskModelService
 from financial_risk.streaming.observability import StreamingMetrics
 
@@ -29,11 +30,20 @@ risk_model = RiskModelService(
         feature_contract_version=settings.feature_contract_version,
     )
 )
+persisted_model = PersistedModelService(
+    f"{settings.model_artifact_path.rstrip('/\\')}\\{settings.model_artifact_file}"
+    if "\\" in settings.model_artifact_path
+    else f"{settings.model_artifact_path.rstrip('/{settings.model_artifact_file}')}"  # overwritten below
+)
+# Use pathlib semantics without making artifact loading mandatory at process startup.
+from pathlib import Path
+
+persisted_model = PersistedModelService(Path(settings.model_artifact_path) / settings.model_artifact_file)
 
 app = FastAPI(
     title="Financial Crime & Risk Intelligence API",
     version=settings.app_version,
-    description="REST interface for risk scoring, investigation cases, and grounded copilot context.",
+    description="REST interface for risk scoring, investigation cases, grounded copilot context, and model inference.",
 )
 
 
@@ -42,6 +52,12 @@ class RiskRequest(BaseModel):
     anomaly_score: float = Field(ge=0, le=1)
     network_score: float = Field(ge=0, le=1)
     velocity_score: float = Field(ge=0, le=1)
+
+
+class ModelScoreRequest(BaseModel):
+    """Feature row accepted by the persisted model scoring endpoint."""
+
+    features: dict[str, Any]
 
 
 class InvestigationRequest(RiskRequest):
@@ -125,6 +141,7 @@ def version() -> dict[str, str]:
         "model_name": settings.model_name,
         "model_version": settings.model_version,
         "feature_contract_version": settings.feature_contract_version,
+        "model_artifact_file": settings.model_artifact_file,
     }
 
 
@@ -140,6 +157,23 @@ def metrics() -> PlainTextResponse:
 @app.post("/v1/risk/score")
 def score_risk(request: RiskRequest) -> dict[str, Any]:
     return _risk_payload(request)
+
+
+@app.post("/v1/model/score")
+def score_persisted_model(request: ModelScoreRequest) -> dict[str, Any]:
+    """Run inference using the persisted trained model artifact."""
+    try:
+        prediction = persisted_model.predict(request.features)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        "fraud_probability": prediction.fraud_probability,
+        "model_name": prediction.model_name,
+        "model_version": prediction.model_version,
+        "feature_contract_version": prediction.feature_contract_version,
+    }
 
 
 @app.post("/v1/investigations/cases")
