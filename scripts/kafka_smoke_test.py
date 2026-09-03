@@ -68,15 +68,17 @@ def main() -> None:
     received = None
     deadline = time.time() + 20
     while time.time() < deadline:
-        received = consumer.poll(1.0)
-        if received is not None:
+        candidate = consumer.poll(1.0)
+        if candidate is None:
+            continue
+        if candidate.event_id == event.event_id:
+            received = candidate
             break
+
     consumer.close()
 
     if received is None:
-        raise RuntimeError("Kafka smoke test timed out waiting for the event")
-    if received.event_id != event.event_id:
-        raise RuntimeError("Kafka smoke test received an unexpected event")
+        raise RuntimeError("Kafka smoke test timed out waiting for the published event")
 
     result = process_event(received, publish=None)
     if result.risk_band != "CRITICAL" or result.action != "hold_and_investigate":
