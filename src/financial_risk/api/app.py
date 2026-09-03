@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import time
 from contextlib import nullcontext
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
@@ -31,14 +32,8 @@ risk_model = RiskModelService(
     )
 )
 persisted_model = PersistedModelService(
-    f"{settings.model_artifact_path.rstrip('/\\')}\\{settings.model_artifact_file}"
-    if "\\" in settings.model_artifact_path
-    else f"{settings.model_artifact_path.rstrip('/{settings.model_artifact_file}')}"  # overwritten below
+    Path(settings.model_artifact_path) / settings.model_artifact_file
 )
-# Use pathlib semantics without making artifact loading mandatory at process startup.
-from pathlib import Path
-
-persisted_model = PersistedModelService(Path(settings.model_artifact_path) / settings.model_artifact_file)
 
 app = FastAPI(
     title="Financial Crime & Risk Intelligence API",
