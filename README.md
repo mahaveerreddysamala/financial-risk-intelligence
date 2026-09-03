@@ -89,6 +89,19 @@ See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) and [`doc
 
 See [`docs/kafka-e2e-smoke.md`](docs/kafka-e2e-smoke.md) for the runbook and production boundary.
 
+## Phase 24: Production-Style Streaming Runtime Reliability
+
+- Bounded retries with configurable retry budget and backoff
+- Structured dead-letter records for events that exhaust retries
+- Idempotency boundary that marks events only after successful downstream publication
+- In-process operational counters for received, succeeded, retried, duplicate, and dead-lettered events
+- Structured logging for successful processing, retries, duplicate suppression, and DLQ routing
+- Continuous Kafka worker wiring with configurable input, output, DLQ, and consumer-group topics
+- Transport-agnostic runtime so the same reliability boundary can support Kafka, replay jobs, or other event transports
+- Explicit production boundary: the default idempotency store is in-memory, and exactly-once processing still depends on external state and messaging guarantees
+
+See [`docs/streaming-runtime.md`](docs/streaming-runtime.md) for the reliability model and worker runbook.
+
 ## Verified 20K Fraud Benchmark
 
 | Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
@@ -113,4 +126,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 23 — Kafka end-to-end integration smoke test.
+**Current phase:** Phase 24 — production-style streaming runtime reliability.
