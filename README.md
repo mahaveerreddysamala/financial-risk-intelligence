@@ -77,6 +77,18 @@ See [`docs/kafka-streaming.md`](docs/kafka-streaming.md) for the streaming archi
 
 See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) and [`docs/streaming-worker.md`](docs/streaming-worker.md) for the streaming inference and worker contracts.
 
+## Phase 23: Kafka End-to-End Integration Smoke Test
+
+- Docker Compose environment with a real Apache Kafka broker
+- Isolated Kafka smoke-test container using the optional streaming dependency
+- Producer → broker → consumer verification using the project's event envelope
+- Real-time `process_event()` risk-scoring verification after broker delivery
+- Container health check and dependency ordering before the smoke test starts
+- Repeatable command for local broker integration validation
+- Explicit integration-test boundary: no claim of secured production Kafka, Schema Registry, or multi-broker HA deployment
+
+See [`docs/kafka-e2e-smoke.md`](docs/kafka-e2e-smoke.md) for the runbook and production boundary.
+
 ## Verified 20K Fraud Benchmark
 
 | Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
@@ -101,4 +113,4 @@ The platform will be benchmarked at progressively larger synthetic workloads, in
 
 ## Repository Status
 
-**Current phase:** Phase 22 — real-time risk scoring consumer.
+**Current phase:** Phase 23 — Kafka end-to-end integration smoke test.
