@@ -5,6 +5,7 @@ import logging
 import os
 
 from financial_risk.models.artifact import PersistedModelService
+from financial_risk.streaming.durable_state import RedisIdempotencyStore, RedisStateStore
 from financial_risk.streaming.events import EventEnvelope
 from financial_risk.streaming.feature_state import StreamingFeatureService
 from financial_risk.streaming.kafka import KafkaEventConsumer, KafkaEventProducer
@@ -30,6 +31,8 @@ def main() -> None:
         "MODEL_ARTIFACT_FILE",
         "artifacts/financial-fraud-xgboost.joblib",
     )
+    redis_url = os.getenv("REDIS_URL")
+    redis_prefix = os.getenv("REDIS_KEY_PREFIX", "financial-risk")
 
     consumer = KafkaEventConsumer(
         bootstrap_servers,
@@ -42,7 +45,13 @@ def main() -> None:
         client_id="financial-risk-scoring-worker",
     )
     model_service = PersistedModelService(artifact_path)
-    feature_service = StreamingFeatureService()
+
+    state_store = RedisStateStore(redis_url, prefix=redis_prefix) if redis_url else None
+    if state_store is not None:
+        state_store.ping()
+        logging.getLogger(__name__).info("redis_state_connected prefix=%s", redis_prefix)
+    feature_service = StreamingFeatureService(state_store=state_store)
+    idempotency = RedisIdempotencyStore(state_store) if state_store is not None else None
 
     def publish_result(result) -> None:
         producer.publish(output_topic, scoring_result_event(result))
@@ -69,6 +78,7 @@ def main() -> None:
         processor=process_stream_event,
         publisher=publish_result,
         dead_letter=publish_dead_letter,
+        idempotency=idempotency,
     )
 
     try:
