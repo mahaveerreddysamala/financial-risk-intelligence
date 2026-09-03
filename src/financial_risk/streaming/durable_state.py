@@ -41,7 +41,7 @@ class RedisStateStore:
             return []
         payload = json.loads(value)
         if not isinstance(payload, list):
-            raise ValueError("stored customer history must be a list")
+            raise TypeError("stored customer history must be a list")
         return [dict(item) for item in payload if isinstance(item, dict)]
 
     def set_history(self, customer_id: str, history: list[dict[str, Any]]) -> None:
