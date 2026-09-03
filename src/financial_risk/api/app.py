@@ -17,11 +17,18 @@ from financial_risk.investigation.copilot import (
     build_copilot_context,
     build_grounded_prompt,
 )
-from financial_risk.models.risk_score import combine_risk_signals, decision_from_score
+from financial_risk.models.service import RiskModelMetadata, RiskModelService
 from financial_risk.streaming.observability import StreamingMetrics
 
 logger = configure_logging(settings.log_level)
 api_metrics = StreamingMetrics()
+risk_model = RiskModelService(
+    RiskModelMetadata(
+        model_name=settings.model_name,
+        model_version=settings.model_version,
+        feature_contract_version=settings.feature_contract_version,
+    )
+)
 
 app = FastAPI(
     title="Financial Crime & Risk Intelligence API",
@@ -48,17 +55,19 @@ class CopilotRequest(BaseModel):
 
 
 def _risk_payload(request: RiskRequest) -> dict[str, Any]:
-    score = combine_risk_signals(
+    prediction = risk_model.predict(
         fraud_probability=request.fraud_probability,
         anomaly_score=request.anomaly_score,
         network_score=request.network_score,
         velocity_score=request.velocity_score,
     )
-    decision = decision_from_score(score)
     return {
-        "risk_score": score,
-        "risk_band": decision.level,
-        "action": decision.action,
+        "risk_score": prediction.risk_score,
+        "risk_band": prediction.risk_band,
+        "action": prediction.action,
+        "model_name": prediction.model_name,
+        "model_version": prediction.model_version,
+        "feature_contract_version": prediction.feature_contract_version,
     }
 
 
@@ -110,7 +119,13 @@ def ready() -> dict[str, str]:
 
 @app.get("/version")
 def version() -> dict[str, str]:
-    return {"version": app.version, "environment": settings.app_env}
+    return {
+        "version": app.version,
+        "environment": settings.app_env,
+        "model_name": settings.model_name,
+        "model_version": settings.model_version,
+        "feature_contract_version": settings.feature_contract_version,
+    }
 
 
 @app.get("/metrics", response_class=PlainTextResponse)
