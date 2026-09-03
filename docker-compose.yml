@@ -87,6 +87,9 @@ services:
       KAFKA_OUTPUT_TOPIC: financial-risk-scored
       KAFKA_DLQ_TOPIC: financial-risk-dlq
       KAFKA_GROUP_ID: financial-risk-scoring-worker
+      MODEL_ARTIFACT_FILE: /app/artifacts/financial-fraud-xgboost.joblib
+    volumes:
+      - ./artifacts:/app/artifacts:ro
     depends_on:
       kafka-init:
         condition: service_healthy
