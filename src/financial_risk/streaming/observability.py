@@ -5,7 +5,7 @@ import time
 from collections import Counter
 from dataclasses import dataclass, field
 from threading import Lock
-from typing import Any
+from typing import Any, Self
 
 
 @dataclass
@@ -32,7 +32,7 @@ class StreamingMetrics:
         with self._lock:
             self._latencies_ms.append(float(value))
 
-    def time(self) -> "LatencyTimer":
+    def time(self) -> LatencyTimer:
         """Return a context manager that records elapsed latency."""
         return LatencyTimer(self)
 
@@ -65,8 +65,7 @@ class StreamingMetrics:
         lines.extend(
             [
                 f"{prefix}_processing_latency_ms_count {latency['count']}",
-                f"{prefix}_processing_latency_ms_sum "
-                f"{latency['avg'] * latency['count']}",
+                f"{prefix}_processing_latency_ms_sum {latency['avg'] * latency['count']}",
                 f"{prefix}_processing_latency_ms_max {latency['max']}",
                 f"{prefix}_processing_latency_ms_p95 {latency['p95']}",
             ]
@@ -81,7 +80,7 @@ class LatencyTimer:
         self._metrics = metrics
         self._started = 0.0
 
-    def __enter__(self) -> "LatencyTimer":
+    def __enter__(self) -> Self:
         self._started = time.perf_counter()
         return self
 
@@ -94,7 +93,7 @@ def _percentile(values: list[float], quantile: float) -> float:
     """Return the nearest-rank percentile for a sorted list."""
     if not values:
         return 0.0
-    index = max(0, min(len(values) - 1, int(round((len(values) - 1) * quantile))))
+    index = max(0, min(len(values) - 1, round((len(values) - 1) * quantile)))
     return values[index]
 
 
