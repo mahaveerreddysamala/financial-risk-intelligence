@@ -36,17 +36,18 @@ MODEL_FEATURE_COLUMNS = [
 
 
 class StreamingFeatureService:
-    """Generate model features from prior transaction history in memory.
+    """Generate model features from prior transaction history.
 
     The current transaction is scored before it is committed to history, so every
     feature is based only on observations available before that transaction.
     """
 
-    def __init__(self, history_days: int = 30) -> None:
+    def __init__(self, history_days: int = 30, state_store: Any | None = None) -> None:
         if history_days <= 0:
             raise ValueError("history_days must be greater than zero")
         self.history_days = history_days
         self._history: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        self._state_store = state_store
 
     @staticmethod
     def _timestamp(value: Any) -> pd.Timestamp:
@@ -94,24 +95,37 @@ class StreamingFeatureService:
             "channel": str(event_payload["channel"]),
         }
 
+    def _get_history(self, customer_id: str) -> list[dict[str, Any]]:
+        if self._state_store is not None:
+            return self._state_store.get_history(customer_id)
+        return self._history[customer_id]
+
     def prepare(self, event_payload: dict[str, Any], occurred_at: str) -> dict[str, Any]:
         """Build model features without mutating history."""
         current = self._base_row(event_payload, occurred_at)
         customer_id = current["customer_id"]
         current_time = current["timestamp"]
         cutoff = current_time - pd.Timedelta(days=self.history_days)
-        prior = [row for row in self._history[customer_id] if row["timestamp"] >= cutoff]
+        prior = [row for row in self._get_history(customer_id) if self._timestamp(row["timestamp"]) >= cutoff]
         frame = pd.DataFrame([*prior, current])
+        frame["timestamp"] = pd.to_datetime(frame["timestamp"], utc=True)
         frame = add_behavioral_features(frame)
         frame = add_velocity_features(frame)
         result = frame.iloc[-1]
-        return {column: result[column].item() if hasattr(result[column], "item") else result[column] for column in MODEL_FEATURE_COLUMNS}
+        return {
+            column: result[column].item() if hasattr(result[column], "item") else result[column]
+            for column in MODEL_FEATURE_COLUMNS
+        }
 
     def commit(self, event_payload: dict[str, Any], occurred_at: str) -> None:
         """Commit one successfully processed transaction to feature history."""
         current = self._base_row(event_payload, occurred_at)
         customer_id = current["customer_id"]
         cutoff = current["timestamp"] - pd.Timedelta(days=self.history_days)
-        history = self._history[customer_id]
+        history = [row for row in self._get_history(customer_id) if self._timestamp(row["timestamp"]) >= cutoff]
         history.append(current)
-        self._history[customer_id] = [row for row in history if row["timestamp"] >= cutoff]
+        history = [row for row in history if self._timestamp(row["timestamp"]) >= cutoff]
+        if self._state_store is not None:
+            self._state_store.set_history(customer_id, history)
+        else:
+            self._history[customer_id] = history
