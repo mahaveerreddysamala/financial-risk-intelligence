@@ -13,6 +13,9 @@ class Settings:
     log_level: str = "INFO"
     model_artifact_path: str = "artifacts"
     app_version: str = "0.1.0"
+    model_name: str = "financial-risk-ensemble"
+    model_version: str = "1.0.0"
+    feature_contract_version: str = "1.0"
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -22,6 +25,9 @@ class Settings:
             log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
             model_artifact_path=os.getenv("MODEL_ARTIFACT_PATH", "artifacts"),
             app_version=os.getenv("APP_VERSION", "0.1.0"),
+            model_name=os.getenv("MODEL_NAME", "financial-risk-ensemble"),
+            model_version=os.getenv("MODEL_VERSION", "1.0.0"),
+            feature_contract_version=os.getenv("FEATURE_CONTRACT_VERSION", "1.0"),
         )
 
 
