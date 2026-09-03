@@ -63,7 +63,10 @@ services:
       APP_ENV: production
       LOG_LEVEL: INFO
       MODEL_ARTIFACT_PATH: /app/artifacts
+      MODEL_ARTIFACT_FILE: financial-fraud-xgboost.joblib
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    volumes:
+      - ./artifacts:/app/artifacts:ro
     ports:
       - "8000:8000"
     depends_on:
