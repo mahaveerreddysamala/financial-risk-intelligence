@@ -5,6 +5,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 from financial_risk.investigation.case_builder import build_investigation_case, case_to_dict
+from financial_risk.models.artifact import PersistedModelService
 from financial_risk.models.risk_score import RiskDecision, combine_risk_signals, decision_from_score
 from financial_risk.streaming.events import EventEnvelope
 
@@ -24,6 +25,9 @@ class RiskScoringResult:
     network_risk: float
     velocity_risk: float
     investigation_case: dict[str, Any] | None = None
+    model_name: str | None = None
+    model_version: str | None = None
+    feature_contract_version: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-serializable scoring result."""
@@ -48,20 +52,37 @@ def score_transaction_event(
     event: EventEnvelope,
     *,
     build_case: bool = True,
+    model_service: PersistedModelService | None = None,
 ) -> RiskScoringResult:
-    """Score one validated transaction event using the ensemble risk engine.
+    """Score one transaction event using the persisted model when features are supplied.
 
-    The streaming boundary expects upstream feature generation/model inference to
-    supply normalized ``fraud_probability``, ``anomaly_score``, ``network_risk``,
-    and ``velocity_risk`` values in the event payload. This keeps the Kafka consumer
-    transport-focused while reusing the established decisioning and case layers.
+    When ``model_features`` is present and a ``model_service`` is provided, the
+    persisted XGBoost artifact supplies ``fraud_probability``. Older events that
+    already contain ``fraud_probability`` remain supported as a compatibility path.
     """
     if event.event_type != "transaction.created":
         raise ValueError(f"unsupported event_type: {event.event_type}")
 
     payload = event.payload
     transaction_id = str(payload.get("transaction_id") or event.event_id)
-    fraud_probability = _signal(payload, "fraud_probability")
+
+    model_name = None
+    model_version = None
+    feature_contract_version = None
+    model_features = payload.get("model_features")
+    if model_features is not None:
+        if model_service is None:
+            raise ValueError("model_features require a persisted model service")
+        if not isinstance(model_features, dict):
+            raise TypeError("model_features must be a dictionary")
+        prediction = model_service.predict(model_features)
+        fraud_probability = prediction.fraud_probability
+        model_name = prediction.model_name
+        model_version = prediction.model_version
+        feature_contract_version = prediction.feature_contract_version
+    else:
+        fraud_probability = _signal(payload, "fraud_probability")
+
     anomaly_score = _signal(payload, "anomaly_score")
     network_risk = _signal(payload, "network_risk")
     velocity_risk = _signal(payload, "velocity_risk")
@@ -100,6 +121,9 @@ def score_transaction_event(
         network_risk=network_risk,
         velocity_risk=velocity_risk,
         investigation_case=investigation_case,
+        model_name=model_name,
+        model_version=model_version,
+        feature_contract_version=feature_contract_version,
     )
 
 
