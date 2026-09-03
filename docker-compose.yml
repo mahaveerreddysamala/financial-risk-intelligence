@@ -47,7 +47,7 @@ services:
         --replication-factor 1;
         sleep 365d
     healthcheck:
-      test: ["CMD-SHELL", "topics=$(/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list 2>/dev/null); echo \"$topics\" | grep -Fx 'financial-risk-events' >/dev/null && echo \"$topics\" | grep -Fx 'financial-risk-scored' >/dev/null && echo \"$topics\" | grep -Fx 'financial-risk-dlq' >/dev/null"]
+      test: ["CMD-SHELL", "topics=$(/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list 2>/dev/null); echo \"$$topics\" | grep -Fx 'financial-risk-events' >/dev/null && echo \"$$topics\" | grep -Fx 'financial-risk-scored' >/dev/null && echo \"$$topics\" | grep -Fx 'financial-risk-dlq' >/dev/null"]
       interval: 2s
       timeout: 10s
       retries: 15
