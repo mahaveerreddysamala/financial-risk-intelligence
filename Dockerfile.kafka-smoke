@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY requirements.txt .
+COPY requirements-streaming.txt .
+RUN pip install --no-cache-dir -r requirements-streaming.txt
+COPY pyproject.toml .
+COPY src ./src
+COPY scripts ./scripts
+ENV PYTHONPATH=/app/src
+CMD ["python", "scripts/kafka_smoke_test.py"]
