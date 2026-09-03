@@ -18,7 +18,7 @@ def _wait_for_broker(bootstrap_servers: str, attempts: int = 30) -> None:
             producer = KafkaEventProducer(bootstrap_servers)
             producer.flush(1.0)
             return
-        except Exception as exc:  # pragma: no cover - integration environment only
+        except (OSError, RuntimeError, ValueError) as exc:  # pragma: no cover - integration environment only
             last_error = exc
             time.sleep(1)
     raise RuntimeError(f"Kafka broker did not become ready: {last_error}")
