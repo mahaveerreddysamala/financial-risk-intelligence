@@ -24,13 +24,19 @@ class EventConsumer(Protocol):
 
 
 class IdempotencyStore(Protocol):
-    """Minimal contract for duplicate-event suppression."""
+    """Contract for duplicate suppression and distributed event claims."""
 
     def contains(self, event_id: str) -> bool:
         """Return whether an event has already been completed."""
 
+    def claim(self, event_id: str) -> bool:
+        """Atomically claim an event for processing."""
+
     def mark(self, event_id: str) -> None:
         """Record an event as successfully completed."""
+
+    def release(self, event_id: str) -> None:
+        """Release an in-progress event claim after processing failure."""
 
 
 @dataclass
@@ -38,14 +44,27 @@ class InMemoryIdempotencyStore:
     """Simple process-local idempotency store for tests and local runs."""
 
     _event_ids: set[str] = field(default_factory=set)
+    _claimed_ids: set[str] = field(default_factory=set)
 
     def contains(self, event_id: str) -> bool:
         """Return whether the event has already been completed."""
         return event_id in self._event_ids
 
+    def claim(self, event_id: str) -> bool:
+        """Atomically claim an event within this process."""
+        if event_id in self._event_ids or event_id in self._claimed_ids:
+            return False
+        self._claimed_ids.add(event_id)
+        return True
+
     def mark(self, event_id: str) -> None:
         """Mark an event as successfully completed."""
+        self._claimed_ids.discard(event_id)
         self._event_ids.add(event_id)
+
+    def release(self, event_id: str) -> None:
+        """Release an in-progress event claim."""
+        self._claimed_ids.discard(event_id)
 
 
 @dataclass(frozen=True)
@@ -127,11 +146,11 @@ class StreamingRuntime:
         self.stats = StreamingStats()
 
     def process_event(self, event: EventEnvelope) -> bool:
-        """Process one event, record metrics, retry failures, and route failures to DLQ."""
+        """Process one event with an atomic claim, retries, metrics, and DLQ handling."""
         self.stats.received += 1
         self.metrics.increment("events_received")
 
-        if self.idempotency.contains(event.event_id):
+        if self.idempotency.contains(event.event_id) or not self.idempotency.claim(event.event_id):
             self.stats.duplicates += 1
             self.metrics.increment("events_duplicates")
             self.logger.info("stream_event_duplicate event_id=%s", event.event_id)
@@ -171,6 +190,7 @@ class StreamingRuntime:
                     continue
                 break
 
+        self.idempotency.release(event.event_id)
         assert last_error is not None
         record = DeadLetterRecord(
             event_id=event.event_id,
