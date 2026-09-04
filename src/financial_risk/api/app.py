@@ -6,13 +6,14 @@ from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from financial_risk.api.config import settings
 from financial_risk.api.observability import configure_logging
 from financial_risk.investigation.case_builder import build_investigation_case, case_to_dict
+from financial_risk.investigation.case_store import VALID_STATUSES, case_store
 from financial_risk.investigation.copilot import (
     RetrievalResult,
     build_copilot_context,
@@ -57,6 +58,11 @@ class ModelScoreRequest(BaseModel):
 
 class InvestigationRequest(RiskRequest):
     transaction: dict[str, Any]
+
+
+class CaseStatusRequest(BaseModel):
+    status: str
+    note: str | None = Field(default=None, max_length=1000)
 
 
 class CopilotRequest(BaseModel):
@@ -171,8 +177,11 @@ def score_persisted_model(request: ModelScoreRequest) -> dict[str, Any]:
     }
 
 
-@app.post("/v1/investigations/cases")
-def create_investigation_case(request: InvestigationRequest) -> dict[str, Any]:
+@app.post("/v1/investigations/cases", status_code=201)
+def create_investigation_case(
+    request: InvestigationRequest,
+    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key", max_length=200),
+) -> dict[str, Any]:
     risk = _risk_payload(request)
     case = build_investigation_case(
         request.transaction,
@@ -184,19 +193,91 @@ def create_investigation_case(request: InvestigationRequest) -> dict[str, Any]:
         risk_band=risk["risk_band"],
         action=risk["action"],
     )
-    return case_to_dict(case)
+    stored, replayed = case_store.create(case_to_dict(case), idempotency_key=idempotency_key)
+    response = stored.to_dict()
+    response["idempotent_replay"] = replayed
+    return response
+
+
+@app.get("/v1/investigations/cases")
+def list_investigation_cases(
+    status: str | None = Query(default=None),
+    risk_band: str | None = Query(default=None),
+    transaction_id: str | None = Query(default=None),
+    offset: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
+) -> dict[str, Any]:
+    if status is not None:
+        status = status.upper()
+        if status not in VALID_STATUSES:
+            raise HTTPException(status_code=422, detail=f"unsupported status: {status}")
+    cases, total = case_store.list(
+        status=status,
+        risk_band=risk_band,
+        transaction_id=transaction_id,
+        offset=offset,
+        limit=limit,
+    )
+    return {
+        "items": [case.to_dict() for case in cases],
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }
+
+
+@app.get("/v1/investigations/cases/{case_id}")
+def get_investigation_case(case_id: str) -> dict[str, Any]:
+    case = case_store.get(case_id)
+    if case is None:
+        raise HTTPException(status_code=404, detail="investigation case not found")
+    return case.to_dict()
+
+
+@app.patch("/v1/investigations/cases/{case_id}/status")
+def update_investigation_case_status(
+    case_id: str,
+    request: CaseStatusRequest,
+    x_actor: str = Header(default="api", alias="X-Actor", max_length=200),
+) -> dict[str, Any]:
+    status = request.status.upper()
+    if status not in VALID_STATUSES:
+        raise HTTPException(status_code=422, detail=f"unsupported status: {status}")
+    try:
+        case = case_store.transition(case_id, status, actor=x_actor, note=request.note)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if case is None:
+        raise HTTPException(status_code=404, detail="investigation case not found")
+    return case.to_dict()
+
+
+@app.get("/v1/investigations/cases/{case_id}/audit")
+def get_investigation_case_audit(case_id: str) -> dict[str, Any]:
+    audit_log = case_store.audit(case_id)
+    if audit_log is None:
+        raise HTTPException(status_code=404, detail="investigation case not found")
+    return {"case_id": case_id, "events": [event.__dict__ for event in audit_log]}
 
 
 @app.post("/v1/copilot/prompt")
 def build_copilot_prompt(request: CopilotRequest) -> dict[str, Any]:
+    if case_store.get(request.case_id) is None:
+        raise HTTPException(status_code=404, detail="investigation case not found")
     references = []
     for item in request.references:
         if not {"document_id", "score", "text"}.issubset(item):
             raise HTTPException(status_code=422, detail="references require document_id, score, and text")
+        try:
+            score = float(item["score"])
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail="reference score must be numeric") from exc
+        if not 0 <= score <= 1:
+            raise HTTPException(status_code=422, detail="reference score must be between 0 and 1")
         references.append(
             RetrievalResult(
                 document_id=str(item["document_id"]),
-                score=float(item["score"]),
+                score=score,
                 text=str(item["text"]),
             )
         )
