@@ -36,7 +36,11 @@ def _preprocessor() -> ColumnTransformer:
     return ColumnTransformer(
         transformers=[
             ("numeric", "passthrough", NUMERIC_FEATURES),
-            ("categorical", OneHotEncoder(handle_unknown="ignore"), CATEGORICAL_FEATURES),
+            (
+                "categorical",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=False, dtype="float32"),
+                CATEGORICAL_FEATURES,
+            ),
         ],
         remainder="drop",
     )
@@ -69,8 +73,9 @@ def build_lightgbm(scale_pos_weight: float = 1.0) -> Pipeline:
         objective="binary",
         scale_pos_weight=max(scale_pos_weight, 1.0),
         random_state=42,
-        n_jobs=4,
+        n_jobs=1,
         verbosity=-1,
+        force_col_wise=True,
     )
     return Pipeline([("preprocess", _preprocessor()), ("model", model)])
 
