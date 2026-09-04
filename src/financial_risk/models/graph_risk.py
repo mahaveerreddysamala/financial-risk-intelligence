@@ -26,22 +26,26 @@ def integrate_graph_risk(
     *,
     fraud_weight: float = 0.50,
     anomaly_weight: float = 0.20,
-    network_weight: float = 0.15,
+    network_weight: float = 0.20,
     velocity_weight: float = 0.10,
     community_weight: float = 0.05,
 ) -> GraphRiskAdjustment:
-    """Blend network and community signals into the operational risk score.
+    """Blend core risk signals, then apply a bounded community-risk uplift.
 
-    Community risk is an externally derived graph signal normalized to [0, 1].
-    The default weights preserve fraud-model dominance while making connected
-    entity and community intelligence part of the final decision.
+    The four core signal weights must sum to 1.0 and preserve the existing
+    ensemble semantics. Community risk is an additive graph uplift applied
+    after the base score, capped at 1.0. This keeps the fraud model dominant
+    while allowing connected-entity intelligence to change the final action.
     """
     signals = [fraud_probability, anomaly_score, network_score, velocity_score, community_risk]
     if any(not 0.0 <= value <= 1.0 for value in signals):
         raise ValueError("All graph risk signals must be between 0 and 1")
-    weights = [fraud_weight, anomaly_weight, network_weight, velocity_weight, community_weight]
-    if any(weight < 0.0 for weight in weights) or abs(sum(weights) - 1.0) > 1e-9:
-        raise ValueError("Graph risk weights must be non-negative and sum to 1")
+
+    core_weights = [fraud_weight, anomaly_weight, network_weight, velocity_weight]
+    if any(weight < 0.0 for weight in core_weights) or abs(sum(core_weights) - 1.0) > 1e-9:
+        raise ValueError("Core graph risk weights must be non-negative and sum to 1")
+    if not 0.0 <= community_weight <= 1.0:
+        raise ValueError("community_weight must be between 0 and 1")
 
     base_score = combine_risk_signals(
         fraud_probability,
@@ -53,13 +57,7 @@ def integrate_graph_risk(
         network_weight=network_weight,
         velocity_weight=velocity_weight,
     )
-    adjusted_score = float(
-        fraud_probability * fraud_weight
-        + anomaly_score * anomaly_weight
-        + network_score * network_weight
-        + velocity_score * velocity_weight
-        + community_risk * community_weight
-    )
+    adjusted_score = float(base_score + community_risk * community_weight)
     adjusted_score = max(0.0, min(1.0, adjusted_score))
     return GraphRiskAdjustment(
         base_score=base_score,
