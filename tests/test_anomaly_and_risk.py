@@ -22,6 +22,19 @@ def test_anomaly_detector_returns_bounded_scores() -> None:
     assert result.flags.dtype == bool
 
 
+def test_anomaly_score_is_independent_of_scoring_batch() -> None:
+    data = build_feature_table(generate_transactions(1_500, seed=42))
+    train = data.iloc[:1_000].copy()
+    test = data.iloc[1_000:].copy()
+
+    scaler, detector = fit_anomaly_detector(train)
+    batch_score = score_anomalies(test, scaler, detector).scores[0]
+    single_score = score_anomalies(test.iloc[[0]], scaler, detector).scores[0]
+
+    assert single_score == pytest.approx(batch_score)
+    assert single_score > 0.0
+
+
 def test_risk_score_and_decisions() -> None:
     score = combine_risk_signals(0.9, 0.8, 0.7, 0.6)
     assert score == pytest.approx(0.81)
