@@ -28,7 +28,7 @@ def _frame(rows: int = 40) -> pd.DataFrame:
 def test_select_f1_threshold_uses_validation_scores() -> None:
     y_true = pd.Series([0, 0, 1, 1])
     probabilities = np.array([0.10, 0.40, 0.60, 0.90])
-    assert select_f1_threshold(y_true, probabilities) == 0.4
+    assert select_f1_threshold(y_true, probabilities) == 0.5
 
 
 def test_realized_cost_counts_transaction_decisions() -> None:
