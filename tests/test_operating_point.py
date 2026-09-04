@@ -21,7 +21,7 @@ def _frame(rows: int = 40) -> pd.DataFrame:
     for feature in CATEGORICAL_FEATURES:
         frame[feature] = "unknown"
     frame["amount"] = np.arange(1, rows + 1, dtype=float)
-    frame["is_fraud"] = (frame["amount"] > rows * 0.7).astype(int)
+    frame["is_fraud"] = (frame["amount"] % 5 == 0).astype(int)
     return frame
 
 
