@@ -177,7 +177,7 @@ def score_persisted_model(request: ModelScoreRequest) -> dict[str, Any]:
     }
 
 
-@app.post("/v1/investigations/cases", status_code=201)
+@app.post("/v1/investigations/cases")
 def create_investigation_case(
     request: InvestigationRequest,
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key", max_length=200),
@@ -262,8 +262,6 @@ def get_investigation_case_audit(case_id: str) -> dict[str, Any]:
 
 @app.post("/v1/copilot/prompt")
 def build_copilot_prompt(request: CopilotRequest) -> dict[str, Any]:
-    if case_store.get(request.case_id) is None:
-        raise HTTPException(status_code=404, detail="investigation case not found")
     references = []
     for item in request.references:
         if not {"document_id", "score", "text"}.issubset(item):
