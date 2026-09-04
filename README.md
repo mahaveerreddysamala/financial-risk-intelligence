@@ -1,310 +1,423 @@
 # Financial Crime & Risk Intelligence Platform
 
-A production-oriented financial AI/ML platform for transaction fraud detection, anomaly detection, graph-based risk intelligence, explainable AI, MLOps, real-time streaming, and GenAI-assisted investigations.
+> **Enterprise-style fraud, anomaly, graph-risk, streaming, MLOps, and GenAI investigation platform built as a senior Data Scientist / AI-ML engineering portfolio project.**
 
-## Project Vision
+[![CI](https://github.com/mahaveerreddysamala/financial-risk-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/mahaveerreddysamala/financial-risk-intelligence/actions)
 
-This project is built as a senior-level Data Scientist / AI-ML portfolio system rather than a single fraud-classification notebook. The platform combines behavioral machine learning, unsupervised anomaly detection, network risk signals, graph/community intelligence, cost-sensitive decisioning, explainability, MLOps, real-time event processing, persisted model serving, durable distributed state, and a grounded investigation copilot.
+## Executive Overview
+
+Financial Risk Intelligence is a production-oriented reference platform for detecting suspicious financial transactions and turning model signals into an investigator-ready workflow.
+
+Instead of stopping at a fraud-classification model, the platform connects the full lifecycle:
+
+**transaction ingestion → data contracts → leakage-aware features → ML/anomaly scoring → graph intelligence → risk decisioning → explainability → investigation cases → grounded RAG copilot → API/streaming operations → monitoring → cloud-ready infrastructure**
+
+The repository emphasizes **reproducibility, explicit production boundaries, model governance, distributed-state safety, observability, and security**. Synthetic data is used throughout; benchmark results are portfolio measurements rather than production fraud claims.
+
+---
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    A[Financial Transactions] --> B[Batch / Kafka Ingestion]
+    B --> C[Data Quality & Contracts]
+    C --> D[Leakage-Aware Feature Engineering]
+
+    D --> E[Supervised ML\nXGBoost]
+    D --> F[Anomaly Detection\nIsolation Forest]
+    D --> G[Graph Intelligence\nNetwork + Communities]
+    D --> H[Velocity Signals]
+
+    E --> I[Risk Decision Engine]
+    F --> I
+    G --> I
+    H --> I
+
+    I --> J{Risk Band}
+    J -->|LOW / MEDIUM| K[Monitor / Approve]
+    J -->|HIGH / CRITICAL| L[Investigation Case]
+
+    L --> M[Evidence + SHAP Reason Codes]
+    M --> N[RAG Investigation Copilot]
+    N --> O[Analyst Brief + Grounded Prompt]
+
+    B --> P[Durable Streaming State]
+    P --> D
+    I --> Q[Risk-Scored Event]
+    Q --> R[Telemetry / Metrics]
+
+    S[FastAPI] --> I
+    R --> T[Prometheus / Grafana]
+
+    U[AWS Terraform Foundation] -.-> S
+    U -.-> P
+    U -.-> T
+```
+
+### Streaming path
+
 ```text
-Financial Transactions
-        |
-        +--> Batch / Kafka Streaming Ingestion
-        |
-        v
-Data Quality + Contracts
-        |
-        v
-Leakage-Aware Feature Engineering
-        |
-        +-------------------+-------------------+
-        |                   |                   |
-        v                   v                   v
-Supervised ML       Anomaly Detection    Graph Risk
-XGBoost             Isolation Forest      Network + Communities
-        |                   |                   |
-        +-------------------+-------------------+
-                            |
-                            v
-                  Risk Scoring / Decisioning
-                            |
-               +------------+------------+
-               |                         |
-               v                         v
-            Approve                 Review / Hold
-                                         |
-                                         v
-                               SHAP + Reason Codes
-                                         |
-                                         v
-                              Investigation Case
-                                         |
-                                         v
-                              GenAI Copilot + RAG
-                                         |
-                                         v
-                                  FastAPI Service
-                                         |
-                             +-----------+-----------+
-                             |                       |
-                             v                       v
-                       Prometheus              Grafana
-
-Kafka transaction path:
-
 transaction.created
-        |
-        v
+      │
+      ▼
 Kafka partition key = customer_id
-        |
-        v
-Consumer Group (scalable workers)
-        |
-        v
-Durable Streaming State
-(Redis customer history + idempotency)
-        |
-        v
+      │
+      ▼
+Consumer Group / Horizontal Workers
+      │
+      ▼
+Redis-backed Feature + Idempotency State
+      │
+      ▼
 Prior-only Feature Generation
-        |
-        v
+      │
+      ▼
 Persisted XGBoost Artifact
-        |
-        v
-Fraud Probability
-        |
-        +--> Anomaly + Network + Velocity Signals
-        |
-        v
-Ensemble Risk Score
-        |
-        v
-Inference Telemetry
-        |
-        v
+      │
+      ├── Fraud Probability
+      ├── Anomaly Signal
+      ├── Network Risk
+      └── Velocity Signal
+      │
+      ▼
+Ensemble Risk Decision
+      │
+      ▼
 transaction.risk_scored
 ```
 
-## Phases 1–20
+---
 
-The repository includes deterministic synthetic data generation, data contracts, leakage-aware feature engineering, fraud modeling, anomaly detection, graph intelligence, calibration and cost-sensitive decisioning, monitoring, model registry, investigation cases, grounded GenAI/RAG, FastAPI service endpoints, containerization, production-readiness checks, MLflow lifecycle integration, executable MLflow training, model-quality gates, CI enforcement, and Airflow orchestration.
+## Key Engineering Capabilities
 
-## Phase 21: Kafka Streaming Event Layer
+### Risk & Machine Learning
+- Supervised fraud detection with XGBoost
+- Logistic Regression baseline and model comparison
+- Unsupervised anomaly detection
+- Cost-sensitive risk decisioning
+- Threshold selection and quality gates
+- Champion/challenger model selection
+- Model registry and automated promotion controls
+- Persisted model artifact serving with feature-contract validation
+- SHAP-based explainability and reason codes
 
-- Versioned, transport-neutral event envelope for financial transaction events
-- Stable event IDs suitable for Kafka keys and downstream idempotency strategies
-- Explicit event type, schema version, UTC occurrence time, and JSON payload
-- Optional Confluent Kafka producer and consumer adapters loaded lazily
-- Consumer configuration with manual offset commits for process-then-commit workflows
-- Streaming dependency isolated from the core CI/runtime dependency set
+### Graph Risk Intelligence
+- Heterogeneous entity graph across customers, accounts, devices, IPs, and merchants
+- Weighted network relationships and entity-reuse risk
+- Community detection and community-level risk signals
+- Incremental online community tracking
+- Streaming graph enrichment
+- Graph signals integrated directly into final risk decisioning
 
-See [`docs/kafka-streaming.md`](docs/kafka-streaming.md) for the streaming architecture and reliability contract.
+### Real-Time Data Engineering
+- Versioned event envelopes
+- Kafka producer/consumer boundaries
+- Customer-keyed partitioning for ordering
+- Consumer-group horizontal scaling
+- Redis-backed durable feature state
+- Atomic idempotency claims and leases
+- Retry and dead-letter handling
+- Prior-only feature generation to prevent temporal leakage
+- Downstream risk-scored events and inference telemetry
 
-## Phase 22: Real-Time Risk Scoring Consumer
+### Investigation & GenAI
+- Persistent investigation case lifecycle
+- Idempotent case creation
+- Investigator status transitions and audit events
+- Evidence provenance
+- TF-IDF reference retrieval
+- Retrieval confidence and limitations
+- Grounded analyst briefs
+- RAG prompt construction with explicit anti-hallucination constraints
+- Clear separation between AI assistance and analyst decision-making
 
-- Reuses the established ensemble fraud/anomaly/network/velocity risk engine
-- Validates normalized streaming risk signals before decisioning
-- Produces operational LOW, MEDIUM, HIGH, and CRITICAL outcomes
-- Automatically assembles an evidence-grounded investigation case for CRITICAL events
-- Preserves event ID, transaction ID, and event timestamp for traceability
-- Produces a `transaction.risk_scored` downstream event envelope
-- Adds a transport-neutral `process_event()` worker boundary for Kafka consumers, replay jobs, and test harnesses
-- Explicitly avoids claims of a live broker, exactly-once semantics, or persisted model serving until those components are deployed and verified
+### Production Engineering
+- FastAPI service layer
+- Dockerized API and streaming worker
+- Prometheus-compatible application metrics
+- Grafana dashboards
+- Health/readiness/version endpoints
+- Structured operational logging
+- CI with automated tests and Ruff
+- Terraform AWS foundation
+- Environment-driven configuration
+- Non-root containers
+- Security and production-readiness documentation
 
-See [`docs/real-time-risk-scoring.md`](docs/real-time-risk-scoring.md) for the streaming inference contract.
+---
 
-## Phase 23: Kafka End-to-End Integration Smoke Test
+## Model Governance
 
-- Docker Compose environment with a real Apache Kafka broker
-- Isolated Kafka smoke-test container using the optional streaming dependency
-- Producer → broker → consumer verification using the project's event envelope
-- Real-time `process_event()` risk-scoring verification after broker delivery
-- Container health check and dependency ordering before the smoke test starts
-- Repeatable command for local broker integration validation
-- Explicit integration-test boundary: no claim of secured production Kafka, Schema Registry, or multi-broker HA deployment
+The model lifecycle is treated as an engineering workflow rather than a notebook exercise:
 
-See [`docs/kafka-e2e-smoke.md`](docs/kafka-e2e-smoke.md) for the runbook and production boundary.
+```text
+Candidate Models
+      │
+      ▼
+Quality / Performance Gates
+      │
+      ▼
+Champion vs Challenger Evaluation
+      │
+      ▼
+Registry + Version Metadata
+      │
+      ▼
+Promotion Decision
+      │
+      ▼
+Persisted Serving Artifact
+      │
+      ▼
+Runtime Monitoring
+      │
+      ├── Drift
+      ├── Performance
+      └── Calibration
+```
 
-## Phase 24: Production-Style Streaming Runtime Reliability
+The project also includes monitoring and quality-gate utilities so model promotion is tied to measurable checks instead of manual assumptions.
 
-- Bounded retries with configurable retry budget and backoff
-- Structured dead-letter records for events that exhaust retries
-- Idempotency boundary that marks events only after successful downstream publication
-- In-process operational counters for received, succeeded, retried, duplicate, and dead-lettered events
-- Structured logging for successful processing, retries, duplicate suppression, and DLQ routing
-- Continuous Kafka worker wiring with configurable input, output, DLQ, and consumer-group topics
-- Transport-agnostic runtime so the same reliability boundary can support Kafka, replay jobs, or other event transports
-- Explicit production boundary: the default idempotency store is in-memory, and exactly-once processing still depends on external state and messaging guarantees
+---
 
-See [`docs/streaming-runtime.md`](docs/streaming-runtime.md) for the reliability model and worker runbook.
+## Investigation Workflow
 
-## Phase 25: Streaming Observability & Operational Metrics
+A suspicious transaction can move through an auditable investigation lifecycle:
 
-- Thread-safe in-process counters for streaming throughput and outcomes
-- Processing-latency timing with count, average, maximum, and p95 summaries
-- Risk-band counters for LOW, MEDIUM, HIGH, and CRITICAL decisions
-- Poll-timeout, failure, retry, duplicate, success, and dead-letter counters
-- Prometheus-compatible text exposition for integration with a metrics collector
-- Metrics embedded in the transport-agnostic runtime without changing the event contract
-- FastAPI `/metrics` endpoint exposing Prometheus-compatible application metrics
-- Explicit production boundary: the current metrics backend is in-process; persistent metrics storage and dashboards remain deployment concerns
+```text
+Risk Decision
+     │
+     ▼
+Investigation Case
+     │
+     ├── Transaction Evidence
+     ├── Model / Risk Signals
+     ├── Graph Context
+     ├── Reason Codes
+     └── Retrieved References
+              │
+              ▼
+       Grounded Copilot
+              │
+              ▼
+       Analyst Brief
+              │
+              ▼
+     Human Investigation
+```
 
-See [`docs/streaming-observability.md`](docs/streaming-observability.md) and [`docs/api-operational-metrics.md`](docs/api-operational-metrics.md).
+The copilot is intentionally **grounded and non-autonomous**. It is instructed to distinguish evidence from interpretation, avoid inventing facts, and state when evidence is insufficient.
 
-## Phase 28: Docker Compose Production-Style Stack
+---
 
-- Multi-service local stack combining FastAPI, Kafka, topic initialization, and the streaming risk worker
-- Dedicated worker image with the optional Confluent Kafka dependency isolated from the API image
-- Health-gated Kafka topic initialization before API and worker startup
-- Input, scored-output, and dead-letter Kafka topics wired through environment configuration
-- API container with Docker health check and `/health`, `/ready`, `/version`, and `/metrics` endpoints
-- Restart policies for long-running Kafka, API, and worker services
-- Verified local event path from `transaction.created` through the worker to the `transaction.risk_scored` output
-- Explicit deployment boundary: one local Kafka broker, plaintext listeners, and reproducible local validation are used for the portfolio stack
+## API Surface
 
-See [`docs/docker-compose-stack.md`](docs/docker-compose-stack.md).
+The FastAPI application exposes operational and investigation-oriented interfaces including:
 
-## Phase 29: Prometheus + Grafana Observability
+| Area | Examples |
+|---|---|
+| Health | `/health`, `/ready`, `/version` |
+| Metrics | `/metrics` |
+| Model scoring | `POST /v1/model/score` |
+| Investigation cases | `POST /v1/investigations/cases` |
+| Case retrieval | `GET /v1/investigations/cases/{case_id}` |
+| Case status | `PATCH /v1/investigations/cases/{case_id}/status` |
+| Audit trail | `GET /v1/investigations/cases/{case_id}/audit` |
+| Copilot prompt | `POST /v1/copilot/prompt` |
+| Analyst brief | `POST /v1/copilot/cases/{case_id}/brief` |
 
-- Prometheus collector scraping the FastAPI `/metrics` endpoint
-- Grafana provisioned with a Prometheus datasource and dashboard
-- Pre-provisioned `Financial Risk API` dashboard for request volume, failures, request rate, latency, and HTTP status trends
-- Monitoring services integrated into the Docker Compose stack
-- Live validation of API health, application metrics, Prometheus readiness, Grafana health, and Kafka worker activity
-- Explicit production boundary: local dashboards use reproducible demo credentials; persistence, TLS, authentication, alerting, and highly available monitoring remain deployment concerns
+API behavior is validated with automated tests and explicit input/error handling.
 
-See [`docs/prometheus-grafana.md`](docs/prometheus-grafana.md).
+---
 
-## Phase 30: Model Serving Contract & Deployment Hardening
+## Technology Stack
 
-- Dedicated `RiskModelService` boundary between the FastAPI transport layer and the risk decision engine
-- Versioned serving metadata for model name, model version, and feature-contract version
-- `/version` exposes deployment and model metadata for diagnostics
-- API and streaming worker containers run as non-root UID 10001 users
-- Container files are owned by the runtime user before process startup
-- Explicit production boundary: persisted artifact loading was introduced separately in Phase 31; managed registry, authenticated/TLS service mesh, and autoscaling inference remain deployment extensions
+| Layer | Technologies |
+|---|---|
+| Languages | Python, SQL, Bash |
+| ML | XGBoost, scikit-learn, SHAP |
+| Graph | NetworkX, community detection, online graph state |
+| Data | Pandas, NumPy, PyArrow |
+| Streaming | Apache Kafka, consumer groups |
+| State | Redis-compatible durable state |
+| API | FastAPI, Uvicorn |
+| Observability | Prometheus, Grafana, structured logs |
+| Containers | Docker, Docker Compose |
+| MLOps | MLflow, model registry, quality gates, CI/CD |
+| Cloud / IaC | AWS, Terraform |
+| Testing | pytest, Ruff |
+| GenAI | RAG workflow, retrieval, grounded prompt generation |
 
-See [`docs/model-serving-deployment.md`](docs/model-serving-deployment.md).
+---
 
-## Phase 31: Persisted XGBoost Model Artifact Serving
+## Validation & Benchmarks
 
-- Persisted `financial-fraud-xgboost.joblib` serving artifact
-- Dedicated `PersistedModelService` with explicit artifact and metadata validation
-- Exact model feature contract enforced before inference
-- Model provenance returned with every persisted-model prediction
-- FastAPI `POST /v1/model/score` endpoint for persisted-model inference
-- Docker Compose mounts the artifact directory read-only into the API and streaming worker
-- `scikit-learn==1.5.2` pinned to match the serialized artifact and prevent estimator deserialization incompatibility
-- Verified inside the container with scikit-learn 1.5.2 and successful persisted-model inference
-- Explicit security boundary: joblib/pickle artifacts are treated as trusted internal model artifacts
+### Verified fraud benchmark
 
-## Phase 32: Persisted Model Integrated into Kafka Streaming
-
-- Streaming worker loads the persisted XGBoost artifact at startup
-- `transaction.created` events can provide the model feature vector to the persisted model service
-- Fraud probability from persisted XGBoost is combined with anomaly, network, and velocity signals through the established ensemble decision engine
-- Model name, version, and feature-contract version propagate into downstream `transaction.risk_scored` events
-- Kafka end-to-end validation completed using a real broker and the persisted model
-- Verified example: `phase32-model-test-002` produced `fraud_probability=0.0355707`, `risk_score=0.3777854`, `risk_band=MEDIUM`, `action=monitor`
-- Kafka boundary hardened so null/tombstone and malformed JSON records are skipped without crashing the long-running worker
-
-## Phase 33: Stateful Real-Time Feature Generation
-
-- Streaming feature state generates the persisted model's required behavioral and velocity features from raw transaction events
-- Prior-only customer history is used so the current transaction does not leak into its own features
-- Rolling customer windows cover 7-day behavioral history and 30-day customer statistics
-- Short-horizon transaction velocity features cover 5-minute, 1-hour, and 24-hour windows
-- `prepare()` computes features without mutating history; `commit()` records the transaction only after successful processing
-- Feature generation remains compatible with in-memory state for deterministic tests
-- Docker validation completed with raw transactions for the same customer; generated history was reflected in downstream telemetry
-
-## Phase 34: Streaming Inference Telemetry
-
-- Downstream `transaction.risk_scored` events include compact `feature_telemetry`
-- Telemetry identifies whether inference used the persisted model artifact or a precomputed compatibility signal
-- Persisted-model events expose feature count and selected prior-history/velocity features without publishing the entire feature vector
-- Telemetry preserves model name, model version, and feature-contract version alongside the scoring result
-- Tests cover telemetry serialization and persisted-model inference metadata
-- Docker validation demonstrated generated telemetry for raw Kafka transactions
-- Explicit production boundary: telemetry is currently carried in the event payload; centralized streaming metrics, long-term audit storage, and full distributed tracing remain deployment extensions
-
-## Phase 35: Durable Distributed Streaming State
-
-- Redis-backed customer feature history for state that survives worker restarts
-- Redis-backed event idempotency keys with bounded retention
-- Stateful feature generation keeps the existing prepare-before-commit leakage boundary while using shared state
-- Worker enables Redis automatically when `REDIS_URL` is configured
-- Docker Compose adds a health-checked Redis service and health-gated worker startup
-- In-memory state implementations remain available for deterministic unit tests and transport-agnostic runs
-- Verified restart persistence: customer history retained transactions after worker restart, and the restarted worker recognized a replayed event as a duplicate
-- Explicit production boundary: the local stack does not yet configure Redis authentication, TLS, replication, backups, high availability, or operational persistence policies
-
-See [`docs/durable-streaming-state.md`](docs/durable-streaming-state.md).
-
-## Phase 36: Kafka Partition-Aware Horizontal Scaling
-
-- `transaction.created` events now use `customer_id` as the Kafka routing key
-- Same-customer transactions therefore map to the same partition, preserving per-customer ordering within the Kafka partition model
-- `financial-risk-events` is configured with three local partitions for scale-out validation
-- Worker replicas use the same Kafka consumer group so Kafka can distribute partitions across instances
-- Worker `container_name` is removed so Docker Compose can create multiple worker replicas
-- Redis remains the shared feature-history and idempotency state boundary across replicas
-- Added unit coverage for customer-based routing-key behavior and fallback routing
-- Added a reproducible runbook for 2-worker / 3-partition validation
-- Explicit production boundary: the local validation uses one Kafka broker; production requires replicated brokers, capacity planning, partition sizing, and operational rebalance tuning
-
-See [`docs/kafka-horizontal-scaling.md`](docs/kafka-horizontal-scaling.md).
-
-## Phase 37: Redis Atomicity & Distributed State Safety
-
-- Atomic event-claim semantics prevent two horizontally scaled workers from processing the same event concurrently
-- Claim leases expire so a crashed worker does not permanently strand an event
-- Successful processing marks the event complete; failed processing releases the claim for retry
-- Customer transaction history uses an atomic append operation instead of an unsafe read-modify-write sequence
-- Shared Redis state remains durable across worker restarts and replicas
-- In-memory idempotency behavior remains available for deterministic unit tests
-- Added dedicated Phase 37 state-safety tests covering claim, release, completion, and atomic-history integration
-- Verified end-to-end with two workers: the first copy of `phase37-duplicate-002` succeeded and the duplicate was suppressed
-- Verified Redis persisted exactly one customer transaction and a bounded idempotency key TTL
-- Explicit production boundary: Redis authentication, TLS, replication, failover, backups, and managed operational controls remain deployment concerns
-
-See [`docs/redis-atomicity.md`](docs/redis-atomicity.md) for the state-safety design and validation runbook.
-
-## Phase 38: Graph Community Detection
-
-- Adds deterministic heterogeneous entity-graph construction across customers, accounts, devices, IPs, and merchants
-- Uses weighted entity relationships so repeated reuse strengthens graph edges
-- Detects communities through modularity optimization for fraud-ring style network segmentation
-- Produces customer-level `community_id`, `community_customer_count`, weighted network degree, and `community_risk_signal` features
-- Keeps community analysis as an explainable feature layer that can complement supervised fraud probability and existing network-risk signals
-- Adds automated tests for graph construction, deterministic community assignment, derived features, and input validation
-- Uses NetworkX as a focused graph-analysis dependency; graph storage remains in-process for reproducible portfolio validation
-- Explicit production boundary: community detection is currently batch/in-process; distributed graph processing and online incremental community updates remain future deployment extensions
-
-See [`docs/graph-community-detection.md`](docs/graph-community-detection.md).
-
-## Verified 20K Fraud Benchmark
+The original reproducible 20K synthetic transaction benchmark produced:
 
 | Model | ROC-AUC | PR-AUC | Precision | Recall | F1 |
 |---|---:|---:|---:|---:|---:|
 | Logistic Regression | 0.6131 | 0.0573 | 2.45% | 51.28% | 0.0468 |
 | XGBoost | **0.6667** | **0.0802** | **4.44%** | 10.26% | **0.0620** |
 
-XGBoost achieved a **12.87x lift** at the validation-selected `0.85` operating threshold on the synthetic test workload. These values are reproducible portfolio benchmarks, not production fraud-performance claims.
+XGBoost achieved a reported **12.87x lift** at the validation-selected `0.85` operating threshold on that synthetic workload. These are reproducible portfolio measurements and **must not be interpreted as production fraud-performance claims**.
 
-## Planned ML / Engineering Extensions
+### Scale benchmark
 
-- Advanced graph analytics and online community updates
-- Random Forest and LightGBM model comparisons
-- Managed Kafka, object storage, managed MLflow, and cloud deployment integrations
-- Production alerting, autoscaling, deeper operational monitoring, and distributed tracing
-- External LLM provider integration for the grounded investigation copilot
-- Broader benchmark and scale testing at 100K, 1M, 10M, and 50M synthetic transactions
+Phase 49 adds a reproducible benchmark runner for 100K, 500K, 1M+ and larger synthetic workloads, including runtime and rows/second measurement.
 
-## Repository Status
+**Important:** the repository does not fabricate a 1M+ runtime. The documented result matrix is populated only after an explicit scale run is executed.
 
-**Current phase:** Phase 38 — Graph community detection.
+See [`docs/PHASE_49_SCALE_BENCHMARK.md`](docs/PHASE_49_SCALE_BENCHMARK.md) and [`docs/PHASE_49_BENCHMARK_RESULTS.md`](docs/PHASE_49_BENCHMARK_RESULTS.md).
 
-**Validation status:** Phase 37 distributed idempotency and durable customer-state behavior has been validated end-to-end. Phase 38 implementation and automated tests are now added and ready for local validation.
+---
+
+## Cloud-Ready Architecture
+
+Phase 50 introduces a Terraform AWS foundation and a documented production reference architecture.
+
+```text
+                    Internet / Enterprise Clients
+                              │
+                              ▼
+                       ALB / API Gateway
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+               ECS API             ECS Worker
+                    │                   │
+                    └─────────┬─────────┘
+                              │
+          ┌───────────────────┼───────────────────┐
+          ▼                   ▼                   ▼
+    Managed Kafka       Redis-compatible       S3
+                        Feature / State       Artifacts
+          │                   │
+          └───────────────────┼───────────────────┘
+                              ▼
+                    Observability Platform
+```
+
+The Terraform foundation currently provisions the portfolio-safe building blocks needed for a cloud deployment plan, including ECR, ECS cluster, S3 artifact storage, and CloudWatch logging.
+
+**It does not claim a live production AWS deployment.** Networking, managed Kafka/Redis, ingress, certificates, secrets, IAM policies, HA configuration, and production capacity planning remain deployment-specific extensions.
+
+See [`docs/PHASE_50_CLOUD_ARCHITECTURE.md`](docs/PHASE_50_CLOUD_ARCHITECTURE.md) and [`infra/README.md`](infra/README.md).
+
+---
+
+## Local Quickstart
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/mahaveerreddysamala/financial-risk-intelligence.git
+cd financial-risk-intelligence
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. Run quality checks
+
+```bash
+ruff check src tests scripts
+pytest
+```
+
+### 3. Run the API
+
+```bash
+uvicorn financial_risk.api.app:app --host 0.0.0.0 --port 8000
+```
+
+### 4. Run the local production-style stack
+
+```bash
+docker compose up --build
+```
+
+The Docker Compose environment provides a reproducible local boundary for the API, Kafka, Redis, streaming worker, Prometheus, and Grafana components.
+
+---
+
+## Repository Guide
+
+```text
+financial-risk-intelligence/
+├── src/financial_risk/       # Core risk, ML, graph, streaming, API, investigation code
+├── tests/                    # Automated unit/integration coverage
+├── scripts/                  # Benchmarking and operational utilities
+├── docs/                     # Architecture, runbooks, phase documentation
+├── infra/terraform/aws/      # Cloud infrastructure foundation
+├── .github/workflows/        # CI and infrastructure validation
+├── docker-compose.yml        # Local production-style stack
+├── requirements.txt          # Runtime/test dependencies
+└── SECURITY.md               # Security guidance and reporting
+```
+
+---
+
+## Engineering Principles
+
+1. **No data leakage** — features are generated from information available before the scored transaction.
+2. **Evidence over claims** — benchmarks and deployment statements are documented only when measured or validated.
+3. **Human-in-the-loop investigations** — GenAI assists analysts rather than making autonomous case conclusions.
+4. **Idempotent distributed processing** — duplicate events must be safely suppressed across workers.
+5. **Observable services** — risk decisions expose operational telemetry and health signals.
+6. **Explicit production boundaries** — local Docker validation is not presented as managed production infrastructure.
+7. **Secure by default** — credentials are environment/configuration concerns, containers avoid root execution, and production security controls are documented before deployment.
+
+---
+
+## Project Status
+
+| Area | Status |
+|---|---|
+| ML fraud/anomaly risk engine | ✅ Complete |
+| Model registry / promotion / quality gates | ✅ Complete |
+| Drift / performance / calibration monitoring | ✅ Complete |
+| Graph risk + community intelligence | ✅ Complete |
+| Kafka streaming + horizontal scaling | ✅ Complete |
+| Durable Redis state + atomic idempotency | ✅ Complete |
+| Investigation workflow + auditability | ✅ Complete |
+| GenAI/RAG investigation copilot | ✅ Complete |
+| Large-scale benchmark runner | ✅ Implemented |
+| 1M+ benchmark measurement | 🟡 Requires explicit execution |
+| Cloud architecture + Terraform foundation | ✅ Complete |
+| Live production cloud deployment | 🟡 Not claimed |
+| Final portfolio documentation | ✅ Complete |
+
+---
+
+## Documentation
+
+- [`docs/PHASE_49_SCALE_BENCHMARK.md`](docs/PHASE_49_SCALE_BENCHMARK.md) — scale benchmark methodology
+- [`docs/PHASE_49_BENCHMARK_RESULTS.md`](docs/PHASE_49_BENCHMARK_RESULTS.md) — measured-result matrix
+- [`docs/PHASE_50_CLOUD_ARCHITECTURE.md`](docs/PHASE_50_CLOUD_ARCHITECTURE.md) — cloud reference architecture
+- [`docs/PHASE_50_STATUS.md`](docs/PHASE_50_STATUS.md) — Phase 50 delivery status
+- [`docs/production-readiness.md`](docs/production-readiness.md) — operational readiness and deployment boundaries
+- [`infra/README.md`](infra/README.md) — Terraform usage and safety guidance
+- [`SECURITY.md`](SECURITY.md) — security expectations and vulnerability reporting
+
+---
+
+## Resume-Ready Project Summary
+
+**Financial Crime & Risk Intelligence Platform** — Built an enterprise-style financial risk platform combining XGBoost fraud detection, anomaly detection, graph/community intelligence, Kafka streaming, Redis-backed distributed state, model governance, SHAP explainability, investigation case management, and a grounded RAG/GenAI copilot; implemented automated quality gates, streaming observability, Docker-based deployment, and a Terraform AWS foundation with reproducible CI validation.
+
+### Strong interview talking points
+
+- **Data Science:** leakage-aware feature engineering, imbalanced fraud classification, threshold/cost-sensitive decisioning, calibration, explainability, and model monitoring.
+- **Data Engineering:** Kafka partitioning, consumer groups, retries/DLQ, Redis atomicity, durable state, idempotency, and streaming feature generation.
+- **AI/GenAI:** grounded retrieval, provenance, analyst briefs, prompt constraints, and human-in-the-loop investigation workflows.
+- **MLOps:** champion/challenger evaluation, registry metadata, automated promotion gates, persisted artifacts, and runtime monitoring.
+- **Cloud/Platform:** Docker, FastAPI, Prometheus/Grafana, Terraform, AWS architecture, health checks, security boundaries, and CI/CD.
+
+---
+
+## License
+
+This repository is intended as a professional portfolio and reference implementation. See repository licensing and security documentation for applicable usage guidance.
