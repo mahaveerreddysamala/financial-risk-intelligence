@@ -266,9 +266,19 @@ XGBoost achieved a reported **12.87x lift** at the validation-selected `0.85` op
 
 ### Scale benchmark
 
-Phase 49 adds a reproducible benchmark runner for 100K, 500K, 1M+ and larger synthetic workloads, including runtime and rows/second measurement.
+Phase 49 includes a measured 1M-row scale run of the synthetic transaction generation/output path:
 
-**Important:** the repository does not fabricate a 1M+ runtime. The documented result matrix is populated only after an explicit scale run is executed.
+| Rows | Partitions | Runtime | Throughput | Environment |
+|---:|---:|---:|---:|---|
+| **1,000,000** | **8** | **1.732874 s** | **577,075.9 rows/s** | Local Windows / Python 3.11 |
+
+Command used:
+
+```powershell
+python scripts/benchmark_scale.py --rows 1000000 --partitions 8 --output-dir artifacts/benchmarks
+```
+
+This is a reproducible portfolio benchmark for bounded-memory synthetic transaction generation and CSV output. It is **not** a claim of 577K transactions/second for the complete fraud scoring pipeline, graph enrichment, model inference, or cloud deployment.
 
 See [`docs/PHASE_49_SCALE_BENCHMARK.md`](docs/PHASE_49_SCALE_BENCHMARK.md) and [`docs/PHASE_49_BENCHMARK_RESULTS.md`](docs/PHASE_49_BENCHMARK_RESULTS.md).
 
@@ -384,8 +394,8 @@ financial-risk-intelligence/
 | Durable Redis state + atomic idempotency | ✅ Complete |
 | Investigation workflow + auditability | ✅ Complete |
 | GenAI/RAG investigation copilot | ✅ Complete |
-| Large-scale benchmark runner | ✅ Implemented |
-| 1M+ benchmark measurement | 🟡 Requires explicit execution |
+| Large-scale benchmark runner | ✅ Complete |
+| 1M-row benchmark measurement | ✅ Measured — 1.73 s / 577K rows/s on local run |
 | Cloud architecture + Terraform foundation | ✅ Complete |
 | Live production cloud deployment | 🟡 Not claimed |
 | Final portfolio documentation | ✅ Complete |
