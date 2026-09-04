@@ -130,7 +130,7 @@ def build_monitoring_status(
 
     issues = sum((drift_detected, performance_degraded, calibration_degraded))
     if issues == 0:
-        return MonitoringStatus("healthy", "info", False, False, False, tuple())
+        return MonitoringStatus("healthy", "info", False, False, False, ())
     if performance_degraded or calibration_degraded:
         return MonitoringStatus("degraded", "critical" if issues >= 2 else "warning", drift_detected, performance_degraded, calibration_degraded, tuple(reasons))
     return MonitoringStatus("drift", "warning", True, False, False, tuple(reasons))
