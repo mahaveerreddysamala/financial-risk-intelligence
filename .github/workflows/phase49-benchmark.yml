@@ -1,0 +1,72 @@
+name: Phase 49 Scale Benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      rows:
+        description: "Number of synthetic transactions"
+        required: true
+        default: "1000000"
+        type: string
+      partitions:
+        description: "Configured processing partitions"
+        required: true
+        default: "8"
+        type: string
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -e .
+
+      - name: Run scale benchmark
+        run: |
+          python scripts/benchmark_scale.py \
+            --rows "${{ inputs.rows }}" \
+            --partitions "${{ inputs.partitions }}" \
+            --output-dir artifacts/benchmarks
+
+      - name: Validate benchmark metadata
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = list(Path("artifacts/benchmarks").glob("*.json"))
+          if len(files) != 1:
+              raise SystemExit(f"Expected exactly one benchmark metadata file, found {len(files)}")
+          data = json.loads(files[0].read_text(encoding="utf-8"))
+          required = {"rows", "partitions", "elapsed_seconds", "rows_per_second", "output_path", "process_id"}
+          missing = required.difference(data)
+          if missing:
+              raise SystemExit(f"Missing benchmark fields: {sorted(missing)}")
+          if data["rows"] != int("${{ inputs.rows }}"):
+              raise SystemExit("Recorded row count does not match requested workload")
+          if data["partitions"] != int("${{ inputs.partitions }}"):
+              raise SystemExit("Recorded partition count does not match requested workload")
+          if data["elapsed_seconds"] <= 0 or data["rows_per_second"] <= 0:
+              raise SystemExit("Benchmark metrics must be positive")
+          print(json.dumps(data, indent=2))
+          PY
+
+      - name: Upload benchmark artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase49-benchmark-${{ inputs.rows }}-p${{ inputs.partitions }}
+          path: artifacts/benchmarks/
+          if-no-files-found: error
+          retention-days: 30
