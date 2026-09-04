@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from threading import RLock
 from typing import Any
 from uuid import uuid4
@@ -67,7 +67,7 @@ class InvestigationCaseStore:
 
     @staticmethod
     def _now() -> str:
-        return datetime.now(timezone.utc).isoformat()
+        return datetime.now(UTC).isoformat()
 
     def create(self, payload: dict[str, Any], *, idempotency_key: str | None = None, actor: str = "api") -> tuple[StoredCase, bool]:
         with self._lock:
