@@ -14,8 +14,8 @@ def test_performance_report_flags_large_pr_auc_drop() -> None:
         {"pr_auc": 0.10, "precision": 0.08},
         {"pr_auc": 0.06, "precision": 0.07},
     )
-    assert result.loc[result["metric"] == "pr_auc", "degraded"].item() is True
-    assert result.loc[result["metric"] == "precision", "degraded"].item() is True
+    assert bool(result.loc[result["metric"] == "pr_auc", "degraded"].item()) is True
+    assert bool(result.loc[result["metric"] == "precision", "degraded"].item()) is True
 
 
 def test_performance_report_handles_missing_metric() -> None:
