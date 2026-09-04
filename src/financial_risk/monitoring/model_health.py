@@ -26,7 +26,7 @@ def evaluate_performance(
     current: dict[str, float],
     *,
     min_pr_auc: float = 0.05,
-    max_relative_drop: float = 0.20,
+    max_relative_drop: float = 0.10,
 ) -> pd.DataFrame:
     """Compare current model metrics with a reference baseline."""
     if min_pr_auc < 0 or min_pr_auc > 1:
@@ -106,13 +106,28 @@ def build_monitoring_status(
     drift_report_frame: pd.DataFrame | None = None,
     performance_report: pd.DataFrame | None = None,
     calibration_report: dict[str, float | bool | str] | None = None,
+    min_drift_sample_size: int = 30,
 ) -> MonitoringStatus:
     """Aggregate monitoring evidence into an alert-ready status."""
-    drift_detected = bool(
-        drift_report_frame is not None
-        and not drift_report_frame.empty
-        and drift_report_frame["drift_detected"].astype(bool).any()
-    )
+    if min_drift_sample_size < 2:
+        raise ValueError("min_drift_sample_size must be at least 2")
+
+    drift_detected = False
+    if drift_report_frame is not None and not drift_report_frame.empty:
+        if "drift_detected" not in drift_report_frame.columns:
+            raise ValueError("drift_report_frame must contain drift_detected")
+        reference_ok = "reference_size" not in drift_report_frame.columns or (
+            pd.to_numeric(drift_report_frame["reference_size"], errors="coerce") >= min_drift_sample_size
+        ).all()
+        current_ok = "current_size" not in drift_report_frame.columns or (
+            pd.to_numeric(drift_report_frame["current_size"], errors="coerce") >= min_drift_sample_size
+        ).all()
+        drift_detected = bool(
+            reference_ok
+            and current_ok
+            and drift_report_frame["drift_detected"].astype(bool).any()
+        )
+
     performance_degraded = bool(
         performance_report is not None
         and not performance_report.empty
@@ -132,7 +147,14 @@ def build_monitoring_status(
     if issues == 0:
         return MonitoringStatus("healthy", "info", False, False, False, ())
     if performance_degraded or calibration_degraded:
-        return MonitoringStatus("degraded", "critical" if issues >= 2 else "warning", drift_detected, performance_degraded, calibration_degraded, tuple(reasons))
+        return MonitoringStatus(
+            "degraded",
+            "critical" if issues >= 2 else "warning",
+            drift_detected,
+            performance_degraded,
+            calibration_degraded,
+            tuple(reasons),
+        )
     return MonitoringStatus("drift", "warning", True, False, False, tuple(reasons))
 
 
@@ -146,9 +168,12 @@ def monitor_model_window(
     reference_brier: float | None = None,
     current_brier: float | None = None,
     psi_threshold: float = 0.20,
+    min_drift_sample_size: int = 30,
     **_: Any,
 ) -> dict[str, Any]:
     """Produce one monitoring snapshot suitable for batch jobs or alerting."""
+    if min_drift_sample_size < 2:
+        raise ValueError("min_drift_sample_size must be at least 2")
     features = drift_report(reference_features, current_features, numeric_features, psi_threshold=psi_threshold)
     performance = None
     if reference_performance is not None and current_performance is not None:
@@ -160,6 +185,7 @@ def monitor_model_window(
         drift_report_frame=features,
         performance_report=performance,
         calibration_report=calibration,
+        min_drift_sample_size=min_drift_sample_size,
     )
     return {
         "status": status,
