@@ -38,3 +38,14 @@ jobs:
 
       - name: Enforce model quality gate
         run: python scripts/check_model_quality.py --benchmark artifacts/model-benchmark.csv
+
+      - name: Publish benchmark evidence
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: financial-risk-model-benchmark
+          path: |
+            artifacts/model-benchmark.csv
+            artifacts/xgboost-thresholds.csv
+            artifacts/xgboost-top-k.csv
+            artifacts/model-benchmark-report.md

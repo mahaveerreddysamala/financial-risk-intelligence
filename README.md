@@ -151,6 +151,17 @@ These figures describe a synthetic portfolio benchmark, not production fraud per
 They provide a reproducible baseline for future temporal backtests, ablation studies, and
 cost-based operating-point comparisons.
 
+Reproduce the complete model benchmark and create CSV evidence plus a Markdown portfolio
+report with one command:
+
+```bash
+python -m financial_risk.models.benchmark
+```
+
+Outputs are written under `artifacts/`, including `model-benchmark-report.md`. Pull-request
+CI runs the same command, enforces the quality gate, and publishes the report as the
+`financial-risk-model-benchmark` workflow artifact.
+
 ## Graph Intelligence
 
 Financial crime frequently involves relationships that are difficult to detect from an individual transaction. The graph layer models relationships across entities such as customers, accounts, devices, IP addresses, and merchants.
