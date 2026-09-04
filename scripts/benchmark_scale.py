@@ -1,18 +1,26 @@
 """Reproducible transaction-scale benchmark runner.
 
-The benchmark intentionally keeps orchestration separate from the transaction
-scoring implementation so it can be used with progressively larger datasets.
-CI can run the smallest profile; production-like runs can use the 1M+ profile.
+The benchmark intentionally keeps orchestration separate from transaction
+scoring so it can be used with progressively larger datasets. It supports
+portable script execution from both the repository root and direct script
+execution on Windows/Linux CI environments.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import sys
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
+
+
+# Make repository-local imports deterministic for direct script execution.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 
 @dataclass(frozen=True)
@@ -28,7 +36,9 @@ class BenchmarkResult:
         return asdict(self)
 
 
-def _write_synthetic_transactions(rows: int, output_path: Path, chunk_size: int = 100_000) -> int:
+def _write_synthetic_transactions(
+    rows: int, output_path: Path, chunk_size: int = 100_000
+) -> int:
     """Write deterministic CSV transaction data in bounded-memory chunks."""
     if rows < 1:
         raise ValueError("rows must be at least 1")
@@ -45,7 +55,9 @@ def _write_synthetic_transactions(rows: int, output_path: Path, chunk_size: int 
                 customer_id = index % 50_000
                 merchant_id = index % 5_000
                 amount = 10 + (index * 37 % 10_000) / 100
-                handle.write(f"TX-{index:010d},C-{customer_id:08d},M-{merchant_id:06d},{amount:.2f}\n")
+                handle.write(
+                    f"TX-{index:010d},C-{customer_id:08d},M-{merchant_id:06d},{amount:.2f}\n"
+                )
             written = end
     return written
 
@@ -68,15 +80,21 @@ def run_benchmark(rows: int, partitions: int, output_dir: Path) -> BenchmarkResu
         process_id=os.getpid(),
     )
     metadata_path = output_path.with_suffix(".json")
-    metadata_path.write_text(json.dumps(result.to_dict(), indent=2) + "\n", encoding="utf-8")
+    metadata_path.write_text(
+        json.dumps(result.to_dict(), indent=2) + "\n", encoding="utf-8"
+    )
     return result
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run a reproducible transaction-scale benchmark")
+    parser = argparse.ArgumentParser(
+        description="Run a reproducible transaction-scale benchmark"
+    )
     parser.add_argument("--rows", type=int, default=100_000)
     parser.add_argument("--partitions", type=int, default=4)
-    parser.add_argument("--output-dir", type=Path, default=Path("artifacts/benchmarks"))
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("artifacts/benchmarks")
+    )
     args = parser.parse_args()
     result = run_benchmark(args.rows, args.partitions, args.output_dir)
     print(json.dumps(result.to_dict(), indent=2))
