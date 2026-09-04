@@ -162,6 +162,20 @@ Outputs are written under `artifacts/`, including `model-benchmark-report.md`. P
 CI runs the same command, enforces the quality gate, and publishes the report as the
 `financial-risk-model-benchmark` workflow artifact.
 
+### Temporal stability backtesting
+
+A walk-forward backtest retrains XGBoost on expanding historical windows and evaluates three
+strictly later two-month periods. It reports fold-level ROC-AUC, PR-AUC, precision, recall,
+and investigation-capacity lift so temporal instability cannot be hidden by one aggregate
+test split.
+
+```bash
+python -m financial_risk.models.backtesting
+```
+
+The command creates `artifacts/temporal-backtest.csv` and a Markdown stability report. CI
+executes a 12,000-row profile and includes both files in the model benchmark artifact.
+
 ## Graph Intelligence
 
 Financial crime frequently involves relationships that are difficult to detect from an individual transaction. The graph layer models relationships across entities such as customers, accounts, devices, IP addresses, and merchants.

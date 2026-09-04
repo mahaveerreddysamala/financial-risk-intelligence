@@ -36,6 +36,10 @@ jobs:
       - name: Benchmark model quality
         run: python -m financial_risk.models.benchmark --rows 20000 --seed 42
 
+      - name: Run temporal stability backtest
+        if: matrix.python-version == '3.11'
+        run: python -m financial_risk.models.backtesting --rows 12000 --seed 42 --top-k 100
+
       - name: Enforce model quality gate
         run: python scripts/check_model_quality.py --benchmark artifacts/model-benchmark.csv
 
@@ -49,3 +53,5 @@ jobs:
             artifacts/xgboost-thresholds.csv
             artifacts/xgboost-top-k.csv
             artifacts/model-benchmark-report.md
+            artifacts/temporal-backtest.csv
+            artifacts/temporal-backtest-report.md
