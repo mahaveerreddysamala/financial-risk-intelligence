@@ -16,6 +16,7 @@ from financial_risk.investigation.case_builder import build_investigation_case, 
 from financial_risk.investigation.case_store import VALID_STATUSES, case_store
 from financial_risk.investigation.copilot import (
     RetrievalResult,
+    build_analyst_brief,
     build_copilot_context,
     build_grounded_prompt,
 )
@@ -86,6 +87,27 @@ def _risk_payload(request: RiskRequest) -> dict[str, Any]:
         "model_version": prediction.model_version,
         "feature_contract_version": prediction.feature_contract_version,
     }
+
+
+def _retrieval_results(request: CopilotRequest) -> list[RetrievalResult]:
+    results: list[RetrievalResult] = []
+    for item in request.references:
+        if not {"document_id", "score", "text"}.issubset(item):
+            raise HTTPException(status_code=422, detail="references require document_id, score, and text")
+        try:
+            score = float(item["score"])
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail="reference score must be numeric") from exc
+        if not 0 <= score <= 1:
+            raise HTTPException(status_code=422, detail="reference score must be between 0 and 1")
+        results.append(
+            RetrievalResult(
+                document_id=str(item["document_id"]),
+                score=score,
+                text=str(item["text"]),
+            )
+        )
+    return results
 
 
 @app.middleware("http")
@@ -262,22 +284,33 @@ def get_investigation_case_audit(case_id: str) -> dict[str, Any]:
 
 @app.post("/v1/copilot/prompt")
 def build_copilot_prompt(request: CopilotRequest) -> dict[str, Any]:
-    references = []
-    for item in request.references:
-        if not {"document_id", "score", "text"}.issubset(item):
-            raise HTTPException(status_code=422, detail="references require document_id, score, and text")
-        try:
-            score = float(item["score"])
-        except (TypeError, ValueError) as exc:
-            raise HTTPException(status_code=422, detail="reference score must be numeric") from exc
-        if not 0 <= score <= 1:
-            raise HTTPException(status_code=422, detail="reference score must be between 0 and 1")
-        references.append(
-            RetrievalResult(
-                document_id=str(item["document_id"]),
-                score=score,
-                text=str(item["text"]),
-            )
-        )
+    references = _retrieval_results(request)
     context = build_copilot_context(request.case_id, request.evidence, references)
     return {"case_id": request.case_id, "grounded_prompt": build_grounded_prompt(context)}
+
+
+@app.post("/v1/copilot/cases/{case_id}/brief")
+def build_case_copilot_brief(case_id: str, request: CopilotRequest) -> dict[str, Any]:
+    """Build a case-linked analyst brief and grounded LLM prompt from stored evidence."""
+    if request.case_id != case_id:
+        raise HTTPException(status_code=422, detail="case_id in body must match path")
+    case = case_store.get(case_id)
+    if case is None:
+        raise HTTPException(status_code=404, detail="investigation case not found")
+    references = _retrieval_results(request)
+    context = build_copilot_context(case.case_id, case.evidence, references)
+    brief = build_analyst_brief(context)
+    return {
+        "case_id": case.case_id,
+        "case_status": case.status,
+        "risk_score": case.risk_score,
+        "risk_band": case.risk_band,
+        "action": case.action,
+        "brief": brief.to_dict(),
+        "grounded_prompt": build_grounded_prompt(context),
+        "provenance": {
+            "case_evidence": True,
+            "reference_ids": list(brief.reference_ids),
+            "retrieval_confidence": brief.retrieval_confidence,
+        },
+    }
