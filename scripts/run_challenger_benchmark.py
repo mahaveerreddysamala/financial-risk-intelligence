@@ -9,6 +9,7 @@ import pandas as pd
 
 from financial_risk.data_generation.generator import generate_transactions
 from financial_risk.features.pipeline import build_feature_table
+from financial_risk.models.baseline import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 from financial_risk.models.challengers import (
     build_lightgbm,
     build_random_forest,
@@ -16,10 +17,6 @@ from financial_risk.models.challengers import (
 )
 from financial_risk.models.split import temporal_split
 from financial_risk.models.xgboost_model import build_xgboost_model, evaluate_xgboost
-from financial_risk.models.baseline import FEATURE_COLUMNS if False else NUMERIC_FEATURES
-
-# Shared benchmark contract lives in the baseline module.
-from financial_risk.models.baseline import CATEGORICAL_FEATURES, NUMERIC_FEATURES
 
 FEATURE_COLUMNS = NUMERIC_FEATURES + CATEGORICAL_FEATURES
 
@@ -43,10 +40,9 @@ def run_benchmark(rows: int = 20_000, seed: int = 42) -> pd.DataFrame:
         model.fit(train[FEATURE_COLUMNS], y_train)
         if name == "XGBoost":
             evaluation = evaluate_xgboost(model, test)
-            results.append({"model": name, **asdict(evaluation)})
         else:
             evaluation = evaluate_challenger(model, test, name)
-            results.append(asdict(evaluation))
+        results.append(asdict(evaluation) if name != "XGBoost" else {"model": name, **asdict(evaluation)})
     return pd.DataFrame(results)
 
 
