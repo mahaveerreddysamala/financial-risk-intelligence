@@ -47,10 +47,13 @@ def add_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
         output: list[dict[str, object]] = []
 
         for row in work.itertuples(index=False):
-            timestamp = row.timestamp
+            # Normalize tuple values so arithmetic remains explicit across
+            # pandas/NumPy versions instead of relying on numpy.datetime64
+            # coercion rules.
+            timestamp = pd.Timestamp(row.timestamp)
             amount = float(row.amount)
 
-            short_cutoff = timestamp - pd.Timedelta(days=7)
+            short_cutoff = timestamp - pd.Timedelta(7, unit="D")
             while short and short[0][0] <= short_cutoff:
                 _, _, merchant, device = short.popleft()
                 merchant_counts[merchant] -= 1
@@ -60,7 +63,7 @@ def add_behavioral_features(df: pd.DataFrame) -> pd.DataFrame:
                 if device_counts[device] <= 0:
                     del device_counts[device]
 
-            long_cutoff = timestamp - pd.Timedelta(days=30)
+            long_cutoff = timestamp - pd.Timedelta(30, unit="D")
             while long and long[0][0] <= long_cutoff:
                 _, old_amount, _, _, international, night = long.popleft()
                 amount_sum -= old_amount

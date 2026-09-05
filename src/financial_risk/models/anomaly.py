@@ -73,12 +73,13 @@ def score_anomalies(
         raise ValueError(f"Missing anomaly features: {sorted(missing)}")
 
     matrix = scaler.transform(frame[ANOMALY_FEATURES].fillna(0.0))
-    raw = -detector.decision_function(matrix)
-    minimum = float(raw.min())
-    maximum = float(raw.max())
-    if maximum > minimum:
-        scores = (raw - minimum) / (maximum - minimum)
-    else:
-        scores = np.zeros(len(frame), dtype=float)
+    # IsolationForest's decision boundary is zero: negative values are
+    # anomalies and positive values are inliers. Map that stable boundary to
+    # 0.5 instead of min-max normalizing each scoring batch. Batch-local
+    # normalization makes the same observation receive a different risk score
+    # depending on which other observations happen to be scored with it, and a
+    # single-row request always collapses to zero.
+    decision = detector.decision_function(matrix)
+    scores = np.clip(0.5 - decision, 0.0, 1.0)
     flags = detector.predict(matrix) == -1
     return AnomalyResult(scores=scores.astype(float), flags=flags.astype(bool))

@@ -105,7 +105,7 @@ class StreamingFeatureService:
         current = self._base_row(event_payload, occurred_at)
         customer_id = current["customer_id"]
         current_time = current["timestamp"]
-        cutoff = current_time - pd.Timedelta(days=self.history_days)
+        cutoff = current_time - pd.Timedelta(self.history_days, unit="D")
         prior = [row for row in self._get_history(customer_id) if self._timestamp(row["timestamp"]) >= cutoff]
         frame = pd.DataFrame([*prior, current])
         frame["timestamp"] = pd.to_datetime(frame["timestamp"], utc=True)
@@ -121,7 +121,7 @@ class StreamingFeatureService:
         """Commit one successfully processed transaction to feature history."""
         current = self._base_row(event_payload, occurred_at)
         customer_id = current["customer_id"]
-        cutoff = current["timestamp"] - pd.Timedelta(days=self.history_days)
+        cutoff = current["timestamp"] - pd.Timedelta(self.history_days, unit="D")
         if self._state_store is not None and hasattr(self._state_store, "append_history"):
             self._state_store.append_history(
                 customer_id,
