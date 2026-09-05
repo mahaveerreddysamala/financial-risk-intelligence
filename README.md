@@ -56,8 +56,10 @@ streamlit run dashboards/financial_risk_app.py
 ```
 
 The dashboard includes executive metrics, decision distribution, daily risk, signal-level
-scores, operational actions, case evidence, held-out model metrics, and optional walk-forward
-backtest results. GitHub Actions executes the complete dashboard in headless mode.
+scores, operational actions, case evidence, held-out model metrics, a capacity-aware operating
+point simulator, and optional walk-forward backtest results. The simulator reports queue
+precision, fraud recall, and lift at a selected investigation capacity. GitHub Actions executes
+the complete dashboard in headless mode.
 
 ## System Architecture
 
