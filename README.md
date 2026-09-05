@@ -34,13 +34,28 @@ Fraud Model    Anomaly Model   Graph Risk    Velocity
                               Evidence / Reason Codes
                                       │
                                       ▼
-                               RAG Investigation
+                         Grounded Retrieval Context
                                       │
                                       ▼
                                 Analyst Workflow
 ```
 
 The system is designed around explicit interfaces between data processing, model inference, graph enrichment, decisioning, investigation, and operations.
+
+## Interactive Portfolio Dashboard
+
+The Streamlit dashboard trains an XGBoost model on historical synthetic transactions, scores
+a strictly later window, combines fraud, anomaly, network, community, and velocity signals,
+and exposes a prioritized decision queue with evidence-grounded investigation cases.
+
+```bash
+python -m pip install -r requirements.txt -r requirements-dashboard.txt
+streamlit run dashboards/financial_risk_app.py
+```
+
+The dashboard includes executive metrics, decision distribution, daily risk, signal-level
+scores, operational actions, case evidence, held-out model metrics, and optional walk-forward
+backtest results. GitHub Actions executes the complete dashboard in headless mode.
 
 ## System Architecture
 
@@ -132,6 +147,50 @@ Runtime Monitoring
 
 The repository includes model comparison, quality gates, registry metadata, automated promotion controls, persisted artifacts, and monitoring utilities.
 
+### Verified model benchmark
+
+The CI benchmark uses 20,000 deterministic synthetic transactions and a chronological
+train/validation/test split. The current held-out test result is intentionally reported
+against the class prevalence so the result is interpretable for an imbalanced problem.
+
+| Metric | Current CI result |
+|---|---:|
+| Test fraud prevalence | 1.20% |
+| XGBoost ROC-AUC | 0.6850 |
+| XGBoost PR-AUC | 0.0832 |
+| Top-250 precision | 4.40% |
+| Top-250 recall | 28.21% |
+| Top-250 lift | 3.68x |
+
+These figures describe a synthetic portfolio benchmark, not production fraud performance.
+They provide a reproducible baseline for future temporal backtests, ablation studies, and
+cost-based operating-point comparisons.
+
+Reproduce the complete model benchmark and create CSV evidence plus a Markdown portfolio
+report with one command:
+
+```bash
+python -m financial_risk.models.benchmark
+```
+
+Outputs are written under `artifacts/`, including `model-benchmark-report.md`. Pull-request
+CI runs the same command, enforces the quality gate, and publishes the report as the
+`financial-risk-model-benchmark` workflow artifact.
+
+### Temporal stability backtesting
+
+A walk-forward backtest retrains XGBoost on expanding historical windows and evaluates three
+strictly later two-month periods. It reports fold-level ROC-AUC, PR-AUC, precision, recall,
+and investigation-capacity lift so temporal instability cannot be hidden by one aggregate
+test split.
+
+```bash
+python -m financial_risk.models.backtesting
+```
+
+The command creates `artifacts/temporal-backtest.csv` and a Markdown stability report. CI
+executes a 12,000-row profile and includes both files in the model benchmark artifact.
+
 ## Graph Intelligence
 
 Financial crime frequently involves relationships that are difficult to detect from an individual transaction. The graph layer models relationships across entities such as customers, accounts, devices, IP addresses, and merchants.
@@ -141,9 +200,9 @@ Implemented capabilities include:
 - heterogeneous entity relationships
 - weighted network features
 - shared-entity reuse detection
-- community detection
-- stable online community identifiers
-- incremental community updates
+- deterministic connected-component grouping
+- stable online component identifiers
+- incremental component updates
 - streaming graph enrichment
 - graph risk integration into the final decision
 
@@ -181,6 +240,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 ## Investigation Copilot
 
 The investigation copilot provides retrieval and grounded prompt construction around case evidence.
+
+The current implementation uses TF-IDF retrieval and produces an evidence-constrained prompt
+and analyst brief. It does not call a hosted language model or autonomously adjudicate cases.
 
 The workflow separates:
 
@@ -292,7 +354,7 @@ No live production AWS environment is implied by the infrastructure code.
 | Streaming | Apache Kafka |
 | State | Redis-compatible durable state |
 | Graph | NetworkX / online communities |
-| GenAI | Retrieval + grounded RAG workflow |
+| AI-ready retrieval | TF-IDF retrieval + grounded prompt construction |
 | Observability | Prometheus / Grafana / structured logs |
 | Containers | Docker / Docker Compose |
 | MLOps | Model registry / quality gates / CI/CD |
@@ -311,6 +373,7 @@ financial-risk-intelligence/
 │   ├── investigation/    # Cases, evidence, copilot
 │   └── monitoring/       # Runtime/model monitoring
 ├── tests/                # Automated test suite
+├── dashboards/           # Interactive portfolio dashboard
 ├── scripts/              # Benchmark and operational utilities
 ├── docs/                 # Architecture and operational documentation
 ├── infra/terraform/aws/  # AWS infrastructure foundation
@@ -330,7 +393,7 @@ source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Run validation:
+Run validation (CI executes the suite on Python 3.11 and 3.12):
 
 ```bash
 ruff check src tests scripts
@@ -369,6 +432,6 @@ See `SECURITY.md` for security guidance and reporting procedures.
 
 ## Status
 
-The current implementation covers the core risk-decisioning, streaming, graph, investigation, GenAI/RAG, monitoring, and cloud-foundation components. CI validates the application and infrastructure configuration.
+The current implementation covers the core risk-decisioning, streaming, connected-component graph enrichment, investigation, evidence-grounded retrieval, monitoring, and cloud-foundation components. CI validates the application and infrastructure configuration.
 
 The system is intended to be operated as a reference implementation of a financial risk platform, with environment-specific production infrastructure configured separately.
