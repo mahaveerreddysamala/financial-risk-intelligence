@@ -42,6 +42,21 @@ Fraud Model    Anomaly Model   Graph Risk    Velocity
 
 The system is designed around explicit interfaces between data processing, model inference, graph enrichment, decisioning, investigation, and operations.
 
+## Interactive Portfolio Dashboard
+
+The Streamlit dashboard trains an XGBoost model on historical synthetic transactions, scores
+a strictly later window, combines fraud, anomaly, network, community, and velocity signals,
+and exposes a prioritized decision queue with evidence-grounded investigation cases.
+
+```bash
+pip install -r requirements-dashboard.txt
+streamlit run dashboards/financial_risk_app.py
+```
+
+The dashboard includes executive metrics, decision distribution, daily risk, signal-level
+scores, operational actions, case evidence, held-out model metrics, and optional walk-forward
+backtest results. GitHub Actions executes the complete dashboard in headless mode.
+
 ## System Architecture
 
 ### Real-time processing
@@ -358,6 +373,7 @@ financial-risk-intelligence/
 │   ├── investigation/    # Cases, evidence, copilot
 │   └── monitoring/       # Runtime/model monitoring
 ├── tests/                # Automated test suite
+├── dashboards/           # Interactive portfolio dashboard
 ├── scripts/              # Benchmark and operational utilities
 ├── docs/                 # Architecture and operational documentation
 ├── infra/terraform/aws/  # AWS infrastructure foundation

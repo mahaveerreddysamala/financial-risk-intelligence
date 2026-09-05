@@ -28,7 +28,7 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt && pip install -e .
 
       - name: Lint
-        run: ruff check src tests scripts
+        run: ruff check src tests scripts dashboards
 
       - name: Test
         run: python -m pytest -q
@@ -55,3 +55,21 @@ jobs:
             artifacts/model-benchmark-report.md
             artifacts/temporal-backtest.csv
             artifacts/temporal-backtest-report.md
+
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install dashboard dependencies
+        run: >-
+          python -m pip install --upgrade pip &&
+          pip install -r requirements.txt -r requirements-dashboard.txt &&
+          pip install -e .
+      - name: Run dashboard smoke test
+        run: python scripts/smoke_dashboard.py
