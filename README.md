@@ -49,7 +49,7 @@ a strictly later window, combines fraud, anomaly, network, community, and veloci
 and exposes a prioritized decision queue with evidence-grounded investigation cases.
 
 ```bash
-pip install -r requirements-dashboard.txt
+python -m pip install -r requirements.txt -r requirements-dashboard.txt
 streamlit run dashboards/financial_risk_app.py
 ```
 
