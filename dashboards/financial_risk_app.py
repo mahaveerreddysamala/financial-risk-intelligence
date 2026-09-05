@@ -14,6 +14,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from financial_risk.dashboard import (
     build_dashboard_snapshot,
     build_investigation_payload,
+    build_operating_point_curve,
+    operating_point_summary,
 )
 
 st.set_page_config(page_title="Financial Risk Intelligence", page_icon="🛡️", layout="wide")
@@ -35,6 +37,7 @@ with st.sidebar:
     st.header("Demo controls")
     rows = st.slider("Synthetic transactions", 2_000, 20_000, default_rows, 1_000)
     minimum_risk = st.slider("Minimum queue score", 0.0, 1.0, 0.30, 0.05)
+    review_capacity = st.slider("Review capacity (% of future transactions)", 1, 25, 5)
     selected_bands = st.multiselect(
         "Risk bands",
         ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
@@ -126,6 +129,22 @@ with model_tab:
         {"metric": list(snapshot.model_metrics), "value": list(snapshot.model_metrics.values())}
     )
     st.dataframe(metrics, hide_index=True, width="stretch")
+
+    st.subheader("Capacity-aware operating point")
+    operating_point = operating_point_summary(transactions, review_capacity / 100.0)
+    operating_columns = st.columns(5)
+    operating_columns[0].metric("Transactions reviewed", f'{operating_point["review_count"]:,}')
+    operating_columns[1].metric("Fraud captured", f'{operating_point["captured_fraud"]:,}')
+    operating_columns[2].metric("Queue precision", f'{operating_point["precision"]:.1%}')
+    operating_columns[3].metric("Fraud recall", f'{operating_point["recall"]:.1%}')
+    operating_columns[4].metric("Lift vs. random", f'{operating_point["lift"]:.2f}x')
+    capacity_curve = build_operating_point_curve(transactions).set_index("review_rate_pct")
+    st.line_chart(capacity_curve[["precision", "recall"]], color=["#7c3aed", "#ea580c"])
+    st.caption(
+        "The simulator ranks the held-out future window by the final ensemble risk score and "
+        "measures the operational trade-off at a fixed investigation capacity."
+    )
+
     backtest_path = ROOT / "artifacts" / "temporal-backtest.csv"
     if backtest_path.exists():
         st.subheader("Walk-forward stability")
