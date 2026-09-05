@@ -44,6 +44,8 @@ The system is designed around explicit interfaces between data processing, model
 
 ## Interactive Portfolio Dashboard
 
+[**Open the live Financial Risk dashboard**](https://financial-risk-intelligence.streamlit.app/)
+
 The Streamlit dashboard trains an XGBoost model on historical synthetic transactions, scores
 a strictly later window, combines fraud, anomaly, network, community, and velocity signals,
 and exposes a prioritized decision queue with evidence-grounded investigation cases.
