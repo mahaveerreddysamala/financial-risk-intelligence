@@ -14,6 +14,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from financial_risk.dashboard import (
     build_dashboard_snapshot,
     build_investigation_payload,
+)
+from financial_risk.dashboard.operating_points import (
     build_operating_point_curve,
     operating_point_summary,
 )
