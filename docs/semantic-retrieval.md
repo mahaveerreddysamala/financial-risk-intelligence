@@ -1,4 +1,4 @@
-# Semantic retrieval — draft, model validation pending
+# Semantic retrieval — draft, local model benchmark validated
 
 This change builds on case-evidence PR #5. It adds an interchangeable TF-IDF and
 sentence-transformer retrieval layer, plus a small authored regression benchmark.
@@ -6,8 +6,21 @@ The public dashboard still defaults to TF-IDF; no paid API calls are enabled.
 
 ## Validation status
 
-Real-model dependency installation was blocked by cancelled network approval.
-No real embedding inference, semantic benchmark result or retrieval improvement is claimed.
+After explicit user authorization, the pinned real model ran on CPU successfully, including
+a second cached-only run. Machine-readable evidence is in
+[semantic-retrieval-results.json](semantic-retrieval-results.json).
+
+| Metric | TF-IDF | MiniLM |
+|---|---:|---:|
+| Recall@3 (10 answerable questions) | 0.90 | 1.00 |
+| MRR@3 (10 answerable questions) | 0.7333 | 1.00 |
+| Out-of-domain false accepts (3 questions) | 0/3 | 0/3 |
+| Median query latency, cached run | 0.503 ms | 7.795 ms |
+| P95 query latency, cached run | 1.102 ms | 10.160 ms |
+
+The fixture and thresholds were unchanged between backends. These measurements apply only
+to this tiny authored fixture; they do not establish production superiority or robustness.
+No hosted LLM calls were made. Twenty-six focused tests passed in the semantic environment.
 Unit tests use deterministic fake embeddings to test ranking, normalization, source identity,
 input rejection and RAG integration. They do not validate model quality.
 
@@ -54,7 +67,6 @@ No vector database or semantic dashboard control is included in this draft.
 
 ## Before marking ready
 
-- Install optional dependencies and run the pinned real model.
-- Run both backends on the unchanged fixture and retain the machine-readable results.
-- Inspect failed/paraphrased and out-of-domain queries without tuning on the evaluation set.
+- Completed: real-model and cached-only execution, unchanged fixture, retained JSON evidence.
+- Broaden independent evaluation before generalizing quality or adjusting thresholds.
 - Merge prerequisite PR #5, retarget to main and run the normal CI gates.

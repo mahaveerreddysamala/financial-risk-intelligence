@@ -1,0 +1,532 @@
+{
+  "description": "13 authored regression questions, 6 chunks; not held-out evidence",
+  "corpus_sha256": "8964b532d33823d99c9d6dabf07e7ba78ee4f1eebd86d109208a6021ad24c5a6",
+  "fixture_sha256": "ec5851a71cb1b64de5020609249e0e186a3748b64748fcf5959bf43e11f8771b",
+  "python": "3.12.13",
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "semantic_startup_seconds": 3.3286295420000442,
+  "versions": {
+    "numpy": "2.5.2",
+    "scikit-learn": "1.9.0",
+    "sentence-transformers": "5.1.2",
+    "torch": "2.14.0+cpu"
+  },
+  "results": {
+    "tfidf": {
+      "recall_at_3": 0.9,
+      "mrr_at_3": 0.7333333333333333,
+      "ood_false_accept_rate": 0.0,
+      "p50_query_ms": 0.5033870000943352,
+      "p95_query_ms": 1.1019254000757421,
+      "threshold": 0.12,
+      "questions": [
+        {
+          "id": "devices-1",
+          "query": "Does one phone used by several people prove wrongdoing?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.11990067604303527,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 1.39981400002398,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 0.3333333333333333,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "devices-2",
+          "query": "Could a household explain overlapping hardware between customers?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.5547439999418202,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 0.5,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "velocity-1",
+          "query": "Why would a burst of purchases attract attention?",
+          "retrieved": [
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.1934588701834154,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.5116290000160006,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "velocity-2",
+          "query": "May tomorrow's purchases inform today's historical features?",
+          "retrieved": [
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.273592157974762,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.4751839999244112,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "capacity-1",
+          "query": "How do I measure the proportion of reviewed alerts that were actually fraudulent?",
+          "retrieved": [
+            "docs/rag-reference.md:3:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.10948482049990495,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.4851799999414652,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "capacity-2",
+          "query": "How much better is the analyst queue than random selection?",
+          "retrieved": [
+            "docs/rag-reference.md:3:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.2189696409998099,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.45231000001422217,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "signals-1",
+          "query": "Does an elevated ensemble score establish criminal intent?",
+          "retrieved": [
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:0:0"
+          ],
+          "scores": [
+            0.23625687575299648,
+            0.09789849204006121,
+            0.0
+          ],
+          "latency_ms": 0.9033330001102513,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "signals-2",
+          "query": "What inputs are combined to prioritize suspicious payments?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:0:0"
+          ],
+          "scores": [
+            0.08478258109888166,
+            0.0818417824883355,
+            0.0
+          ],
+          "latency_ms": 0.6054499999663676,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 0.5,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "human-1",
+          "query": "Can the assistant automatically stop a payment?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.5033870000943352,
+          "recall_at_3": 0.0,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "human-2",
+          "query": "Does a valid reference identifier guarantee that the generated claim is true?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.19600821318801448,
+            0.12060946327847277,
+            0.0
+          ],
+          "latency_ms": 0.6778890000305182,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "ood-1",
+          "query": "What is the weather forecast for Tokyo tomorrow?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.49167900010615995,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        },
+        {
+          "id": "ood-2",
+          "query": "How long should I bake sourdough bread?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.4861209999944549,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        },
+        {
+          "id": "ood-3",
+          "query": "Who won the football world cup in 1998?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "latency_ms": 0.46809299999495124,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        }
+      ]
+    },
+    "semantic": {
+      "recall_at_3": 1.0,
+      "mrr_at_3": 1.0,
+      "ood_false_accept_rate": 0.0,
+      "p50_query_ms": 7.795186999942416,
+      "p95_query_ms": 10.159839400012054,
+      "threshold": 0.35,
+      "questions": [
+        {
+          "id": "devices-1",
+          "query": "Does one phone used by several people prove wrongdoing?",
+          "retrieved": [
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:4:0"
+          ],
+          "scores": [
+            0.47159551783155285,
+            0.2512192926669347,
+            0.2024083047764584
+          ],
+          "latency_ms": 8.270151000033366,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "devices-2",
+          "query": "Could a household explain overlapping hardware between customers?",
+          "retrieved": [
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:3:0"
+          ],
+          "scores": [
+            0.4823350915477536,
+            0.14775018500990775,
+            0.12227003519803586
+          ],
+          "latency_ms": 7.223638000027677,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "velocity-1",
+          "query": "Why would a burst of purchases attract attention?",
+          "retrieved": [
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.48582752396576845,
+            0.21078995040259518,
+            0.2100299944906654
+          ],
+          "latency_ms": 7.31053900005918,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "velocity-2",
+          "query": "May tomorrow's purchases inform today's historical features?",
+          "retrieved": [
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:4:0"
+          ],
+          "scores": [
+            0.3596066763960107,
+            0.14345211288012819,
+            0.08798658674547696
+          ],
+          "latency_ms": 7.311109000056604,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "capacity-1",
+          "query": "How do I measure the proportion of reviewed alerts that were actually fraudulent?",
+          "retrieved": [
+            "docs/rag-reference.md:3:0",
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:5:0"
+          ],
+          "scores": [
+            0.4693821585166965,
+            0.3665325618631746,
+            0.2712527661596097
+          ],
+          "latency_ms": 7.795468000040273,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "capacity-2",
+          "query": "How much better is the analyst queue than random selection?",
+          "retrieved": [
+            "docs/rag-reference.md:3:0",
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:2:0"
+          ],
+          "scores": [
+            0.47310764849015996,
+            0.23624385725604383,
+            0.16827803729064839
+          ],
+          "latency_ms": 7.800054000085765,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "signals-1",
+          "query": "Does an elevated ensemble score establish criminal intent?",
+          "retrieved": [
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:3:0",
+            "docs/rag-reference.md:5:0"
+          ],
+          "scores": [
+            0.48691498183923876,
+            0.2713852965893547,
+            0.2456049121854307
+          ],
+          "latency_ms": 7.057819000010568,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "signals-2",
+          "query": "What inputs are combined to prioritize suspicious payments?",
+          "retrieved": [
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.3867886604375921,
+            0.2875241016944444,
+            0.27202321134559726
+          ],
+          "latency_ms": 7.795186999942416,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "human-1",
+          "query": "Can the assistant automatically stop a payment?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            0.2761826834119825,
+            0.18517084873907103,
+            0.06520975673182532
+          ],
+          "latency_ms": 7.646403999956419,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": false
+        },
+        {
+          "id": "human-2",
+          "query": "Does a valid reference identifier guarantee that the generated claim is true?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:4:0"
+          ],
+          "scores": [
+            0.42103170987414235,
+            0.3016416119209564,
+            0.16996478388617414
+          ],
+          "latency_ms": 8.067055999958939,
+          "recall_at_3": 1.0,
+          "reciprocal_rank_at_3": 1.0,
+          "out_of_domain": false,
+          "accepted": true
+        },
+        {
+          "id": "ood-1",
+          "query": "What is the weather forecast for Tokyo tomorrow?",
+          "retrieved": [
+            "docs/rag-reference.md:4:0",
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:0:0"
+          ],
+          "scores": [
+            0.00032472431429856653,
+            -0.02157488874319929,
+            -0.0282593274459468
+          ],
+          "latency_ms": 7.371010000042588,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        },
+        {
+          "id": "ood-2",
+          "query": "How long should I bake sourdough bread?",
+          "retrieved": [
+            "docs/rag-reference.md:0:0",
+            "docs/rag-reference.md:2:0",
+            "docs/rag-reference.md:1:0"
+          ],
+          "scores": [
+            -0.009564739276757495,
+            -0.01893704329976508,
+            -0.04356830777365173
+          ],
+          "latency_ms": 12.994371999980103,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        },
+        {
+          "id": "ood-3",
+          "query": "Who won the football world cup in 1998?",
+          "retrieved": [
+            "docs/rag-reference.md:5:0",
+            "docs/rag-reference.md:1:0",
+            "docs/rag-reference.md:3:0"
+          ],
+          "scores": [
+            0.015329157057390748,
+            -0.006623028666472359,
+            -0.0077614688446000215
+          ],
+          "latency_ms": 7.897931000002245,
+          "recall_at_3": null,
+          "reciprocal_rank_at_3": 0,
+          "out_of_domain": true,
+          "accepted": false
+        }
+      ]
+    }
+  }
+}
