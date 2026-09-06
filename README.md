@@ -243,6 +243,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+Start with the [project case study](docs/portfolio-case-study.md) for architecture, measured
+tradeoffs, failure analysis, interview talking points and the latest deployment-check finding.
+
 The [evidence availability check](docs/evidence-availability.md) rejects recognized requests
 for facts absent from the built-in corpus and documents its measured coverage and gaps.
 
