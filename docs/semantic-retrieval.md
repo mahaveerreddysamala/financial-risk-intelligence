@@ -1,4 +1,4 @@
-# Semantic retrieval — draft, local model benchmark validated
+# Semantic retrieval — local model benchmark validated
 
 This change builds on case-evidence PR #5. It adds an interchangeable TF-IDF and
 sentence-transformer retrieval layer, plus a small authored regression benchmark.
@@ -63,10 +63,11 @@ answer = answer_question(question, documents, case=case, retriever=engine)
 
 The supplied engine owns its indexed document snapshot. Keep it aligned with the intended
 corpus. Semantic search runs on local CPU; hosted text generation remains separately opt-in.
-No vector database or semantic dashboard control is included in this draft.
+No vector database or semantic dashboard control is included in this implementation.
 
-## Before marking ready
+## Integration and evaluation status
 
 - Completed: real-model and cached-only execution, unchanged fixture, retained JSON evidence.
 - Broaden independent evaluation before generalizing quality or adjusting thresholds.
-- Merge prerequisite PR #5, retarget to main and run the normal CI gates.
+- Prerequisite PR #5 is merged; PR #6 targets main for normal CI gates and review.
+- Semantic mode remains optional and is not enabled in the public dashboard.
