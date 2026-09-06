@@ -243,6 +243,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+The [evidence availability check](docs/evidence-availability.md) rejects recognized requests
+for facts absent from the built-in corpus and documents its measured coverage and gaps.
+
 The [abstention experiment](docs/abstention-analysis.md) documents failure analysis,
 30 separate validation questions, a rejected threshold change and recorded execution.
 

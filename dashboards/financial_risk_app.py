@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from financial_risk.investigation.rag import answer_question, load_chunks
+from financial_risk.investigation.evidence_scope import REFERENCE_SCOPE
 
 from financial_risk.dashboard import (
     build_dashboard_snapshot,
@@ -82,7 +83,8 @@ with copilot_tab:
             if case_id != "Reference only":
                 row = transactions.loc[transactions["transaction_id"].eq(case_id)].iloc[0]
                 case = build_investigation_payload(row)
-            answer = answer_question(question, load_chunks(ROOT), case=case)
+            answer = answer_question(question, load_chunks(ROOT), case=case,
+                                     evidence_scope=REFERENCE_SCOPE)
             st.text(answer.text)
             for source in answer.sources:
                 with st.expander(f'{source["id"]}: {source["source"]}'):

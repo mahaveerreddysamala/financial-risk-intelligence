@@ -1,0 +1,254 @@
+[
+  {
+    "id": "scope-general-1",
+    "query": "Would a common checkout kiosk justify accusing multiple customers?",
+    "relevant": [
+      "docs/rag-reference.md:1:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-2",
+    "query": "How should investigators interpret hardware reused within a family?",
+    "relevant": [
+      "docs/rag-reference.md:1:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-3",
+    "query": "Should connections between accounts be examined after a shared-device flag?",
+    "relevant": [
+      "docs/rag-reference.md:1:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-4",
+    "query": "Does a recent run of payments always imply wrongdoing?",
+    "relevant": [
+      "docs/rag-reference.md:2:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-5",
+    "query": "Should later purchases influence an earlier payment's activity features?",
+    "relevant": [
+      "docs/rag-reference.md:2:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-6",
+    "query": "What historical activity is excluded for the event being evaluated?",
+    "relevant": [
+      "docs/rag-reference.md:2:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-7",
+    "query": "Which metric describes fraud found among transactions the analysts reviewed?",
+    "relevant": [
+      "docs/rag-reference.md:3:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-8",
+    "query": "What determines the size of the prioritized review workload?",
+    "relevant": [
+      "docs/rag-reference.md:3:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-9",
+    "query": "How is the share of all fraud recovered by the queue measured?",
+    "relevant": [
+      "docs/rag-reference.md:3:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-10",
+    "query": "What does queue performance relative to population prevalence represent?",
+    "relevant": [
+      "docs/rag-reference.md:3:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-11",
+    "query": "Can historical synthetic evaluation promise future outcomes?",
+    "relevant": [
+      "docs/rag-reference.md:3:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-12",
+    "query": "Should an analyst treat an elevated score as proof of intent?",
+    "relevant": [
+      "docs/rag-reference.md:4:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-13",
+    "query": "How are fraud, anomaly, velocity and network indicators used together?",
+    "relevant": [
+      "docs/rag-reference.md:4:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-14",
+    "query": "Are synthetic fraud labels suitable as prioritization inputs?",
+    "relevant": [
+      "docs/rag-reference.md:4:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-15",
+    "query": "Who should review a draft about a customer account?",
+    "relevant": [
+      "docs/rag-reference.md:5:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-16",
+    "query": "Can matching citation identifiers establish factual support?",
+    "relevant": [
+      "docs/rag-reference.md:5:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-17",
+    "query": "What restrictions apply to sending personal records to this assistant?",
+    "relevant": [
+      "docs/rag-reference.md:5:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-general-18",
+    "query": "May the assistant take action to halt payments itself?",
+    "relevant": [
+      "docs/rag-reference.md:5:0"
+    ],
+    "category": "general_guidance"
+  },
+  {
+    "id": "scope-missing-1",
+    "query": "Tell me the exact loss on this selected payment.",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-2",
+    "query": "How many dollars did this customer lose?",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-3",
+    "query": "Show the actual losses for case CASE-712.",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-4",
+    "query": "What was stolen from our customer yesterday?",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-5",
+    "query": "How much is the loss for transaction TX-812?",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-6",
+    "query": "I need the dollar damage from the selected payment.",
+    "relevant": [],
+    "category": "transaction_loss"
+  },
+  {
+    "id": "scope-missing-7",
+    "query": "Who holds account ACCT-512?",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-8",
+    "query": "Identify the cardholder behind this payment.",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-9",
+    "query": "What is the identity of this customer?",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-10",
+    "query": "Who is the owner of the flagged account?",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-11",
+    "query": "Please identify the customer linked to this account.",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-12",
+    "query": "Give me the account holder's full legal name.",
+    "relevant": [],
+    "category": "customer_identity"
+  },
+  {
+    "id": "scope-missing-13",
+    "query": "Forecast our bank's fraud rate for December.",
+    "relevant": [],
+    "category": "organization_forecast"
+  },
+  {
+    "id": "scope-missing-14",
+    "query": "What will our company fraud losses be next year?",
+    "relevant": [],
+    "category": "organization_forecast"
+  },
+  {
+    "id": "scope-missing-15",
+    "query": "Predict my organization's fraud rate next month.",
+    "relevant": [],
+    "category": "organization_forecast"
+  },
+  {
+    "id": "scope-missing-16",
+    "query": "Forecast the future fraud losses at our bank.",
+    "relevant": [],
+    "category": "organization_forecast"
+  },
+  {
+    "id": "scope-missing-17",
+    "query": "Predict the loss rate for this company tomorrow.",
+    "relevant": [],
+    "category": "organization_forecast"
+  },
+  {
+    "id": "scope-missing-18",
+    "query": "How high will our fraud rate rise next quarter?",
+    "relevant": [],
+    "category": "organization_forecast"
+  }
+]

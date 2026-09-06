@@ -29,6 +29,12 @@ def main() -> None:
     next(item for item in test.button if item.label == "Retrieve evidence").click().run()
     if test.exception or not any("[E1]" in item.value for item in test.text):
         raise AssertionError("Selected case did not render evidence citations")
+    question = next(item for item in test.text_input if item.label == "Question")
+    question.set_value("What is the exact loss for this transaction?")
+    next(item for item in test.button if item.label == "Retrieve evidence").click().run()
+    if test.exception or not any("does not include verified transaction-loss records" in item.value
+                                 for item in test.text):
+        raise AssertionError("Unavailable case evidence did not produce an abstention")
     print(f"Dashboard smoke passed with {len(test.metric)} rendered metrics")
 
 
