@@ -243,6 +243,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+The [abstention experiment](docs/abstention-analysis.md) documents failure analysis,
+30 separate validation questions, a rejected threshold change and recorded execution.
+
 See the [50-question retrieval challenge and comparison demo](docs/retrieval-challenge.md)
 for acceptance failures, latency measurements, reproduction steps and a citation-review protocol.
 
