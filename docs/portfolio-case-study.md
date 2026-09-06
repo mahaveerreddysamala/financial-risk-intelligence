@@ -65,9 +65,14 @@ then merged as `c24c63db8ae5c92b300dc798a99e1c0e7d0e0be4`.
 Live verification on 2026-09-06 loaded the dashboard, but submitting a missing-loss question
 failed with `TypeError: answer_question() got an unexpected keyword argument 'case'`.
 It persisted after one browser reload. Deployment logs show code updates without a fresh
-runtime start, consistent with a stale imported function. A runtime reboot and retest are
-pending explicit authorization; the deployed copilot is not yet verified after this merge.
-This illustrates why passing CI and a loaded homepage do not prove a working deployed flow.
+runtime start, consistent with a stale imported function. After explicit user authorization,
+the app was rebooted on 2026-09-06 (runtime startup recorded at 20:35 UTC). Live retesting
+then passed: general shared-device retrieval returned `[S1]`; synthetic selected case
+`TXN000000590` returned `[E1]` through `[E5]` with reference citations; the exact-loss question
+returned the missing-evidence explanation in both reference-only and selected-case modes.
+No code changes or paid LLM calls were needed for recovery. These checks verify the exercised
+flows, not general model quality or an uptime guarantee. This incident illustrates why passing
+CI and a loaded homepage do not prove a working deployed flow.
 
 ## Interview walkthrough
 
