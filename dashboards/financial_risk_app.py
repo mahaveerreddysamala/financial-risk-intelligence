@@ -11,6 +11,8 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+from financial_risk.investigation.rag import answer_question, load_chunks
+
 from financial_risk.dashboard import (
     build_dashboard_snapshot,
     build_investigation_payload,
@@ -59,9 +61,29 @@ metric_columns[2].metric("Critical cases", f"{critical:,}")
 metric_columns[3].metric("PR-AUC", f'{snapshot.model_metrics["pr_auc"]:.4f}')
 metric_columns[4].metric("ROC-AUC", f'{snapshot.model_metrics["roc_auc"]:.4f}')
 
-overview_tab, queue_tab, evidence_tab, model_tab = st.tabs(
-    ["Executive overview", "Decision queue", "Case evidence", "Model evidence"]
+overview_tab, queue_tab, evidence_tab, model_tab, copilot_tab = st.tabs(
+    ["Executive overview", "Decision queue", "Case evidence", "Model evidence", "Ask the copilot"]
 )
+
+with copilot_tab:
+    st.subheader("Investigation reference copilot")
+    st.caption("Offline reference retrieval. No API calls, credentials, or transaction actions.")
+    with st.form("reference_question"):
+        question = st.text_input("Question", "How do shared devices affect an investigation?",
+                                 max_chars=2000)
+        submitted = st.form_submit_button("Retrieve evidence")
+    if submitted:
+        if not question.strip():
+            st.warning("Enter a question first.")
+        else:
+            answer = answer_question(question, load_chunks(ROOT))
+            st.text(answer.text)
+            for source in answer.sources:
+                with st.expander(f'{source["id"]}: {source["source"]}'):
+                    st.text(source["text"])
+                    st.caption(f'Retrieval similarity: {source["score"]:.3f} (not confidence)')
+    st.info("This tab retrieves demonstration guidance, not case-specific LLM conclusions. "
+            "The optional hosted adapter is available to developers but disabled in this app.")
 
 with overview_tab:
     left, right = st.columns(2)

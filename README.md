@@ -243,10 +243,15 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+The **Ask the copilot** dashboard tab now retrieves cited synthetic reference excerpts offline.
+An optional OpenAI synthesis adapter is implemented and tested with a mocked HTTP provider;
+paid calls remain disabled in the public dashboard. See [RAG setup and evaluation limitations](docs/investigation-rag.md).
+
 The investigation copilot provides retrieval and grounded prompt construction around case evidence.
 
-The current implementation uses TF-IDF retrieval and produces an evidence-constrained prompt
-and analyst brief. It does not call a hosted language model or autonomously adjudicate cases.
+The default implementation uses TF-IDF retrieval and produces an evidence-constrained prompt
+and analyst brief. Hosted synthesis requires explicit developer configuration; neither mode
+autonomously adjudicates cases.
 
 The workflow separates:
 
