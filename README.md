@@ -244,6 +244,8 @@ Case creation supports idempotency. Status transitions are validated, actor info
 ## Investigation Copilot
 
 The **Ask the copilot** dashboard tab now retrieves cited synthetic reference excerpts offline.
+Select a case to include validated numeric observations with separate evidence citations;
+identifiers and free-text case fields are excluded from copilot context.
 An optional OpenAI synthesis adapter is implemented and tested with a mocked HTTP provider;
 paid calls remain disabled in the public dashboard. See [RAG setup and evaluation limitations](docs/investigation-rag.md).
 

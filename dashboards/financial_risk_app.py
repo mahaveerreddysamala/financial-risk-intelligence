@@ -69,6 +69,8 @@ with copilot_tab:
     st.subheader("Investigation reference copilot")
     st.caption("Offline reference retrieval. No API calls, credentials, or transaction actions.")
     with st.form("reference_question"):
+        case_id = st.selectbox("Case context", ["Reference only"] +
+                               transactions.head(50)["transaction_id"].tolist())
         question = st.text_input("Question", "How do shared devices affect an investigation?",
                                  max_chars=2000)
         submitted = st.form_submit_button("Retrieve evidence")
@@ -76,13 +78,19 @@ with copilot_tab:
         if not question.strip():
             st.warning("Enter a question first.")
         else:
-            answer = answer_question(question, load_chunks(ROOT))
+            case = None
+            if case_id != "Reference only":
+                row = transactions.loc[transactions["transaction_id"].eq(case_id)].iloc[0]
+                case = build_investigation_payload(row)
+            answer = answer_question(question, load_chunks(ROOT), case=case)
             st.text(answer.text)
             for source in answer.sources:
                 with st.expander(f'{source["id"]}: {source["source"]}'):
                     st.text(source["text"])
-                    st.caption(f'Retrieval similarity: {source["score"]:.3f} (not confidence)')
-    st.info("This tab retrieves demonstration guidance, not case-specific LLM conclusions. "
+                    if "score" in source:
+                        st.caption(f'Retrieval similarity: {source["score"]:.3f} (not confidence)')
+    st.info("Selected cases contribute only allowlisted numeric signals; identifiers and free text "
+            "are excluded. Excerpts and observations are not LLM conclusions. "
             "The optional hosted adapter is available to developers but disabled in this app.")
 
 with overview_tab:

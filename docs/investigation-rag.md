@@ -41,6 +41,21 @@ Valid IDs do NOT verify entailment, factual accuracy, or all claims. Responses r
 `llm-unverified` and require human review. No safety certification or hallucination-rate claim
 is made. There are no tools for financial actions and no arbitrary document upload or URL fetch.
 
-Next evaluation milestones: case-evidence integration with redaction, semantic embedding
+## Selected-case context
+
+Choose a transaction under **Case context** or leave **Reference only** selected.
+The copilot presents observed numeric signals as `[E1]` citations alongside `[S1]` references.
+Only fraud probability, anomaly score, network risk, velocity risk and shared-device count
+are allowed. Identifiers, amounts, location and free-text fields are excluded. Invalid numeric
+values and duplicate fields are dropped. This is data minimization, not general-purpose PII
+redaction: user questions are still unfiltered and must never contain sensitive information.
+Signal labels expand retrieval queries, so case mode can return general signal guidance even
+when a question is unsupported. The offline result is excerpts, not a claim to answer it.
+
+Developer callers can pass `case=build_investigation_payload(row)` to `answer_question`.
+In hosted mode the question, sanitized numeric observations and references are transmitted;
+the full case is not. Hosted usage remains separately opt-in and unverified.
+
+Next evaluation milestones: semantic embedding
 comparison, held-out paraphrase/adversarial questions, per-claim citation support review,
 latency/token/cost measurements using a separately authorized live evaluation.
