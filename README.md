@@ -243,6 +243,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+An optional semantic-retrieval backend and regression benchmark are drafted; real-model
+validation is pending. See [semantic retrieval status and setup](docs/semantic-retrieval.md).
+
 The **Ask the copilot** dashboard tab now retrieves cited synthetic reference excerpts offline.
 Select a case to include validated numeric observations with separate evidence citations;
 identifiers and free-text case fields are excluded from copilot context.

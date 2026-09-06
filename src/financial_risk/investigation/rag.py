@@ -9,7 +9,7 @@ from pathlib import Path
 import httpx
 import pandas as pd
 
-from financial_risk.investigation.copilot import build_document_index, retrieve_documents
+from financial_risk.investigation.retrieval import LexicalRetriever, Retriever
 from financial_risk.investigation.llm_adapter import TextGenerator
 from financial_risk.investigation.case_context import safe_case_sources
 
@@ -49,18 +49,18 @@ def load_chunks(root: Path) -> pd.DataFrame:
 
 def answer_question(question: str, documents: pd.DataFrame,
                     generator: TextGenerator | None = None, *,
-                    case: dict | None = None) -> RagAnswer:
+                    case: dict | None = None, retriever: Retriever | None = None) -> RagAnswer:
     """Retrieve passages; citation-ID validation is not factuality verification."""
     if not question.strip() or len(question) > 2000:
         raise ValueError("Question must contain 1–2000 characters")
-    vectorizer, matrix, _ = build_document_index(documents)
+    engine = retriever if retriever is not None else LexicalRetriever(documents)
     evidence = safe_case_sources(case) if case is not None else ()
     # Case labels help retrieve guidance; values and identifiers never influence retrieval.
     query = question + " " + " ".join(s["field"].replace("_", " ") for s in evidence)
-    hits = retrieve_documents(query, documents, vectorizer, matrix, top_k=3)
+    hits = engine.search(query.strip(), top_k=3)
     sources = tuple({"id": f"S{i + 1}", "source": hit.document_id,
                      "score": hit.score, "text": hit.text}
-                    for i, hit in enumerate(hits) if hit.score >= 0.12)
+                    for i, hit in enumerate(hits) if hit.score >= engine.minimum_score)
     if not sources:
         return RagAnswer("Insufficient reference evidence to answer this question.",
                          (), "abstention", True, False)

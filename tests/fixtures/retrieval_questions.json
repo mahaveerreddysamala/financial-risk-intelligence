@@ -1,0 +1,15 @@
+[
+  {"id":"devices-1","query":"Does one phone used by several people prove wrongdoing?","relevant":["docs/rag-reference.md:1:0"]},
+  {"id":"devices-2","query":"Could a household explain overlapping hardware between customers?","relevant":["docs/rag-reference.md:1:0"]},
+  {"id":"velocity-1","query":"Why would a burst of purchases attract attention?","relevant":["docs/rag-reference.md:2:0"]},
+  {"id":"velocity-2","query":"May tomorrow's purchases inform today's historical features?","relevant":["docs/rag-reference.md:2:0"]},
+  {"id":"capacity-1","query":"How do I measure the proportion of reviewed alerts that were actually fraudulent?","relevant":["docs/rag-reference.md:3:0"]},
+  {"id":"capacity-2","query":"How much better is the analyst queue than random selection?","relevant":["docs/rag-reference.md:3:0"]},
+  {"id":"signals-1","query":"Does an elevated ensemble score establish criminal intent?","relevant":["docs/rag-reference.md:4:0"]},
+  {"id":"signals-2","query":"What inputs are combined to prioritize suspicious payments?","relevant":["docs/rag-reference.md:4:0"]},
+  {"id":"human-1","query":"Can the assistant automatically stop a payment?","relevant":["docs/rag-reference.md:5:0"]},
+  {"id":"human-2","query":"Does a valid reference identifier guarantee that the generated claim is true?","relevant":["docs/rag-reference.md:5:0"]},
+  {"id":"ood-1","query":"What is the weather forecast for Tokyo tomorrow?","relevant":[]},
+  {"id":"ood-2","query":"How long should I bake sourdough bread?","relevant":[]},
+  {"id":"ood-3","query":"Who won the football world cup in 1998?","relevant":[]}
+]
