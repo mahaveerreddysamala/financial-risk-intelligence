@@ -24,6 +24,11 @@ def main() -> None:
     submit.click().run()
     if test.exception or not any("[S1]" in item.value for item in test.text):
         raise AssertionError("Copilot query did not render cited evidence")
+    selector = next(item for item in test.selectbox if item.label == "Case context")
+    selector.select(selector.options[1])
+    next(item for item in test.button if item.label == "Retrieve evidence").click().run()
+    if test.exception or not any("[E1]" in item.value for item in test.text):
+        raise AssertionError("Selected case did not render evidence citations")
     print(f"Dashboard smoke passed with {len(test.metric)} rendered metrics")
 
 
