@@ -1,0 +1,2 @@
+# Optional; not required for dashboard or default CI. Install CPU torch first if needed.
+sentence-transformers==5.1.2
