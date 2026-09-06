@@ -1,0 +1,83 @@
+{
+  "development_candidates": [
+    {
+      "threshold": 0.2,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 7,
+      "false_rejects": 0
+    },
+    {
+      "threshold": 0.25,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 4,
+      "false_rejects": 2
+    },
+    {
+      "threshold": 0.3,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 2,
+      "false_rejects": 3
+    },
+    {
+      "threshold": 0.35,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 1,
+      "false_rejects": 7
+    },
+    {
+      "threshold": 0.36,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 0,
+      "false_rejects": 7
+    },
+    {
+      "threshold": 0.4,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 0,
+      "false_rejects": 15
+    },
+    {
+      "threshold": 0.45,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 0,
+      "false_rejects": 22
+    },
+    {
+      "threshold": 0.5,
+      "answerable_count": 40,
+      "unsupported_count": 10,
+      "false_accepts": 0,
+      "false_rejects": 30
+    }
+  ],
+  "selected_threshold": 0.36,
+  "validation_baseline": {
+    "threshold": 0.35,
+    "answerable_count": 20,
+    "unsupported_count": 10,
+    "false_accepts": 1,
+    "false_rejects": 4
+  },
+  "validation_candidate": {
+    "threshold": 0.36,
+    "answerable_count": 20,
+    "unsupported_count": 10,
+    "false_accepts": 1,
+    "false_rejects": 4
+  },
+  "meets_predeclared_gate": false,
+  "gate": "Strictly fewer false accepts and no additional false rejects on validation",
+  "deployment": "No runtime threshold changes; human review required even if gate passes",
+  "limits": "AI-authored, same corpus; separate questions are not independent validation",
+  "report_sha256": {
+    "development": "8003f566d10f758e346b419cce5707edd7b040f5e3aba8a689c1cd9575f60ed7",
+    "validation": "fad3d986d7c6b5ed203b6d4761893b44b6e0ef308fbcc559cd3cc81b6d0808d9"
+  }
+}
