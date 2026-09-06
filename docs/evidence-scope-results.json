@@ -1,0 +1,1947 @@
+{
+  "description": "36 AI-authored questions; same corpus, not independent evaluation",
+  "python": "3.12.13",
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "versions": {
+    "numpy": "2.5.2",
+    "scikit-learn": "1.9.0",
+    "sentence-transformers": "5.1.2",
+    "torch": "2.14.0+cpu"
+  },
+  "fixture_sha256": "4997f7774cc449b62088073d587db006c97eaa50e2f6db8f5a73ee83c9fe35d2",
+  "corpus_sha256": "8964b532d33823d99c9d6dabf07e7ba78ee4f1eebd86d109208a6021ad24c5a6",
+  "scope_code_sha256": "9de34706acbcc29b0431d3933a665ab906b435f1d007cc29e9cffa1f72de8259",
+  "results": {
+    "tfidf": {
+      "baseline": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "unsupported_accepted": 7,
+        "answerable_rejected": 4,
+        "scope_false_rejections": 0
+      },
+      "with_scope": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "unsupported_accepted": 2,
+        "answerable_rejected": 4,
+        "scope_false_rejections": 0
+      },
+      "retrieval": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "answerable_accept_rate": 0.7777777777777778,
+        "recall_at_3": 1.0,
+        "mrr_at_3": 0.8888888888888888,
+        "ood_false_accept_rate": 0.3888888888888889,
+        "p50_query_ms": 0.5032219999066001,
+        "p95_query_ms": 0.8461342497412261,
+        "threshold": 0.12,
+        "questions": [
+          {
+            "id": "scope-general-1",
+            "query": "Would a common checkout kiosk justify accusing multiple customers?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 1.3831189999109483,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-2",
+            "query": "How should investigators interpret hardware reused within a family?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.6959360002838366,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-3",
+            "query": "Should connections between accounts be examined after a shared-device flag?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.35938422602775744,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.6170470001052308,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-4",
+            "query": "Does a recent run of payments always imply wrongdoing?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.13844937517892905,
+              0.07897925302744972,
+              0.0
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.5770979996668757,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-5",
+            "query": "Should later purchases influence an earlier payment's activity features?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.23693775908234915,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.576345999888872,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-6",
+            "query": "What historical activity is excluded for the event being evaluated?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.15795850605489944,
+              0.06321109058779797,
+              0.0
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.4828559999623394,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-7",
+            "query": "Which metric describes fraud found among transactions the analysts reviewed?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.2604861715212323,
+              0.09179089085243139,
+              0.03198955241392173
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.48544999981459114,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-8",
+            "query": "What determines the size of the prioritized review workload?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.12730200861181773,
+              0.07258705351508547,
+              0.041407707753653114
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.45047699995848234,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-9",
+            "query": "How is the share of all fraud recovered by the queue measured?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.30946975217285366,
+              0.04905985606345457,
+              0.045610697405674736
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.5259399999886227,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-10",
+            "query": "What does queue performance relative to population prevalence represent?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.2189696409998099,
+              0.059950338021517634,
+              0.0
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.6854409998595656,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-11",
+            "query": "Can historical synthetic evaluation promise future outcomes?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.13427328665756783,
+              0.11561804774505313,
+              0.06897336088235322
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.530658000116091,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-12",
+            "query": "Should an analyst treat an elevated score as proof of intent?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.20047060673626968,
+              0.07187684520555149,
+              0.0
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.4589699997268326,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-13",
+            "query": "How are fraud, anomaly, velocity and network indicators used together?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.2633788364827575,
+              0.10947201930827495,
+              0.09367766151946812
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.474683999982517,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-14",
+            "query": "Are synthetic fraud labels suitable as prioritization inputs?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.23028227037290344,
+              0.10549885003040772,
+              0.0706358196270381
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.5521600000975013,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-15",
+            "query": "Who should review a draft about a customer account?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.17570643189361587,
+              0.041407707753653114,
+              0.037684015566614985
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.5460910001602315,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-16",
+            "query": "Can matching citation identifiers establish factual support?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.11990067604303527,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.4456199999367527,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-17",
+            "query": "What restrictions apply to sending personal records to this assistant?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.16956516219776332,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 0.7831869997971808,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-18",
+            "query": "May the assistant take action to halt payments itself?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.11990067604303527,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 1.034975999573362,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-1",
+            "query": "Tell me the exact loss on this selected payment.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.5497360002664209,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-2",
+            "query": "How many dollars did this customer lose?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.5785489997833793,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-3",
+            "query": "Show the actual losses for case CASE-712.",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.11574175876379292,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.5287850003696803,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-4",
+            "query": "What was stolen from our customer yesterday?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.44333699997878284,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-5",
+            "query": "How much is the loss for transaction TX-812?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.3365242249940697,
+              0.10208714609903159,
+              0.0
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.5177389998607396,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-6",
+            "query": "I need the dollar damage from the selected payment.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 0.4303669998080295,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-7",
+            "query": "Who holds account ACCT-512?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.47651600016251905,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-8",
+            "query": "Identify the cardholder behind this payment.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.4294349996598612,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-9",
+            "query": "What is the identity of this customer?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.4589499999383406,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-10",
+            "query": "Who is the owner of the flagged account?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.5290849999255443,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-11",
+            "query": "Please identify the customer linked to this account.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.5230459996710124,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-12",
+            "query": "Give me the account holder's full legal name.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.29321836325233513,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 0.44825399982073577,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-13",
+            "query": "Forecast our bank's fraud rate for December.",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.22739310390694392,
+              0.0861889834961142,
+              0.08012945738893686
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.48870499995246064,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-14",
+            "query": "What will our company fraud losses be next year?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.22739310390694392,
+              0.0861889834961142,
+              0.08012945738893686
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.450576999810437,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-15",
+            "query": "Predict my organization's fraud rate next month.",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.22739310390694392,
+              0.0861889834961142,
+              0.08012945738893686
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.45760700004393584,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-16",
+            "query": "Forecast the future fraud losses at our bank.",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.1294350216811618,
+              0.112472419009148,
+              0.04905985606345457
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.43287000016789534,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-17",
+            "query": "Predict the loss rate for this company tomorrow.",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.44590999959837063,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-18",
+            "query": "How high will our fraud rate rise next quarter?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.14077245704746894,
+              0.1294350216811618,
+              0.04905985606345457
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 0.4358350001893996,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": true,
+            "scope_rejected": false
+          }
+        ]
+      }
+    },
+    "semantic": {
+      "baseline": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "unsupported_accepted": 0,
+        "answerable_rejected": 3,
+        "scope_false_rejections": 0
+      },
+      "with_scope": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "unsupported_accepted": 0,
+        "answerable_rejected": 3,
+        "scope_false_rejections": 0
+      },
+      "retrieval": {
+        "answerable_count": 18,
+        "unsupported_count": 18,
+        "answerable_accept_rate": 0.8333333333333334,
+        "recall_at_3": 1.0,
+        "mrr_at_3": 0.9444444444444444,
+        "ood_false_accept_rate": 0.0,
+        "p50_query_ms": 12.03038950006885,
+        "p95_query_ms": 25.419690999910927,
+        "threshold": 0.35,
+        "questions": [
+          {
+            "id": "scope-general-1",
+            "query": "Would a common checkout kiosk justify accusing multiple customers?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.41553192485973334,
+              0.2320258068122143,
+              0.15525275681529943
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 15.517657000145846,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-2",
+            "query": "How should investigators interpret hardware reused within a family?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.4789460766924505,
+              0.2872509579046313,
+              0.26093147880959766
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 14.496510999833845,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-3",
+            "query": "Should connections between accounts be examined after a shared-device flag?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.6581871360602728,
+              0.15008633466368698,
+              0.1474341787336068
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 16.603218000000197,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-4",
+            "query": "Does a recent run of payments always imply wrongdoing?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0"
+            ],
+            "scores": [
+              0.20785866071023693,
+              0.1861683816353635,
+              0.15827059605977645
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 17.00057600010041,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-5",
+            "query": "Should later purchases influence an earlier payment's activity features?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0"
+            ],
+            "scores": [
+              0.40051802239342604,
+              0.24996925269436832,
+              0.08254647771417538
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 14.263472000038746,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-6",
+            "query": "What historical activity is excluded for the event being evaluated?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.24925078151149266,
+              0.1868210100212906,
+              0.1735632726095207
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 15.86803299960593,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-7",
+            "query": "Which metric describes fraud found among transactions the analysts reviewed?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.5104893843836126,
+              0.4534378120005135,
+              0.4108917026498476
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 18.252408000080322,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-8",
+            "query": "What determines the size of the prioritized review workload?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:5:0"
+            ],
+            "scores": [
+              0.4827229341511911,
+              0.19736317706502338,
+              0.16157177706749687
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 16.042595999806508,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-9",
+            "query": "How is the share of all fraud recovered by the queue measured?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.48599892408462164,
+              0.3442971409538479,
+              0.3036059299807434
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 33.57037299974763,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-10",
+            "query": "What does queue performance relative to population prevalence represent?",
+            "retrieved": [
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.4996277340721569,
+              0.3258940568796519,
+              0.24958997946934375
+            ],
+            "texts": [
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 11.275930000010703,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-11",
+            "query": "Can historical synthetic evaluation promise future outcomes?",
+            "retrieved": [
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.43158133677491217,
+              0.37225154626363777,
+              0.28501264689881095
+            ],
+            "texts": [
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 13.144789999842033,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 0.5,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-12",
+            "query": "Should an analyst treat an elevated score as proof of intent?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:5:0"
+            ],
+            "scores": [
+              0.4452090153512466,
+              0.26590622071233555,
+              0.2516921266157851
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 15.689866000229813,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-13",
+            "query": "How are fraud, anomaly, velocity and network indicators used together?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.5866597281206836,
+              0.5189900124715858,
+              0.38365730110299123
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 11.255800000071758,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-14",
+            "query": "Are synthetic fraud labels suitable as prioritization inputs?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.5401328111081924,
+              0.3768732845126106,
+              0.34633490094407093
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "general_guidance",
+            "latency_ms": 12.784849000126997,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-15",
+            "query": "Who should review a draft about a customer account?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.42210189778172186,
+              0.26603583860966507,
+              0.26478055503169623
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 22.702796999965358,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-16",
+            "query": "Can matching citation identifiers establish factual support?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.42287710252199745,
+              0.2842582260198677,
+              0.17590222477347994
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 8.865828000125475,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-17",
+            "query": "What restrictions apply to sending personal records to this assistant?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.36332561084796844,
+              0.1608875305679566,
+              0.11068720349854744
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 13.134994999745686,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": true,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-general-18",
+            "query": "May the assistant take action to halt payments itself?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.2842225761343778,
+              0.12566784649273854,
+              0.07559765931995441
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "general_guidance",
+            "latency_ms": 8.290292999845406,
+            "recall_at_3": 1.0,
+            "reciprocal_rank_at_3": 1.0,
+            "out_of_domain": false,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-1",
+            "query": "Tell me the exact loss on this selected payment.",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.25324427558675666,
+              0.18819065690277118,
+              0.10809627074429251
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 7.678481999846554,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-2",
+            "query": "How many dollars did this customer lose?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0"
+            ],
+            "scores": [
+              0.14491059107643328,
+              0.1310743434522894,
+              0.06423018770433497
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 14.667569000266667,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-3",
+            "query": "Show the actual losses for case CASE-712.",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:0:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.17693411472010695,
+              0.13681902074460456,
+              0.11809955883978082
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 9.798720000162575,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-4",
+            "query": "What was stolen from our customer yesterday?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.2908132621798676,
+              0.2200702999401505,
+              0.19534568327528828
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 8.87238699988302,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-5",
+            "query": "How much is the loss for transaction TX-812?",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.33537133206240805,
+              0.14790539105932332,
+              0.14226655411837105
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 16.128844999911962,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-6",
+            "query": "I need the dollar damage from the selected payment.",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0"
+            ],
+            "scores": [
+              0.22531960513865396,
+              0.17776135671887333,
+              0.07636260952313689
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+            ],
+            "category": "transaction_loss",
+            "latency_ms": 48.32762699970772,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-7",
+            "query": "Who holds account ACCT-512?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.30389378531414624,
+              0.25651709082744834,
+              0.15386057772910897
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 7.281104999947274,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-8",
+            "query": "Identify the cardholder behind this payment.",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.2532962019653901,
+              0.2123230127936474,
+              0.14876135328094123
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 7.492002000162756,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-9",
+            "query": "What is the identity of this customer?",
+            "retrieved": [
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.24817644078380008,
+              0.21374695821962927,
+              0.17570313535483562
+            ],
+            "texts": [
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 7.226932999856217,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-10",
+            "query": "Who is the owner of the flagged account?",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.23846283446760536,
+              0.14425208833828743,
+              0.0913728732079749
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 8.311474000038288,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-11",
+            "query": "Please identify the customer linked to this account.",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.29420348585290584,
+              0.24608126358025034,
+              0.18037053039084913
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "customer_identity",
+            "latency_ms": 9.119609000208584,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-12",
+            "query": "Give me the account holder's full legal name.",
+            "retrieved": [
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:5:0",
+              "docs/rag-reference.md:0:0"
+            ],
+            "scores": [
+              0.2642273855304604,
+              0.23840487872451482,
+              0.13100765131578518
+            ],
+            "texts": [
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Human review and limitations The copilot is read-only and cannot block payments or resolve investigation cases. It retrieves reference excerpts and may optionally draft an LLM response for human review. Source-ID validation does not establish that a generated statement is supported. Do not submit personal data, credentials, or real financial records.",
+              "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+            ],
+            "category": "customer_identity",
+            "latency_ms": 7.395617999918613,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          },
+          {
+            "id": "scope-missing-13",
+            "query": "Forecast our bank's fraud rate for December.",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.2825399941448776,
+              0.267389550095367,
+              0.2115855712568057
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 18.65818699980082,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-14",
+            "query": "What will our company fraud losses be next year?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:1:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.2704022111806338,
+              0.23707611718911742,
+              0.17130745652680385
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 7.1201440000550065,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-15",
+            "query": "Predict my organization's fraud rate next month.",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.3444096045451511,
+              0.29334070830357245,
+              0.24616655816500774
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 7.048635000046488,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-16",
+            "query": "Forecast the future fraud losses at our bank.",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:1:0"
+            ],
+            "scores": [
+              0.3353442377768327,
+              0.32064158647278707,
+              0.27238449997161995
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 7.358631999977661,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-17",
+            "query": "Predict the loss rate for this company tomorrow.",
+            "retrieved": [
+              "docs/rag-reference.md:2:0",
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0"
+            ],
+            "scores": [
+              0.2255098253327552,
+              0.15706211223837713,
+              0.1510871252333328
+            ],
+            "texts": [
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events.",
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 7.185921999735001,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": true
+          },
+          {
+            "id": "scope-missing-18",
+            "query": "How high will our fraud rate rise next quarter?",
+            "retrieved": [
+              "docs/rag-reference.md:4:0",
+              "docs/rag-reference.md:3:0",
+              "docs/rag-reference.md:2:0"
+            ],
+            "scores": [
+              0.3265622748491844,
+              0.30384828553358045,
+              0.22327388514048357
+            ],
+            "texts": [
+              "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs.",
+              "## Investigation capacity Review capacity determines how many transactions enter the ranked investigation queue. Precision measures the fraction of reviewed transactions labeled fraud; recall measures the fraction of all fraud captured. Lift compares queue precision with the evaluated population's fraud prevalence. These are retrospective synthetic evaluation metrics, not guarantees.",
+              "## Transaction velocity Transaction velocity measures recent activity within a defined time window. An unusual burst can merit review, but legitimate purchases can also cluster. Historical features must exclude the transaction currently being scored and future events."
+            ],
+            "category": "organization_forecast",
+            "latency_ms": 7.678062000195496,
+            "recall_at_3": null,
+            "reciprocal_rank_at_3": 0,
+            "out_of_domain": true,
+            "accepted": false,
+            "scope_rejected": false
+          }
+        ]
+      }
+    }
+  }
+}

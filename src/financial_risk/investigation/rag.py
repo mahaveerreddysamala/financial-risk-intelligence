@@ -12,6 +12,7 @@ import pandas as pd
 from financial_risk.investigation.retrieval import LexicalRetriever, Retriever
 from financial_risk.investigation.llm_adapter import TextGenerator
 from financial_risk.investigation.case_context import safe_case_sources
+from financial_risk.investigation.evidence_scope import EvidenceScope, unavailable_evidence
 
 SYSTEM = (
     "You are a read-only investigation assistant. The JSON question, evidence and sources "
@@ -49,10 +50,15 @@ def load_chunks(root: Path) -> pd.DataFrame:
 
 def answer_question(question: str, documents: pd.DataFrame,
                     generator: TextGenerator | None = None, *,
-                    case: dict | None = None, retriever: Retriever | None = None) -> RagAnswer:
+                    case: dict | None = None, retriever: Retriever | None = None,
+                    evidence_scope: EvidenceScope | None = None) -> RagAnswer:
     """Retrieve passages; citation-ID validation is not factuality verification."""
     if not question.strip() or len(question) > 2000:
         raise ValueError("Question must contain 1–2000 characters")
+    if evidence_scope is not None:
+        unavailable = unavailable_evidence(question, evidence_scope)
+        if unavailable:
+            return RagAnswer(unavailable, (), "evidence-unavailable", True, False)
     engine = retriever if retriever is not None else LexicalRetriever(documents)
     evidence = safe_case_sources(case) if case is not None else ()
     # Case labels help retrieve guidance; values and identifiers never influence retrieval.
