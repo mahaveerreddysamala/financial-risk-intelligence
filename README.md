@@ -243,6 +243,9 @@ Case creation supports idempotency. Status transitions are validated, actor info
 
 ## Investigation Copilot
 
+See the [50-question retrieval challenge and comparison demo](docs/retrieval-challenge.md)
+for acceptance failures, latency measurements, reproduction steps and a citation-review protocol.
+
 An optional semantic-retrieval backend has completed a local pinned-model regression benchmark;
 it is optional and is not enabled in the public dashboard. See
 [semantic retrieval results and limitations](docs/semantic-retrieval.md).
