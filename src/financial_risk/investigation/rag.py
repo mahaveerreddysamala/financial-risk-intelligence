@@ -101,8 +101,10 @@ class OpenAITextGenerator:
         self._api_key = api_key
         self.model = model
         self.transport = transport
+        self.last_usage: dict | None = None
 
     def generate(self, prompt: str) -> str:
+        self.last_usage = None
         with httpx.Client(timeout=30, transport=self.transport) as client:
             response = client.post(
                 "https://api.openai.com/v1/chat/completions",
@@ -111,7 +113,14 @@ class OpenAITextGenerator:
                       "messages": [{"role": "system", "content": SYSTEM},
                                    {"role": "user", "content": prompt}]})
             response.raise_for_status()
-            result = response.json()["choices"][0]["message"]["content"]
+            body = response.json()
+            result = body["choices"][0]["message"]["content"]
             if not isinstance(result, str) or not result.strip():
                 raise ValueError("Empty provider response")
+            usage = body.get("usage")
+            if isinstance(usage, dict):
+                self.last_usage = {
+                    key: usage[key] for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if type(usage.get(key)) is int and usage[key] >= 0
+                }
             return result
