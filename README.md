@@ -6,6 +6,10 @@ A real-time financial risk decisioning platform for detecting suspicious transac
 
 ## Overview
 
+The [synthetic LLM pilot](docs/llm-pilot.md) provides opt-in generation, request limits,
+token reporting and a human-review report. The public dashboard remains retrieval-only;
+mocked generation tests do not establish live model quality.
+
 Financial institutions need to evaluate transactions using more than a single fraud score. A production risk platform must combine transaction behavior, anomaly signals, entity relationships, velocity, model outputs, and operational context while remaining explainable, observable, and safe to operate at scale.
 
 This repository implements that workflow as a modular Python service and streaming system:

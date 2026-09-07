@@ -33,6 +33,9 @@ jobs:
       - name: Test
         run: python -m pytest -q
 
+      - name: Run retrieval-only LLM pilot (no API calls)
+        run: python -m financial_risk.investigation.llm_pilot --output artifacts/retrieval-pilot.json
+
       - name: Benchmark model quality
         run: python -m financial_risk.models.benchmark --rows 20000 --seed 42
 
@@ -55,6 +58,7 @@ jobs:
             artifacts/model-benchmark-report.md
             artifacts/temporal-backtest.csv
             artifacts/temporal-backtest-report.md
+            artifacts/retrieval-pilot.json
 
   dashboard:
     runs-on: ubuntu-latest
