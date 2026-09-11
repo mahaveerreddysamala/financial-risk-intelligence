@@ -37,7 +37,7 @@ case observations plus retrieved reference guidance → analyst brief.
 
 The demo writes `artifacts/end-to-end-demo/demo.json` and `analyst-brief.md`. Numeric case
 observations are copied mechanically. The LLM receives only reference passages and drafts
-general review guidance; the analyst makes the case-specific interpretation. This boundary
+general shared-device review guidance; the analyst makes the case-specific interpretation. This boundary
 was introduced after a local model misinterpreted score magnitudes and a shared-account count
 despite valid citation IDs. No payment action is executed. The hosted dashboard remains
 retrieval-only and cannot reach Ollama running on your laptop.
@@ -71,6 +71,22 @@ still made unsupported interpretations, motivating separation of exact observati
 reference-only generation. These counts were observed in session execution; earlier raw
 artifacts were lost in a workspace reset. Fresh execution artifacts are recorded separately.
 Do not treat sequential development runs as a controlled comparison or production validation.
+
+## Fresh recorded execution
+
+The [raw pilot](local-llm-pilot.json) records four real CPU model requests and three
+pre-generation abstentions. All four answers passed citation-ID validation. Across those four
+requests, median latency was **8.931 seconds** and nearest-rank p95 was **28.555 seconds**;
+the run shared host resources with tests and includes cold-load effects.
+See the [evaluation](local-llm-evaluation.json), [attributed assistant review](local-llm-reviews.json)
+and [runtime/model digests](local-llm-runtime.json). The assistant judged the four answers
+supported, but this is neither independent human review nor a general accuracy estimate.
+
+The [recorded analyst brief](local-analyst-brief.md) contains mechanically copied case
+observations followed by locally generated shared-device guidance. Its [JSON evidence](local-demo-result.json)
+preserves the case, sources and question. A [rejected longer-prompt attempt](local-demo-rejected.json)
+is retained to demonstrate that the citation guard can still fail closed. The narrower final
+demo does not generate a case-specific fraud conclusion.
 
 ## Two-minute demo
 

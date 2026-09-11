@@ -1,0 +1,168 @@
+{
+  "synthetic": true,
+  "seed": 42,
+  "rows": 2000,
+  "train_rows": 1332,
+  "test_rows": 340,
+  "selection": "highest combined risk score in synthetic holdout",
+  "scoring": "XGBoost + IsolationForest + device/velocity heuristics; community proxy",
+  "actions_executed": false,
+  "case": {
+    "transaction_id": "TXN000001893",
+    "risk_score": 0.5586241071953195,
+    "risk_band": "MEDIUM",
+    "action": "monitor",
+    "evidence": [
+      {
+        "source": "risk_engine",
+        "field": "fraud_probability",
+        "value": 0.9525312185287476,
+        "signal": "fraud_probability",
+        "severity": "high"
+      },
+      {
+        "source": "risk_engine",
+        "field": "anomaly_score",
+        "value": 0.20786165976981913,
+        "signal": "anomaly_score",
+        "severity": "high"
+      },
+      {
+        "source": "risk_engine",
+        "field": "network_risk",
+        "value": 0.0,
+        "signal": "network_risk",
+        "severity": "high"
+      },
+      {
+        "source": "risk_engine",
+        "field": "velocity_risk",
+        "value": 0.2,
+        "signal": "velocity_risk",
+        "severity": "high"
+      },
+      {
+        "source": "transaction",
+        "field": "amount",
+        "value": 61.03,
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "country",
+        "value": "US",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "channel",
+        "value": "ecommerce",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "payment_method",
+        "value": "bank_transfer",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "device_id",
+        "value": "D17",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "ip_id",
+        "value": "IP42",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "merchant_id",
+        "value": "M32",
+        "signal": "observed_attribute",
+        "severity": "context"
+      },
+      {
+        "source": "transaction",
+        "field": "shared_device_account_count",
+        "value": 1,
+        "signal": "observed_attribute",
+        "severity": "context"
+      }
+    ]
+  },
+  "brief": {
+    "text": "Answer withheld: missing or unknown source citations.",
+    "sources": [
+      {
+        "id": "S1",
+        "source": "docs/rag-reference.md:4:0",
+        "score": 0.2779863754896532,
+        "text": "## Model and anomaly signals The dashboard combines fraud model, anomaly, network and velocity signals into a bounded risk score. A high score is a prioritization signal, not a determination of criminal intent. Analysts should inspect individual signals and case evidence. Synthetic labels are evaluation-only and must not become scoring inputs."
+      },
+      {
+        "id": "S2",
+        "source": "docs/rag-reference.md:1:0",
+        "score": 0.24425501099959332,
+        "text": "## Shared devices and network reuse Shared devices across accounts can indicate a relationship worth investigating. Device reuse alone is not proof of fraud: families and shared terminals can produce legitimate overlap. Review transaction evidence and connected entities before drawing conclusions."
+      },
+      {
+        "id": "S3",
+        "source": "docs/rag-reference.md:0:0",
+        "score": 0.1834833181073383,
+        "text": "# Synthetic investigation reference \u2014 demonstration guidance, not legal policy"
+      }
+    ],
+    "mode": "citation-rejected",
+    "abstained": true,
+    "citation_ids_valid": false
+  },
+  "exact_observations": [
+    {
+      "id": "E1",
+      "source": "selected_case.fraud_probability",
+      "text": "Fraud model probability: 0.9525312185287476",
+      "field": "fraud_probability",
+      "value": 0.9525312185287476
+    },
+    {
+      "id": "E2",
+      "source": "selected_case.anomaly_score",
+      "text": "Anomaly score: 0.20786165976981913",
+      "field": "anomaly_score",
+      "value": 0.20786165976981913
+    },
+    {
+      "id": "E3",
+      "source": "selected_case.network_risk",
+      "text": "Network reuse risk: 0.0",
+      "field": "network_risk",
+      "value": 0.0
+    },
+    {
+      "id": "E4",
+      "source": "selected_case.velocity_risk",
+      "text": "Transaction velocity risk: 0.2",
+      "field": "velocity_risk",
+      "value": 0.2
+    },
+    {
+      "id": "E5",
+      "source": "selected_case.shared_device_account_count",
+      "text": "Shared devices account count: 1",
+      "field": "shared_device_account_count",
+      "value": 1
+    }
+  ],
+  "raw_generation_for_review": "[Shared devices and model signals indicate a relationship worth investigating, but device reuse alone is not proof of fraud. Review transaction evidence and connected entities before drawing conclusions. Analysts should inspect individual signals and case evidence, not using synthetic labels for scoring.]",
+  "model": "qwen2.5:3b",
+  "elapsed_seconds": 18.587
+}

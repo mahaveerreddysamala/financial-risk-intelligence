@@ -16,18 +16,16 @@ def run_demo(root, output, generator=None, rows=2000):
     started = time.perf_counter()
     snapshot = build_dashboard_snapshot(rows=rows, seed=42)
     case = build_investigation_payload(snapshot.transactions.iloc[0])
+    question = "What do shared devices across accounts indicate?"
     brief = answer_question(
-        "Write three short sentences of reference-grounded review guidance about shared devices "
-        "and model signals. Do not restate or interpret numeric case values: their calibrated "
-        "meaning is unknown and exact observations will be displayed separately. "
-        "Cite the reference passages and state that scores do not establish criminal intent.",
+        question,
         load_chunks(root), generator, evidence_scope=REFERENCE_SCOPE,
     )
     report = {"synthetic": True, "seed": 42, "rows": rows,
               "train_rows": snapshot.train_rows, "test_rows": snapshot.test_rows,
               "selection": "highest combined risk score in synthetic holdout",
               "scoring": "XGBoost + IsolationForest + device/velocity heuristics; community proxy",
-              "actions_executed": False, "case": case, "brief": asdict(brief),
+              "actions_executed": False, "case": case, "question": question, "brief": asdict(brief),
               "exact_observations": safe_case_sources(case),
               "raw_generation_for_review": getattr(generator, "last_response", None),
               "model": getattr(generator, "model", None),

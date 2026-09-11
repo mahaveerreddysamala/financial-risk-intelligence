@@ -1,0 +1,20 @@
+{
+  "ollama": {
+    "version": "0.34.0"
+  },
+  "device": "CPU",
+  "python": "3.12.14",
+  "cloud_disabled": true,
+  "models": [
+    {
+      "name": "qwen2.5:3b",
+      "digest": "357c53fb659c5076de1d65ccb0b397446227b71a42be9d1603d46168015c9e4b",
+      "size": 1929912432
+    }
+  ],
+  "source_sha256": {
+    "src/financial_risk/investigation/local_llm.py": "3228775674d24a6079b56ec94c7fbaccd73ddfa757819d0627e36ae0c7feef6c",
+    "src/financial_risk/investigation/llm_pilot.py": "2e049886e644eb724a220c0c6788f10990b957839e861a1a08c99bfb0ea49766",
+    "src/financial_risk/investigation/demo.py": "f0fc67b9f5d9c23a46c7a2d9a55840389b7234aa43249e14aca4f5f2e38115cf"
+  }
+}

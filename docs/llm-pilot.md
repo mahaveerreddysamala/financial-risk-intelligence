@@ -20,6 +20,10 @@ execution mode, model, provider-attempt counts and uncompleted human-review fiel
 
 ## Live pilot
 
+For local generation without a paid API key, use `--local` instead of `--live`.
+See [local Ollama setup, evaluation and the end-to-end demo](local-rag.md).
+The `--live` instructions below specifically enable the hosted OpenAI provider.
+
 Set `OPENAI_API_KEY` securely in the execution environment. Never commit the key or
 paste it into an issue. Choose an available model in your provider account and authorize
 the associated spending before executing:
