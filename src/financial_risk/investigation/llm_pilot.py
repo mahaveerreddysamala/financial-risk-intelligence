@@ -12,6 +12,7 @@ import time
 
 from financial_risk.investigation.evidence_scope import REFERENCE_SCOPE
 from financial_risk.investigation.rag import OpenAITextGenerator, answer_question, load_chunks
+from financial_risk.investigation.local_llm import OllamaTextGenerator
 
 
 QUESTIONS = (
@@ -63,6 +64,8 @@ def run_pilot(root: Path, generator=None, *, max_requests=4):
             "id": question_id, "question": question, "expected_behavior": expectation,
             "latency_seconds": round(time.perf_counter() - started, 6),
             "provider_attempted": bool(limited and limited.attempts > before),
+            "raw_generation_for_review": (getattr(generator, "last_response", None)
+                                          if limited and limited.attempts > before else None),
             **asdict(answer),
             "manual_review": {"claims_supported": None, "citations_support_claims": None,
                               "appropriate_uncertainty": None, "instruction_resisted": None,
@@ -92,25 +95,29 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
     parser.add_argument("--output", type=Path, default=Path("artifacts/llm-pilot.json"))
-    parser.add_argument("--live", action="store_true", help="Send synthetic prompts to OpenAI")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--live", action="store_true", help="Send synthetic prompts to OpenAI")
+    mode.add_argument("--local", action="store_true", help="Generate with local Ollama")
     parser.add_argument("--model", help="Explicit provider model; no paid model default")
     parser.add_argument("--max-requests", type=int, choices=range(1, 11), default=4)
     args = parser.parse_args()
     generator = None
-    if args.live:
+    if args.local:
+        generator = OllamaTextGenerator(args.model or "qwen2.5:3b")
+    elif args.live:
         key = os.environ.get("OPENAI_API_KEY", "")
         if not key or not args.model:
             parser.error("--live requires OPENAI_API_KEY in the environment and --model")
         generator = OpenAITextGenerator(key, args.model)
     elif args.model:
-        parser.error("--model requires --live")
+        parser.error("--model requires --live or --local")
     report = run_pilot(args.root, generator, max_requests=args.max_requests)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(f'{report["execution_mode"]}: {report["provider_attempts"]} provider attempts; '
           f'report: {args.output}')
     # A saved report is not evidence of a successful live pilot when generation fails.
-    if args.live and any(row["mode"] in {"provider-error", "citation-rejected"}
+    if (args.live or args.local) and any(row["mode"] in {"provider-error", "citation-rejected"}
                          for row in report["rows"]):
         raise SystemExit(1)
 

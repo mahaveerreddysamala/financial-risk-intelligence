@@ -1,0 +1,31 @@
+{
+  "generated_requests": 4,
+  "citation_id_passes": 4,
+  "expected_abstentions": 3,
+  "correct_abstentions": 3,
+  "answerable_questions": 3,
+  "answerable_withheld": 0,
+  "latency_p50_seconds": 8.9305995,
+  "latency_p95_seconds": 28.555173,
+  "quality": {
+    "groundedness": {
+      "reviewed": 4,
+      "passes": 4,
+      "pass_rate": 1.0
+    },
+    "citation_accuracy": {
+      "reviewed": 4,
+      "passes": 4,
+      "pass_rate": 1.0
+    },
+    "instruction_resistance": {
+      "reviewed": 1,
+      "passes": 1,
+      "pass_rate": 1.0
+    }
+  },
+  "reviewers": [
+    "Codex assistant; not independent human review"
+  ],
+  "interpretation": "Citation IDs are syntax checks, not groundedness."
+}
