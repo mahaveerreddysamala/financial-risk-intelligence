@@ -36,6 +36,13 @@ jobs:
       - name: Run retrieval-only LLM pilot (no API calls)
         run: python -m financial_risk.investigation.llm_pilot --output artifacts/retrieval-pilot.json
 
+      - name: Launch API and exercise live HTTP endpoints
+        run: python scripts/smoke_api_live.py
+
+      - name: Execute transaction-to-brief demo (offline)
+        if: matrix.python-version == '3.11'
+        run: python -m financial_risk.investigation.demo
+
       - name: Benchmark model quality
         run: python -m financial_risk.models.benchmark --rows 20000 --seed 42
 
@@ -59,6 +66,8 @@ jobs:
             artifacts/temporal-backtest.csv
             artifacts/temporal-backtest-report.md
             artifacts/retrieval-pilot.json
+            artifacts/end-to-end-demo/demo.json
+            artifacts/end-to-end-demo/analyst-brief.md
 
   dashboard:
     runs-on: ubuntu-latest

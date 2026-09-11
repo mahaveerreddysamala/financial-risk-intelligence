@@ -6,6 +6,25 @@ A real-time financial risk decisioning platform for detecting suspicious transac
 
 ## Overview
 
+### What I built / What I measured / What I learned
+
+| Built | Measured | Learned |
+|---|---|---|
+| Transaction scoring, case evidence and a locally generated analyst brief | Historical synthetic holdout: **3.68× top-250 lift**; [local RAG execution and evaluation](docs/local-rag.md) | Valid citation IDs do not guarantee supported claims. Exact case observations and generated reference guidance need separate review. |
+
+After setup, run `python -m financial_risk.investigation.demo --local` for the complete
+synthetic demo. See the [two-minute demo script](docs/local-rag.md). No paid API key is needed.
+
+```mermaid
+flowchart TD
+    A[Synthetic transactions] --> B[Temporal features and scoring]
+    B --> C[Case and exact observations]
+    D[Approved reference passages] --> E[Retrieval and local Ollama guidance]
+    C --> F[Analyst brief]
+    E --> F
+    F --> G[Human evidence review]
+```
+
 The [synthetic LLM pilot](docs/llm-pilot.md) provides opt-in generation, request limits,
 token reporting and a human-review report. The public dashboard remains retrieval-only;
 mocked generation tests do not establish live model quality.
